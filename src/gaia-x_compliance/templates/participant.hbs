@@ -1,0 +1,31 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/security/suites/jws-2020/v1",
+    "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#"
+  ],
+  "id": "https://{{ issuer_domain }}/.well-known/{{ participant_name }}.participant.json",
+  "type": "VerifiableCredential",
+  "issuer": "did:web:{{ issuer_domain }}",
+  "issuanceDate": "{{ issuance_date }}",
+  "credentialSubject": {
+    "id": "{{ participant_uri }}",
+    "type": "gx:LegalParticipant",
+    "gx:legalName": "{{ participant_legal_name }}",
+    "gx:legalRegistrationNumber": {
+      "id": "{{ participant_uri }}/lrn"
+    },
+    "gx:headquarterAddress": {
+      "gx:streetAddress": "{{ participant_street_address }}",
+      "gx:postalCode": "{{ participant_postal_code }}",
+      "gx:locality": "{{ participant_locality }}",
+      "gx:countrySubdivisionCode": "{{ participant_country_subdivision_code }}"
+    },
+    "gx:legalAddress": {
+      "gx:streetAddress": "{{ participant_street_address }}",
+      "gx:postalCode": "{{ participant_postal_code }}",
+      "gx:locality": "{{ participant_locality }}",
+      "gx:countrySubdivisionCode": "{{ participant_country_subdivision_code }}"
+    }
+  }
+}

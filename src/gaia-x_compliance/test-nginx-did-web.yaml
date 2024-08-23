@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-dataspace
+  template:
+    metadata:
+      labels:
+        app: nginx-dataspace
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+          - name: did-web-config
+            mountPath: /usr/share/nginx/html/.well-known
+            readOnly: true
+      volumes:
+        - name: did-web-config
+          configMap:
+            name: did-web-config
