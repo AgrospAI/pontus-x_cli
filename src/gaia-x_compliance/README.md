@@ -1,5 +1,28 @@
 # Prepare yourself for Gaia-X compliance
 
+This guide will help you to prepare your institution for Gaia-X compliance. It will guide you through the process of setting up a DID-Web server and generating the necessary participant credentials following the Gaia-X Trust Framework.
+
+To follow this guide, it is recommended to download this repository and install the required dependencies using the following commands:
+
+```shell
+git clone https://github.com/rhizomik/pontus-x_cli.git
+cd pontus-x_cli
+npm install
+```
+
+If you don't have git or npm installed:
+
+* To install git, follow the instructions at https://git-scm.com/downloads
+* To install Node.js abd NPM, follow the instructions at https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+
+After cloning and installing all the project dependencies using npm, move into the `src/gaia-x_compliance` folder:
+
+```shell
+cd src/gaia-x_compliance/
+```
+
+Now, you can follow the instructions below to set up a DID-Web server and generate the necessary participant credentials.
+
 ## Obtaining a domain and SSL certificate
 
 Get a root domain for DID-Web and the associated SSL certificate. We will use for this Let's Encrypt certificates, the free alternative among Gaia-X's [list of defined Trust Anchors](https://gaia-x.gitlab.io/policy-rules-committee/trust-framework/trust_anchors/#list-of-defined-trust-anchors).
@@ -65,7 +88,7 @@ To generate the did.json file required for DID-Web, we will use the Gaia-X [did-
 The did.json file is generated using the following commands, taking into account that the certificate chain was stored in the current folder:
 
 ```shell
-npm run generate-did-web -- https://your.domain.org src/gaia-x_compliance/certificate-chain.crt
+npm run generate-did-web -- https://your.domain.org certificate-chain.crt
 ```
 
 The output is stored in a file named `did.json` and is to be made available from the DID-Web domain at the well-known path `/.well-known/did.json` together with the certificate file. 
@@ -108,13 +131,13 @@ To generate the credentials required by the Gaia-X Trust Framework to identify a
 To generate the Gaia-X Verifiable Credentials for Universitat de Lleida using the previous DID-Web server, we can use the following command. The credentials files will be generated in the same folder that the JSON file with the input data about the participant. And the `certificate.key` should be in the same folder that the `did.json`:
 
 ```shell
-npm run generate-participant-vcs -- src/gaia-x_compliance/UdL.data.json src/gaia-x_compliance/did.json
+npm run generate-participant-vcs -- UdL.data.json did.json
 ```
 
 To generate the credentials for other participants, just create a new JSON file with the participant's data and run the script with the new file. For instance, there is another sample JSON file for CEP in [CEP.data.json](CEP.data.json), which can be used to generate the credentials for the "Consorci Centre d'Estudis Porcins" using the command:
 
 ```shell
-npm run generate-participant-vcs -- src/gaia-x_compliance/CEP.data.json src/gaia-x_compliance/did.json
+npm run generate-participant-vcs -- CEP.data.json did.json
 ```
 
 ## Publishing the Gaia-X Compliant Participant Credentials
