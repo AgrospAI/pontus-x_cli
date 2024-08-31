@@ -2,7 +2,7 @@ import fs from 'fs';
 import readlineSync from 'readline-sync';
 import wallet from 'ethereumjs-wallet';
 
-function main() {
+export function exportKeyAsJson() {
     const pk = readlineSync.question('\nExporting your private key as a JSON file... \n' +
         'First, get a copy of your private key from Metamask.\n' +
         '\t 1.) On the upper right menu, select "Account details", then "Show private key". \n' +
@@ -24,14 +24,4 @@ function main() {
         fs.writeFileSync(file, JSON.stringify(value))
         console.log(`Your encrypted private key has been saved to ${file}\n`);
     });
-}
-
-try {
-    main();
-} catch (e) {
-    if (e instanceof Error) {
-        console.error(e.message + '\n');
-    } else {
-        console.error(e)
-    }
 }

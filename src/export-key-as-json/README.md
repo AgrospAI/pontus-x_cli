@@ -6,7 +6,7 @@ First of all, if you don't have already one, you can generate your account, incl
 3. Execute the Export Metamask Private Key as JSON File script using the following command:
 
 ```shell
-npm run export-key-as-json
+pontus-x_cli export-private-key
 ```
 
 The script will generate a JSON file with the private key protected with the provided password. This file can be latter imported in a Pontus-X ecosystem marketplace to automate transaction signing.
