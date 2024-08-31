@@ -1,26 +1,52 @@
 {
   "name": "pontus-x_cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "main": "dist/index.js",
+  "bin": {
+    "pontus-x_cli": "./dist/index.js"
+  },
   "scripts": {
-    "export-key-as-json": "ts-node src/export-key-as-json",
+    "start": "NODE_NO_WARNINGS=1 ts-node src/index.ts",
     "generate-did-web": "ts-node --files src/gaia-x_compliance/generate-did-web",
     "generate-participant-vcs": "ts-node src/gaia-x_compliance/generate-participant-vcs",
-    "build": "tsc",
+    "build": "tsc && chmod +x ./dist/index.js",
     "clean": "rm -rf ./dist/",
     "rebuild": "npm run clean & npm run build"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rhizomik/pontus-x_cli.git"
+  },
+  "keywords": ["data space", "cli", "pontus-x", "gaia-x"],
+  "author": "Roberto García <https://rhizomik.net/~roberto>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/rhizomik/pontus-x_cli/issues"
+  },
+  "homepage": "https://github.com/monatheoctocat/my_package",
   "dependencies": {
+    "@deltadao/nautilus": "^1.0.2",
     "@gaia-x/did-web-generator": "^1.0.1",
     "@gaia-x/json-web-signature-2020": "^2.1.0",
     "axios": "^1.7.4",
+    "commander": "^11.1.0",
+    "dotenv": "^16.3.1",
     "ethereumjs-wallet": "^1.0.2",
+    "ethers": "^5.7.2",
+    "figlet": "^1.7.0",
     "handlebars": "^4.7.8",
     "readline-sync": "^1.4.10",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
+    "@types/figlet": "^1.5.8",
     "@types/node": "^22.2.0",
     "@types/readline-sync": "^1.4.8",
     "typescript": "^5.5.4"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }
