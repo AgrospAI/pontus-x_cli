@@ -1,17 +1,17 @@
 {
   "name": "pontus-x_cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/index.js",
   "bin": {
     "pontus-x_cli": "./dist/index.js"
   },
   "scripts": {
     "start": "NODE_NO_WARNINGS=1 ts-node src/index.ts",
-    "generate-did-web": "ts-node --files src/gaia-x_compliance/generate-did-web",
-    "generate-participant-vcs": "ts-node src/gaia-x_compliance/generate-participant-vcs",
-    "build": "tsc && chmod +x ./dist/index.js",
+    "build": "tsc && chmod +x ./dist/index.js && npm run copy-templates",
+    "copy-templates": "copyfiles -u 1 src/gaia-x_compliance/generate-participant-credentials/templates/* dist",
     "clean": "rm -rf ./dist/",
-    "rebuild": "npm run clean & npm run build"
+    "rebuild": "npm run clean & npm run build",
+    "local-install": "npm install -g ."
   },
   "repository": {
     "type": "git",
@@ -42,6 +42,7 @@
     "@types/figlet": "^1.5.8",
     "@types/node": "^22.2.0",
     "@types/readline-sync": "^1.4.8",
+    "copyfiles": "^2.4.1",
     "typescript": "^5.5.4"
   },
   "files": [

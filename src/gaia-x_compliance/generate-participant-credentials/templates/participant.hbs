@@ -4,7 +4,7 @@
     "https://w3id.org/security/suites/jws-2020/v1",
     "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#"
   ],
-  "id": "https://{{ issuer_domain }}/.well-known/{{ participant_name }}.participant.json",
+  "id": "https://{{ issuer_domain }}/.well-known/{{ participant_name }}.vp.json#participant",
   "type": "VerifiableCredential",
   "issuer": "did:web:{{ issuer_domain }}",
   "issuanceDate": "{{ issuance_date }}",
@@ -13,7 +13,7 @@
     "type": "gx:LegalParticipant",
     "gx:legalName": "{{ participant_legal_name }}",
     "gx:legalRegistrationNumber": {
-      "id": "{{ participant_uri }}/lrn"
+      "id": "{{ participant_uri }}#lrn"
     },
     "gx:headquarterAddress": {
       "gx:streetAddress": "{{ participant_street_address }}",

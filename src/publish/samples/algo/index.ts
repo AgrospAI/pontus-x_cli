@@ -33,9 +33,12 @@ const publish = async (folder: string, connection: any, provider: string, dryRun
     const serviceBuilder =
         new ServiceBuilder({serviceType: ServiceTypes.ACCESS, fileType: FileTypes.URL});
     const urlFile: ServiceFileType<FileTypes> = {
-        type: 'url',
+        type: 'url', // there are multiple supported data source types, see https://docs.oceanprotocol.com/developers/storage
         url: 'https://raw.githubusercontent.com/rogargon/ocean-algo/eda/eda.py',
-        method: 'GET'
+        method: 'GET' // HTTP request method
+        // headers: {
+        //     Authorization: 'Basic XXX' // optional headers field e.g. for basic access control
+        // }
     };
     const service = serviceBuilder
         .setServiceEndpoint(provider) // the access controller to be in control of this asset

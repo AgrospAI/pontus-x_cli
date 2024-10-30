@@ -9,6 +9,8 @@ import { exportKeyAsJson } from './export-key-as-json';
 import { Connection, invokeFunctionFromFile, packageVersion } from './utils';
 import Wallet from 'ethereumjs-wallet';
 import { AssetBuilder, LifecycleStates, ServiceBuilder } from '@deltadao/nautilus';
+import { generateDidWeb } from './gaia-x_compliance/generate-did-web';
+import { checkCompliance, generateParticipantCredentials } from './gaia-x_compliance/generate-participant-credentials';
 
 const program = new Command();
 
@@ -224,12 +226,58 @@ program
         "for instance the sample scripts in https://github.com/rhizomik/pontus-x_cli/tree/master/src/publish/samples'")
     .requiredOption("-p, --provider <provider>", "The Provider URL")
     .option("--dry-run", "Dry run the publishing process")
-    .action(async (scriptFolder, options, ) => {
+    .action(async (scriptFolder, options) => {
         const connection = await Connection.connect();
         console.log(`Publishing asset ${scriptFolder} in provider ${options.provider} from wallet ${connection.wallet.address}`);
         try {
             await invokeFunctionFromFile(`${scriptFolder}/index.ts`, 'publish',
                 scriptFolder, connection, options.provider, options.dryRun);
+            process.exit(0);
+        } catch (error) {
+            console.error(error);
+            process.exit(1);
+        }
+    });
+
+program
+    .command("generate-did-web")
+    .description("Generate a did.json to set up a DID-Web source to publish Gaia-X complaint credentials")
+    .requiredOption("-d, --domain <url>", "URL where the DID-Web document will be hosted")
+    .requiredOption("-c, --certificate <certificate-chain.crt>", "Path to the file with the certificate chain for the DID domain URL")
+    .action(async (options) => {
+        try {
+            await generateDidWeb(options.domain, options.certificate);
+            process.exit(0);
+        } catch (error) {
+            console.error(error);
+            process.exit(1);
+        }
+    });
+
+program
+    .command("generate-participant-credentials")
+    .description("Generate the Gaia-X credentials for the participant including their verifiable presentation and checking its compliance")
+    .requiredOption("-p, --participant <participant.data.json>", "Path to the JSON file including the required participant data")
+    .requiredOption("-d, --did <did.json>", "Path to the did.json file")
+    .requiredOption("-c, --certificate <certificate.key>", "Path to the certificate.key file")
+    .action(async (options) => {
+        try {
+            await generateParticipantCredentials(options.participant, options.did, options.certificate);
+            process.exit(0);
+        } catch (error) {
+            console.error(error);
+            process.exit(1);
+        }
+    });
+
+program
+    .command("check-compliance")
+    .description("Use Gaia-X Compliance to check a participant Verifiable Presentation")
+    .requiredOption("-p, --participant <participant.data.json>", "Path to the JSON file including the required participant data")
+    .requiredOption("--vp <participant.vp.json>", "Path to the participant Verifiable Presentation file")
+    .action(async (options) => {
+        try {
+            await checkCompliance(options.participant, options.vp);
             process.exit(0);
         } catch (error) {
             console.error(error);
