@@ -1,4 +1,4 @@
-#! /usr/bin/env NODE_NO_WARNINGS=1 node
+#!/usr/bin/env node
 import dotenv from 'dotenv';
 dotenv.config()
 import { readFileSync, writeFileSync } from 'fs';
