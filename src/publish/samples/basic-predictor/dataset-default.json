@@ -1,0 +1,7 @@
+{
+  "separator": ",",
+  "target_column": "species",
+  "split": 0.7,
+  "random_state": 42,
+  "stratify": true
+}

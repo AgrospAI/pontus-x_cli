@@ -115,7 +115,7 @@ pontus-x_cli edit-dataset-url did:op:f7946c46eb87318b2cd34efdd5f33b19ea9223a90b6
 Publish the asset as instructed in the provided script:
 
 ```shell
-pontus-x_cli publish --provider https://provider.angliru.udl.cat src/publish/samples/data --dry-run
+pontus-x_cli publish --provider https://provider.agrospai.udl.cat src/publish/samples/data --dry-run
 ```
 
 Remove the flag `--dry-run` to actually publish the asset.
