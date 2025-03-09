@@ -58,12 +58,12 @@ Access a downloadable asset (either a dataset or algorithm) given its DID:
 pontus-x_cli access did:op:34d5f73d77550843201ee1a43ad9d404d3e557ed6a70772e9afde7a27d863b8f
 ```
 
-### revoke \<did>
+### revoke \<dids...>
 
-Publisher revocation of an owned DID
+Publisher revocation of one or more owned DIDs
 
 ```shell
-pontus-x_cli revoke did:op:052eb04066d696a27430116676c859c6303d82257c7a0ebda51f4e80363f6bca
+pontus-x_cli revoke did:op:052eb04066d696a27430116676c859c6303d82257c7a0ebda51f4e80363f6bca did:op:052eb04066d696a27430116676c859c6303d82257c7a0ebda51f4e80363f6bca
 ```
 
 ### self-description \<did> \<sdurl>

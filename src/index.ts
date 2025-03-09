@@ -80,18 +80,20 @@ program.command("access <did>")
         process.exit(0);
     });
 
-program.command("revoke <did>")
-    .description("Publisher revocation of an owned DID ")
-    .action(async (did) => {
+program.command("revoke <dids...>")
+    .description("Publisher revocation of one or more owned DIDs ")
+    .action(async (dids: string[]) => {
         const connection = await Connection.connect();
-        if (readlineSync.keyInYNStrict(`Revoke asset ${did}? `)) {
+        if (readlineSync.keyInYNStrict(`Revoke assets ${dids.join(', ')}? `)) {
             try {
-                const aquariusAsset = await connection.nautilus.getAquariusAsset(did);
-                console.log('Sending transaction to revoke asset...');
-                const tx = await connection.nautilus.setAssetLifecycleState(aquariusAsset,
-                    LifecycleStates.REVOKED_BY_PUBLISHER);
-                console.log(`Asset revoked, ` +
-                    `transaction: ${connection.networkConfig.explorerUri}/tx/${tx.transactionHash}\n`);
+                for(const did of dids) {
+                    const aquariusAsset = await connection.nautilus.getAquariusAsset(did);
+                    console.log('Sending transaction to revoke asset...');
+                    const tx = await connection.nautilus.setAssetLifecycleState(aquariusAsset,
+                        LifecycleStates.REVOKED_BY_PUBLISHER);
+                    console.log(`Asset revoked, ` +
+                        `transaction: ${connection.networkConfig.explorerUri}/tx/${tx.transactionHash}\n`);
+                }
             } catch (e) {
                 console.error(`Error revoking asset: ${e}`);
             }
