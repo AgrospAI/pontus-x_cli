@@ -58,13 +58,14 @@ const publish = async (
   // ALGORITHM METADATA
   const algoMetadata: MetadataConfig["algorithm"] = {
     language: "python",
-    version: "0.2",
+    version: "0.3",
     container: {
-      entrypoint: "/algorithm/.venv/bin/python /algorithm/src/main.py",
+      entrypoint: "/algorithm/.venv/bin/python -u $ALGO",
+      // entrypoint: "sleep infinity",
       image: "clopezgarcia/basic-predictor",
-      tag: "0.1.0",
+      tag: "0.2.2",
       checksum:
-        "sha256:ee1f7f5d3dc6d3323f32f68852aaba8895482a2b4b4e7ff652045b42b7becfbe",
+        "sha256:027cad1d91b8066c4bab381c2199467d63863bccc542589496b0205b9a83193d",
     },
     consumerParameters: consumerParameters,
   };
@@ -86,11 +87,11 @@ const publish = async (
 
   const asset = new AssetBuilder()
     .setType("algorithm")
-    .setName("SciKit-learn algorithm training (working?)")
+    .setName("Debugger SciKit-Learn Model Trainer")
     .setAuthor("Universitat de Lleida (UdL)")
     .setOwner(connection.wallet.address)
     .setDescription(readFileSync(`${folder}/description.md`, "utf8"))
-    .addTags(["ml", "sklearn", "scikit-learn", "tabular-data", "pandas", "udl"])
+    .addTags(["ml", "debug", "sklearn", "scikit-learn", "tabular-data", "pandas", "udl"])
     .setLicense("MIT")
     .setNftData({
       name: "UdL scikit-learn model trainer",
