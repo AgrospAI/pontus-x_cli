@@ -11,6 +11,7 @@ import Wallet from 'ethereumjs-wallet';
 import { AssetBuilder, LifecycleStates, ServiceBuilder } from '@deltadao/nautilus';
 import { generateDidWeb } from './gaia-x_compliance/generate-did-web';
 import { checkCompliance, generateParticipantCredentials } from './gaia-x_compliance/generate-participant-credentials';
+import { type ComputeJob } from '@oceanprotocol/lib';
 
 const program = new Command();
 
@@ -79,18 +80,20 @@ program.command("access <did>")
         process.exit(0);
     });
 
-program.command("revoke <did>")
-    .description("Publisher revocation of an owned DID ")
-    .action(async (did) => {
+program.command("revoke <dids...>")
+    .description("Publisher revocation of one or more owned DIDs ")
+    .action(async (dids: string[]) => {
         const connection = await Connection.connect();
-        if (readlineSync.keyInYNStrict(`Revoke asset ${did}? `)) {
+        if (readlineSync.keyInYNStrict(`Revoke assets ${dids.join(', ')}? `)) {
             try {
-                const aquariusAsset = await connection.nautilus.getAquariusAsset(did);
-                console.log('Sending transaction to revoke asset...');
-                const tx = await connection.nautilus.setAssetLifecycleState(aquariusAsset,
-                    LifecycleStates.REVOKED_BY_PUBLISHER);
-                console.log(`Asset revoked, ` +
-                    `transaction: ${connection.networkConfig.explorerUri}/tx/${tx.transactionHash}\n`);
+                for(const did of dids) {
+                    const aquariusAsset = await connection.nautilus.getAquariusAsset(did);
+                    console.log('Sending transaction to revoke asset...');
+                    const tx = await connection.nautilus.setAssetLifecycleState(aquariusAsset,
+                        LifecycleStates.REVOKED_BY_PUBLISHER);
+                    console.log(`Asset revoked, ` +
+                        `transaction: ${connection.networkConfig.explorerUri}/tx/${tx.transactionHash}\n`);
+                }
             } catch (e) {
                 console.error(`Error revoking asset: ${e}`);
             }
@@ -196,8 +199,8 @@ program.command("edit-trusted-algos <did> <algos...>")
         process.exit(0);
     });
 
-program.command("edit-dataset-url <did> <url>")
-    .description("Change the URL of a dataset DID")
+program.command("edit-asset-url <did> <url>")
+    .description("Change the URL of an asset DID")
     .action(async (did, url) => {
         const connection = await Connection.connect();
         if (readlineSync.keyInYNStrict(`Changing the URL for ${did} ` +
@@ -211,7 +214,7 @@ program.command("edit-dataset-url <did> <url>")
                 const service = serviceBuilder.build();
                 const asset = assetBuilder.addService(service).build();
                 const result = await connection.nautilus.edit(asset);
-                console.log(`Changed dataset URL, ` +
+                console.log(`Changed asset URL, ` +
                     `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`);
             } catch (e) {
                 console.error(`Error changing dataset URL: ${e}`);
@@ -237,6 +240,73 @@ program
             console.error(error);
             process.exit(1);
         }
+    });
+
+program
+    .command("compute <algo> <datasets...>")
+    .description("Compute the algorith on one or more datasets'")
+    .action(async (algo: string, datasets: string[]) => {
+        const connection = await Connection.connect();
+        if (readlineSync.keyInYNStrict(`Computing algorithm ${algo} ` +
+            `on datasets [${datasets.join(', ')}]? `)) {
+            try {
+                const firstDatasetAsset = await connection.nautilus.getAquariusAsset(datasets[0]);
+                const provider = firstDatasetAsset.services[0].serviceEndpoint;
+                const dataset = { "did": datasets[0] };
+                const algorithm = { "did": algo };
+                const additionalDatasets = datasets
+                    .filter((_, i) => i > 0)
+                    .map(dataset => ({ "did": dataset }) );
+                const computeJob =
+                    await connection.nautilus.compute({ dataset, algorithm, additionalDatasets }) as ComputeJob[];
+                console.log(`Compute started, check status using command:\n`+
+                    `pontus-x_cli compute-status ${computeJob[0].jobId} -p ${provider}\n`);
+            } catch (e) {
+                console.error(`Error starting compute: ${e}`);
+            }
+        }
+        process.exit(0);
+    });
+
+program
+    .command("compute-status <jobId>")
+    .description("Check compute job status'")
+    .requiredOption("-p, --provider <provider>", "The Provider URL")
+    .action(async (jobId: string, options) => {
+        const connection = await Connection.connect();
+        try {
+            const computeJobStatus = await connection.nautilus.getComputeStatus({
+                jobId, providerUri: options.provider
+            });
+            console.log(`Compute status: ${computeJobStatus.statusText}\n`);
+            if (computeJobStatus.statusText === 'Job finished') {
+                console.log(`Get results using command:\n`+
+                    `pontus-x_cli compute-results ${jobId} -p ${options.provider}\n`);
+            }
+        } catch (e) {
+            console.error(`Error starting compute: ${e}`);
+        }
+        process.exit(0);
+    });
+
+program
+    .command("compute-results <jobId>")
+    .description("Get the compute job results'")
+    .requiredOption("-p, --provider <provider>", "The Provider URL")
+    .action(async (jobId: string, options) => {
+        const connection = await Connection.connect();
+        try {
+            const computeResultUrl = await connection.nautilus.getComputeResult({
+                jobId, providerUri: options.provider
+            });
+            if (computeResultUrl)
+               console.log(`Compute results available from: ${computeResultUrl}\n`);
+            else
+                console.log(`No results available yet\n`);
+        } catch (e) {
+            console.error(`Error starting compute: ${e}`);
+        }
+        process.exit(0);
     });
 
 program

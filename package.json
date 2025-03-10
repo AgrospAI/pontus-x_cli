@@ -1,6 +1,6 @@
 {
   "name": "pontus-x_cli",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "main": "dist/index.js",
   "bin": {
     "pontus-x_cli": "./dist/index.js"
@@ -25,25 +25,25 @@
   },
   "homepage": "https://github.com/monatheoctocat/my_package",
   "dependencies": {
-    "@deltadao/nautilus": "^1.0.2",
+    "@deltadao/nautilus": "^1.1.0",
     "@gaia-x/did-web-generator": "^1.1.0",
     "@gaia-x/json-web-signature-2020": "^2.3.0",
-    "axios": "^1.7.7",
-    "commander": "^11.1.0",
-    "dotenv": "^16.3.1",
+    "axios": "^1.7.9",
+    "commander": "^13.1.0",
+    "dotenv": "^16.4.7",
     "ethereumjs-wallet": "^1.0.2",
     "ethers": "^5.7.2",
     "figlet": "^1.7.0",
     "handlebars": "^4.7.8",
     "readline-sync": "^1.4.10",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
-    "@types/figlet": "^1.5.8",
-    "@types/node": "^22.2.0",
+    "@types/figlet": "^1.7.0",
+    "@types/node": "^22.13.4",
     "@types/readline-sync": "^1.4.8",
     "copyfiles": "^2.4.1",
-    "typescript": "^5.5.4"
+    "typescript": "^5.7.3"
   },
   "files": [
     "dist",

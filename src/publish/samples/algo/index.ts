@@ -10,7 +10,7 @@ const publish = async (folder: string, connection: any, provider: string, dryRun
         .setAuthor('Universitat de Lleida (UdL)')
         .setOwner(connection.wallet.address)
         .setDescription(readFileSync(`${folder}/description.md`, 'utf8'))
-        .addTags(['eda', 'exploratory data analysis', 'profiling', 'tabular-data', 'pandas', 'udl'])
+        .addTags(['eda', 'exploratory data analysis', 'profiling', 'tabular-data', 'pandas', 'agrospai', 'udl'])
         .setLicense('MIT')
         .setNftData({
             name: 'UdL EDA Algo',

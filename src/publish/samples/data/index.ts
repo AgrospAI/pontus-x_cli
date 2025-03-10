@@ -10,7 +10,7 @@ const publish = async (folder: string, connection: any, provider: string, dryRun
         .setAuthor('Cortez et al., 2009')
         .setOwner(connection.wallet.address)
         .setDescription(readFileSync(`${folder}/description.md`, 'utf8'))
-        .addTags(['agriculture', 'wine', 'udl', 'tabular-data'])
+        .addTags(['agriculture', 'wine', 'agrospai', 'udl', 'tabular-data'])
         .setLicense('CC-BY-4.0')
         .setNftData({
             name: 'Red Wine',

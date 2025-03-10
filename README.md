@@ -4,7 +4,7 @@ Command Line Interface for the Pontus-X Data Space Ecosystem.
 
 ## Installation
 
-If you don't have npm installed, install Node.js and NPM followin g the instructions at https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+If you don't have npm installed, install Node.js and NPM following the instructions at https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
 
 Then, install the Pontus-X CLI globally using npm:
 
@@ -58,12 +58,12 @@ Access a downloadable asset (either a dataset or algorithm) given its DID:
 pontus-x_cli access did:op:34d5f73d77550843201ee1a43ad9d404d3e557ed6a70772e9afde7a27d863b8f
 ```
 
-### revoke \<did>
+### revoke \<dids...>
 
-Publisher revocation of an owned DID
+Publisher revocation of one or more owned DIDs
 
 ```shell
-pontus-x_cli revoke did:op:052eb04066d696a27430116676c859c6303d82257c7a0ebda51f4e80363f6bca
+pontus-x_cli revoke did:op:052eb04066d696a27430116676c859c6303d82257c7a0ebda51f4e80363f6bca did:op:052eb04066d696a27430116676c859c6303d82257c7a0ebda51f4e80363f6bca
 ```
 
 ### self-description \<did> \<sdurl>
@@ -73,7 +73,7 @@ Associate Gaia-X Self-Description to the asset with the given DID
 Edit a DID metadata to link it to a Gaia-X Self Description available from the provided URL (it should be compliant with the configured Gaia-X Digital Clearing House, for instance https://compliance.lab.gaia-x.eu/v1-staging/docs):
 
 ```shell
-pontus-x_cli self-description did:op:34d5f73d77550843201ee1a43ad9d404d3e557ed6a70772e9afde7a27d863b8f https://angliru.udl.cat/.well-known/2210_serviceOffering-eda.json
+pontus-x_cli self-description did:op:34d5f73d77550843201ee1a43ad9d404d3e557ed6a70772e9afde7a27d863b8f https://compliance.agrospai.udl.cat/.well-known/service_EDA_UdL_devnet.vp.json
 ```
 
 ### change-price \<did> \<newPrice>
