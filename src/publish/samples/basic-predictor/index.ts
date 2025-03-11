@@ -60,12 +60,12 @@ const publish = async (
     language: "python",
     version: "0.3",
     container: {
-      entrypoint: "/algorithm/.venv/bin/python -u $ALGO",
+      entrypoint: "python $ALGO",
       // entrypoint: "sleep infinity",
       image: "clopezgarcia/basic-predictor",
       tag: "0.2.2",
       checksum:
-        "sha256:027cad1d91b8066c4bab381c2199467d63863bccc542589496b0205b9a83193d",
+        "sha256:b4b24cce742d43329b6cc458770f7be87f13bba4349f5acfc466441f143dc27c",
     },
     consumerParameters: consumerParameters,
   };
