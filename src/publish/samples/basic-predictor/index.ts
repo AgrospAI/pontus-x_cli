@@ -21,7 +21,7 @@ const publish = async (
 
   consumerParameters.push(
     consumerParametersBuilder
-      .setName("dataset")
+      .setName("Dataset parameters")
       .setLabel("dataset")
       .setDescription(
         "Dataset parameters to train the model with, such as: separator, target_column, split, random_state and stratify."
@@ -40,7 +40,7 @@ const publish = async (
 
   consumerParameters.push(
     consumerParametersBuilder
-      .setName("model")
+      .setName("Model parameters")
       .setLabel("model")
       .setDescription(
         "Model parameters to train the model with, such as: name, params and metrics."
@@ -87,11 +87,11 @@ const publish = async (
 
   const asset = new AssetBuilder()
     .setType("algorithm")
-    .setName("Debugger SciKit-Learn Model Trainer")
+    .setName("SciKit-Learn Model Trainer")
     .setAuthor("Universitat de Lleida (UdL)")
     .setOwner(connection.wallet.address)
     .setDescription(readFileSync(`${folder}/description.md`, "utf8"))
-    .addTags(["ml", "debug", "sklearn", "scikit-learn", "tabular-data", "pandas", "udl"])
+    .addTags(["ml", "sklearn", "scikit-learn", "tabular-data", "pandas", "udl", "agrospai"])
     .setLicense("MIT")
     .setNftData({
       name: "UdL scikit-learn model trainer",

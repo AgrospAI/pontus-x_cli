@@ -5,7 +5,6 @@
     },
     "metrics": [
         "r2",
-        "f1",
         "neg_mean_squared_log_error"
     ]
 }
