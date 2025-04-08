@@ -4,7 +4,7 @@ Command Line Interface for the Pontus-X Data Space Ecosystem.
 
 ## Installation
 
-If you don't have npm installed, install Node.js and NPM following the instructions at https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+If you don't have npm installed, install Node.js and NPM following the instructions at <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>
 
 Then, install the Pontus-X CLI globally using npm:
 
@@ -18,6 +18,14 @@ Then, create a `.env` file in your working directory with the network to be used
 NETWORK=PONTUSXDEV
 ```
 
+### Autocompletion
+
+To enable autocompletion for the Pontus-X CLI, run the following command:
+
+```shell
+pontus-x_cli install-completion
+```
+
 ## Currently available commands
 
 The following subsections detail the available command to interact with the Pontus-X Data Space Ecosystem. Additionally, there is a final section [Prepare yourself for Gaia-X compliance](#prepare-yourself-for-gaia-x-compliance) that will guide you through the process of setting up a DID-Web server and generating the necessary participant credentials following the Gaia-X Trust Framework using two additional `pontus-x_cli` commands.
@@ -29,7 +37,7 @@ Export your private key as a JSON file, to use later with the login command or f
 ### login \<keyFile.json>
 
 Login to retrieve your private key from a JSON key store and store it in .env:
-    
+
 ```shell
 pontus-x_cli login 62078f05eb4450272d7e492f3660835826906822.json
 ```
@@ -70,7 +78,7 @@ pontus-x_cli revoke did:op:052eb04066d696a27430116676c859c6303d82257c7a0ebda51f4
 
 Associate Gaia-X Self-Description to the asset with the given DID
 
-Edit a DID metadata to link it to a Gaia-X Self Description available from the provided URL (it should be compliant with the configured Gaia-X Digital Clearing House, for instance https://compliance.lab.gaia-x.eu/v1-staging/docs):
+Edit a DID metadata to link it to a Gaia-X Self Description available from the provided URL (it should be compliant with the configured Gaia-X Digital Clearing House, for instance <https://compliance.lab.gaia-x.eu/v1-staging/docs>):
 
 ```shell
 pontus-x_cli self-description did:op:34d5f73d77550843201ee1a43ad9d404d3e557ed6a70772e9afde7a27d863b8f https://compliance.agrospai.udl.cat/.well-known/service_EDA_UdL_devnet.vp.json
@@ -140,13 +148,13 @@ This section will help you to prepare your institution for Gaia-X compliance. It
 
 Get a root domain for DID-Web and the associated SSL certificate. We will use for this Let's Encrypt certificates, the free alternative among Gaia-X's [list of defined Trust Anchors](https://gaia-x.gitlab.io/policy-rules-committee/trust-framework/trust_anchors/#list-of-defined-trust-anchors).
 
-There are different ways of getting a Let's Encrypt certificate: https://letsencrypt.org/getting-started/
+There are different ways of getting a Let's Encrypt certificate: <https://letsencrypt.org/getting-started/>
 
 For this example, and as later we will need to publish online some of the generated documents, we will use a Kubernetes cluster with Cert Manager to automate the certificate issuance, plus NGINX to serve the generated documents.
 
 First of all, you will need a Kubernetes cluster that is publicly accessible. You can use a cloud provider like Google Cloud Platform (GCP) or Amazon Web Services (AWS), or a local Kubernetes cluster like [Minikube](https://minikube.sigs.k8s.io/docs/start/).
 
-Once Minikube is running, don't forget to enable the ingress addon using the command: `minikube addons enable ingress`. Then, install Cert Manager following the instructions at https://cert-manager.io/docs/installation/
+Once Minikube is running, don't forget to enable the ingress addon using the command: `minikube addons enable ingress`. Then, install Cert Manager following the instructions at <https://cert-manager.io/docs/installation/>
 
 After Cert Manager is installed, you can create a ClusterIssuer resource to issue Let's Encrypt certificates. The file [letsencrypt-production.yaml](src/gaia-x_compliance/letsencrypt-production.yaml) provides an example of a ClusterIssuer resource, which can be applied to your cluster using the command:
 
@@ -180,7 +188,7 @@ NAME                    READY   SECRET                  AGE
 your.domain.org-cert    True    your.domain.org-cert    2m
 ```
 
-Now, you can retrieve the certificate chain including the root certificate as required by Gaia-X. We can use an online service like https://whatsmychaincert.com. Use the following command configuring you domain name, e.g. `your.domain.org`, to retrieve the whole chain and store it in `certificate-chain.crt`:
+Now, you can retrieve the certificate chain including the root certificate as required by Gaia-X. We can use an online service like <https://whatsmychaincert.com>. Use the following command configuring you domain name, e.g. `your.domain.org`, to retrieve the whole chain and store it in `certificate-chain.crt`:
 
 ```shell
 curl -o certificate-chain.crt "https://whatsmychaincert.com/generate?include_leaf=1&include_root=1&host=your.domain.org"
@@ -196,7 +204,7 @@ kubectl get secret your.domain.org-cert -n test -o jsonpath='{.data.tls\.key}' |
 
 Once we have set a public domain and its associated SSL certificate, we can set up a DID-Web source where we can publish Gaia-X complaint credentials for participants and assets.
 
-To generate the did.json file required for DID-Web, we will use the Gaia-X [did-web-generator](https://gitlab.com/gaia-x/lab/did-web-generator) and provide as input the base URL for DID-Web, e.g. https://your.domain.org, and the name of the file with the SSL certificate, e.g. `certificate-chain.crt`.
+To generate the did.json file required for DID-Web, we will use the Gaia-X [did-web-generator](https://gitlab.com/gaia-x/lab/did-web-generator) and provide as input the base URL for DID-Web, e.g. <https://your.domain.org>, and the name of the file with the SSL certificate, e.g. `certificate-chain.crt`.
 
 The did.json file is generated using the `generate-did-web` command provided by `pontus-x_cli`:
 
@@ -220,9 +228,9 @@ Then, we update the NGINX deployment to mount the config map in the `/usr/share/
 kubectl apply -f test-nginx-did-web.yaml
 ```
 
-Now, the `did.json` should be available at https://your.domain.org/.well-known/did.json and the certificate chain at https://your.domain.org/.well-known/certificate-chain.crt.
+Now, the `did.json` should be available at <https://your.domain.org/.well-known/did.json> and the certificate chain at <https://your.domain.org/.well-known/certificate-chain.crt>.
 
-The chain can be checked to see if it constitutes a valid trust anchor chain using the Gaia-X [Trust Anchor Registry](https://registry.lab.gaia-x.eu/v1-staging/docs#/TrustAnchor/TrustAnchorController_verifyTrustAnchorChain) API. The `v1-staging` version accepts Extended Validation (EV) Secure Sockets Layer (SSL) certificate issuers like Let's Encrypt, while the `v1` version only accepts the official [Gaia-X Trust Anchors]((https://gaia-x.gitlab.io/policy-rules-committee/trust-framework/trust_anchors/#list-of-defined-trust-anchors). EV SSL certificates are just recommended for testing.
+The chain can be checked to see if it constitutes a valid trust anchor chain using the Gaia-X [Trust Anchor Registry](https://registry.lab.gaia-x.eu/v1-staging/docs#/TrustAnchor/TrustAnchorController_verifyTrustAnchorChain) API. The `v1-staging` version accepts Extended Validation (EV) Secure Sockets Layer (SSL) certificate issuers like Let's Encrypt, while the `v1` version only accepts the official [Gaia-X Trust Anchors]((<https://gaia-x.gitlab.io/policy-rules-committee/trust-framework/trust_anchors/#list-of-defined-trust-anchors>). EV SSL certificates are just recommended for testing.
 
 ### Generating Gaia-X Compliant Participant Credentials
 
@@ -286,6 +294,6 @@ kubectl --namespace test create configmap did-web-config --from-file=did.json --
 ### Additional References
 
 Gaia-X: onboarding, first credentials' issuance.
-* Video tutorial: https://www.youtube.com/watch?v=xHaBM-T2--k
-* Jupyter notebook: https://gitlab.com/gaia-x/lab/workshops/gaia-x-101
 
+* Video tutorial: <https://www.youtube.com/watch?v=xHaBM-T2--k>
+* Jupyter notebook: <https://gitlab.com/gaia-x/lab/workshops/gaia-x-101>

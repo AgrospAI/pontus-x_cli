@@ -17,7 +17,12 @@
     "type": "git",
     "url": "https://github.com/rhizomik/pontus-x_cli.git"
   },
-  "keywords": ["data space", "cli", "pontus-x", "gaia-x"],
+  "keywords": [
+    "data space",
+    "cli",
+    "pontus-x",
+    "gaia-x"
+  ],
   "author": "Roberto García <https://rhizomik.net/~roberto>",
   "license": "Apache-2.0",
   "bugs": {
@@ -35,13 +40,17 @@
     "ethers": "^5.7.2",
     "figlet": "^1.7.0",
     "handlebars": "^4.7.8",
+    "minimist": "^1.2.8",
     "readline-sync": "^1.4.10",
+    "tabtab": "^3.0.2",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@types/figlet": "^1.7.0",
+    "@types/minimist": "^1.2.5",
     "@types/node": "^22.13.4",
     "@types/readline-sync": "^1.4.8",
+    "@types/tabtab": "^3.0.4",
     "copyfiles": "^2.4.1",
     "typescript": "^5.7.3"
   },
