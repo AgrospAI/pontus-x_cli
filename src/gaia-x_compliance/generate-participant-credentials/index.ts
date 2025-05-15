@@ -34,7 +34,7 @@ async function generateParticipantTandCVC(data: any, signer: Signer) {
 
 async function generateParticipantLNRVC(data: any) {
     const templateFile = require.resolve('./templates/lrn-request.hbs');
-    const notaryService = "https://registrationnumber.notary.lab.gaia-x.eu/v1-staging/registrationNumberVC";
+    const notaryService = "https://gx-notary.arsys.es/v1/registrationNumberVC";
     const fileContent = readFileSync(resolve(templateFile), 'utf-8');
     const lnrRequestTemplate = Handlebars.compile(fileContent);
     const lnrRequest = lnrRequestTemplate(data);
