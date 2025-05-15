@@ -105,11 +105,11 @@ export async function generateParticipantCredentials(participantDataFile: string
 }
 
 export async function checkCompliance(participantDataFile: string, vpFile: string) {
-    const complianceService = "https://compliance.lab.gaia-x.eu/v1-staging/api/credential-offers";
+    const complianceService = "https://compliance.lab.gaia-x.eu/v1/api/credential-offers";
     const folder = dirname(participantDataFile);
     const participantData = JSON.parse(readFileSync(participantDataFile, 'utf-8'));
     const vp = JSON.parse(readFileSync(vpFile, 'utf-8'))
-    axios.post(`${complianceService}?` +
+    await axios.post(`${complianceService}?` +
         `vcid=https://${participantData.issuer_domain}/.well-known/${participantData.participant_name}.compliance.json`, vp)
         .then(response => {
             if (response.status === 201) {
