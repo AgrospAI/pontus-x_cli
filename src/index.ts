@@ -15,10 +15,7 @@ import readlineSync from "readline-sync";
 import tabtab from "tabtab";
 import { exportKeyAsJson } from "./export-key-as-json";
 import { generateDidWeb } from "./gaia-x_compliance/generate-did-web";
-import {
-    checkCompliance,
-    generateParticipantCredentials,
-} from "./gaia-x_compliance/generate-participant-credentials";
+import { checkCompliance, generateCredentials } from "./gaia-x_compliance/generate-credentials";
 import { Connection, invokeFunctionFromFile, packageVersion } from "./utils";
 dotenv.config();
 
@@ -461,23 +458,26 @@ program
 program
     .command("generate-participant-credentials")
     .description(
-        "Generate the Gaia-X credentials for the participant including their verifiable presentation and checking its compliance"
+        "Generate the Gaia-X credentials for the participant including their verifiable presentation"
     )
     .requiredOption(
         "-p, --participant <participant.data.json>",
         "Path to the JSON file including the required participant data"
     )
-    .requiredOption("-d, --did <did.json>", "Path to the did.json file")
+    .requiredOption("-d, --didjson <did.json>", "Path to the did.json file")
     .requiredOption(
         "-c, --certificate <certificate.key>",
         "Path to the certificate.key file"
     )
     .action(async (options) => {
         try {
-            await generateParticipantCredentials(
+            const password = readlineSync.question(
+                `Enter the password for your private key file ${options.certificate}: `, {hideEchoBack: true});
+            await generateCredentials(
                 options.participant,
-                options.did,
-                options.certificate
+                options.didjson,
+                options.certificate,
+                password
             );
             process.exit(0);
         } catch (error) {
@@ -487,7 +487,35 @@ program
     });
 
 program
-    .command("check-compliance")
+    .command("generate-asset-credentials <did>")
+    .description(
+        "Generate the Gaia-X credentials for the input DID asset, including its verifiable presentation"
+    )
+    .requiredOption(
+        "-p, --participant <participant.data.json>",
+        "Path to the JSON file including the required participant data")
+    .requiredOption("-d, --didjson <did.json>", "Path to the did.json file")
+    .requiredOption(
+        "-c, --certificate <certificate.key>",
+        "Path to the certificate.key file")
+    .action(async (did, options) => {
+        console.log(`Retrieving asset metadata for DID: ${did}`);
+        const { nautilus } = await Connection.connect();
+        const ddo = await nautilus.getAquariusAsset(did);
+        console.log(`Asset ${did} metadata: \n\n ${JSON.stringify(ddo, null, 2)} \n`);
+        try {
+            const password = readlineSync.question(
+                `Enter the password for your private key file ${options.certificate}: `, {hideEchoBack: true});
+            await generateCredentials(options.participant, options.didjson, options.certificate, password, ddo);
+            process.exit(0);
+        } catch (error) {
+            console.error(error);
+            process.exit(1);
+        }
+    });
+
+program
+    .command("check-participant-compliance")
     .description(
         "Use Gaia-X Compliance to check a participant Verifiable Presentation"
     )
@@ -522,7 +550,7 @@ program
     );
 
 const commands = program.commands.map((cmd) => cmd.name());
-const options = ["--help", "--version"];
+const options = ["--help", "--version", "-d", "-p", "-c"];
 
 const completion = (env: tabtab.TabtabEnv) => {
     if (!env.complete) return;
@@ -543,7 +571,7 @@ const run = async () => {
                 name: "pontus-x_cli",
                 completer: "pontus-x_cli",
             })
-            .catch((err) => console.error("INSTALL ERROR", err));
+            .catch((err: any) => console.error("INSTALL ERROR", err));
         console.log("✅ Autocompletion installed.");
         return;
     }
@@ -553,7 +581,7 @@ const run = async () => {
             .uninstall({
                 name: "pontus-x_cli",
             })
-            .catch((err) => console.error("UNINSTALL ERROR", err));
+            .catch((err: any) => console.error("UNINSTALL ERROR", err));
         console.log("❌ Autocompletion uninstalled.");
         return;
     }

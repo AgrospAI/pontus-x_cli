@@ -1,6 +1,6 @@
 {
   "name": "pontus-x_cli",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "dist/index.js",
   "bin": {
     "pontus-x_cli": "./dist/index.js"
@@ -8,7 +8,7 @@
   "scripts": {
     "start": "NODE_NO_WARNINGS=1 ts-node src/index.ts",
     "build": "tsc && chmod +x ./dist/index.js && npm run copy-templates",
-    "copy-templates": "copyfiles -u 1 src/gaia-x_compliance/generate-participant-credentials/templates/* dist",
+    "copy-templates": "copyfiles -u 1 src/gaia-x_compliance/generate-credentials/templates/* dist",
     "clean": "rm -rf ./dist/",
     "rebuild": "npm run clean & npm run build",
     "local-install": "npm install -g ."

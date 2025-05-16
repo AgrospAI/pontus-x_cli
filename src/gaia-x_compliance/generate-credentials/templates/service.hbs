@@ -1,0 +1,55 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/security/suites/jws-2020/v1",
+    "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
+    {
+        "pontus-x": "https://pontus-x.eu/vocabulary/"
+    }
+  ],
+  "id": "https://{{ issuer_domain }}/.well-known/{{ participant_name }}/{{ token_symbol }}_{{ network }}.vp.json",
+  "type": "VerifiableCredential",
+  "issuer": "did:web:{{ issuer_domain }}",
+  "issuanceDate": "{{ issuance_date }}",
+  "credentialSubject": {
+    "id": "{{ did }}",
+    "type": "gx:ServiceOffering",
+    "gx:providedBy": {
+      "id": "{{ participant_uri }}"
+    },
+    "gx:name": "{{ service_name }}",
+    "gx:description": "{{ service_description }}",
+    "gx:dataProtectionRegime": ["GDPR2016"],
+    "gx:termsAndConditions": {
+      "gx:URL": "https://portal.agrospai.udl.cat/privacy/en",
+      "gx:hash": "2277e2ce08030a6ba9c106be999dbec8f4fe7cd8073ee0bd9811c7a7c035fe2b"
+    },
+    "gx:dataAccountExport": {
+      "gx:requestType": "email",
+      "gx:accessType": "digital",
+      "gx:formatType": "text/html"
+    },
+    "gx:policy": "{'@type':'odrl:Policy','odrl:permission':{'odrl:action':'pontus-x:{{ service_type }}','odrl:constraint':{'odrl:leftOperand':'odrl:elapsedTime','odrl:operator':'odrl:eq','odrl:rightOperand':'{{ service_timeout }}'},'odrl:duty':{'odrl:action':'odrl:compensate','odrl:constraint':{'odrl:leftOperand':'odrl:amount','odrl:operator':'odrl:eq','odrl:rightOperand':{{ service_price }},'odrl:unit':'currency:EUR'}},'odrl:target':'{{ did }}'} }",
+    "pontus-x:ownerBlockchainAccountId": "{{ owner_account }}",
+    "pontus-x:type": "{{ service_type }}",
+    "pontus-x:webAddress": "https://portal.agrospai.udl.cat/asset/{{ did }}",
+    "pontus-x:blockchainNetwork": [
+      {
+        "gx:blockchainName": "{{ network }}",
+        "gx:blockchainId": "{{ chain_id }}"
+      }
+    ],
+    "pontus-x:serviceModel": "subscription",
+    "pontus-x:subscriptionDuration": "{{ service_timeout }}",
+    "pontus-x:settlement": [
+      {
+        "pontus-x:currencyAmount": "{{ service_price }}"
+      }
+    ],
+    "pontus-x:nftAddress": "{{ nft_address }}",
+    "pontus-x:accessTokenName": "{{ token_name}}",
+    "pontus-x:accessTokenSymbol": "{{ token_symbol }}",
+    "pontus-x:accessTokenAddress": "{{ token_address }}",
+    "pontus-x:serviceEndpoint": "{{ service_endpoint }}"
+  }
+}
