@@ -1,31 +1,18 @@
-# IntelliJ IDEA specific files
-.idea/
-*.iml
+*-debug.log
+*-error.log
+**/.DS_Store
+/.idea
+/dist
+/tmp
+/node_modules
+oclif.manifest.json
 
-# Visual Studio Code specific files
-.vscode/
+yarn.lock
+pnpm-lock.yaml
 
-# Node.js specific files
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+tsconfig.tsbuildinfo
 
-# TypeScript compiled output
-dist/
-build/
-out/
+*.env
 
-# TypeScript specific files
-*.tsbuildinfo
-
-# Logs
-logs/
-*.log
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Environment variables
-.env
+certificate.key
+d999baae98ac5246568fd726be8832c49626867d.json

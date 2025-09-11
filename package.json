@@ -1,62 +1,85 @@
 {
   "name": "pontus-x_cli",
-  "version": "0.0.7",
-  "main": "dist/index.js",
+  "description": "Command Line Interface for the Pontus-X Data Space Ecosystem",
+  "version": "1.0.0",
+  "author": "AgrospAI",
   "bin": {
-    "pontus-x_cli": "./dist/index.js"
+    "pontus-x_cli": "./bin/run.js"
   },
-  "scripts": {
-    "start": "NODE_NO_WARNINGS=1 ts-node src/index.ts",
-    "build": "tsc && chmod +x ./dist/index.js && npm run copy-templates",
-    "copy-templates": "copyfiles -u 1 src/gaia-x_compliance/generate-credentials/templates/* dist",
-    "clean": "rm -rf ./dist/",
-    "rebuild": "npm run clean & npm run build",
-    "local-install": "npm install -g ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/rhizomik/pontus-x_cli.git"
-  },
-  "keywords": [
-    "data space",
-    "cli",
-    "pontus-x",
-    "gaia-x"
-  ],
-  "author": "Roberto García <https://rhizomik.net/~roberto>",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/rhizomik/pontus-x_cli/issues"
-  },
-  "homepage": "https://github.com/monatheoctocat/my_package",
+  "bugs": "https://github.com/pontus-x_cli/pontus-x_cli/issues",
   "dependencies": {
     "@deltadao/nautilus": "^1.1.0",
     "@gaia-x/did-web-generator": "^1.1.0",
     "@gaia-x/json-web-signature-2020": "^2.3.0",
+    "@oceanprotocol/lib": "^5.0.2",
+    "@oclif/core": "^4",
+    "@oclif/plugin-autocomplete": "^3.2.34",
+    "@oclif/plugin-help": "^6",
     "axios": "^1.7.9",
-    "commander": "^13.1.0",
     "dotenv": "^16.4.7",
     "ethereumjs-wallet": "^1.0.2",
     "ethers": "^5.7.2",
     "figlet": "^1.7.0",
     "handlebars": "^4.7.8",
-    "minimist": "^1.2.8",
-    "readline-sync": "^1.4.10",
-    "tabtab": "^3.0.2",
-    "ts-node": "^10.9.2"
+    "oclif": "^4.22.14",
+    "readline-sync": "^1.4.10"
   },
   "devDependencies": {
+    "@eslint/compat": "^1",
+    "@oclif/prettier-config": "^0.2.1",
+    "@oclif/test": "^4",
     "@types/figlet": "^1.7.0",
-    "@types/minimist": "^1.2.5",
-    "@types/node": "^22.13.4",
+    "@types/node": "^18",
     "@types/readline-sync": "^1.4.8",
-    "@types/tabtab": "^3.0.4",
+    "@vitest/ui": "^3.2.4",
     "copyfiles": "^2.4.1",
-    "typescript": "^5.7.3"
+    "eslint": "^9",
+    "eslint-config-oclif": "^6",
+    "eslint-config-prettier": "^10.1.8",
+    "oclif": "^4",
+    "prettier": "3.6.2",
+    "shx": "^0.3.3",
+    "ts-node": "^10",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=23.11.0"
   },
   "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ]
+    "./bin",
+    "./dist",
+    "./oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/pontus-x_cli/pontus-x_cli",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "oclif": {
+    "bin": "pontus-x_cli",
+    "dirname": "pontus-x_cli",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-autocomplete"
+    ],
+    "topicSeparator": " "
+  },
+  "repository": "AgrospAI/pontus-x_cli",
+  "scripts": {
+    "build": "shx rm -rf dist &&tsc -b",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "prepack": "oclif manifest && oclif readme",
+    "version": "oclif readme && git add README.md",
+    "format": "npx prettier . --write",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:once": "vitest --run",
+    "tsc": "tsc --noEmit"
+  },
+  "types": "dist/index.d.ts"
 }
