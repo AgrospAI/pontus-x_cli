@@ -1,4 +1,4 @@
-#!/usr/bin/env node_modules/.bin/ts-node
+#!/usr/bin/env ts-node
 
 // eslint-disable-next-line n/no-unpublished-import
 import '../src/index.ts'
