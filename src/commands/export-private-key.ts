@@ -11,13 +11,11 @@ export default class ExportPrivateKey extends Command {
     password: Flags.string({
       char: 'p',
       description: 'Password to encrypt the private key file',
-      env: 'PASSWORD',
       required: false,
     }),
     privateKey: Flags.string({
       char: 'k',
       description: 'Your private key',
-      env: 'PRIVATE_KEY',
       required: false,
     }),
   }
