@@ -80,7 +80,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:once": "vitest --run",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "local-install": "npm install -g ."
   },
   "types": "dist/index.d.ts"
 }
