@@ -33,6 +33,7 @@ export default class EditTrustedAlgos extends Command {
           aquariusAsset,
           serviceId: aquariusAsset.services[0].id,
         })
+        serviceBuilder.setAllAlgorithmsUntrusted(); // Remove existing trusted algorithms
         serviceBuilder.addTrustedAlgorithms(algos.map((algo: string) => ({did: algo})))
         const service = serviceBuilder.build()
         const asset = assetBuilder.addService(service).build()
