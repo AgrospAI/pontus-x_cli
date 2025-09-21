@@ -20,10 +20,10 @@ export const publish = async (folder: string, connection: any, provider: string,
     })
   const algoMetadata = {
     container: {
-      checksum: 'sha256:105d404c9b00438c08c2199d5356fcd17d7349cff514c923d066ced56d9baa93',
-      entrypoint: 'python $ALGO',
-      image: 'rogargon/pandas-profiling',
-      tag: '4.9.0',
+        image: 'rogargon/pandas-profiling',
+        tag: '4.16',
+        checksum: 'sha256:81dca5439f07dff4d56097546a9fce7335be3de8e2622dc105c64e54376f86b5',
+        entrypoint: 'python /algorithm/src/main.py'
     },
     language: 'python',
     version: '0.2',
