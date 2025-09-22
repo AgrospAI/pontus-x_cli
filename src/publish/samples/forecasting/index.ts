@@ -21,8 +21,8 @@ const publish = async (
 
   consumerParameters.push(
     consumerParametersBuilder
-      .setName("Dataset parameters")
-      .setLabel("dataset")
+      .setName("dataset")
+      .setLabel("Dataset parameters")
       .setDescription(
         "Dataset parameters to train the model with, such as: separator, target_column, split, random_state and stratify."
       )
@@ -40,8 +40,8 @@ const publish = async (
 
   consumerParameters.push(
     consumerParametersBuilder
-      .setName("Model parameters")
-      .setLabel("model")
+      .setName("model")
+      .setLabel("Model parameters")
       .setDescription(
         "Model parameters to train the model with, such as: name, parameters and metrics."
       )
@@ -58,14 +58,14 @@ const publish = async (
   // ALGORITHM METADATA
   const algoMetadata: MetadataConfig["algorithm"] = {
     language: "python",
-    version: "0.1",
+    version: "0.4",
     container: {
       entrypoint: "python $ALGO",
       // entrypoint: "sleep infinity",
       image: "clopezgarcia/timeseries-forecast",
-      tag: "latest",
+      tag: "0.1.6",
       checksum:
-        "sha256:bd4e4ba94a5f93cb44934d7e5e3e9ab102aea148e09bbf16d6860fa64925f30b",
+        "sha256:449910b1c7f4e94fa14c4c7a44d6bd6d634de875ea0318200c6128bec0a36d8e",
     },
     consumerParameters: consumerParameters,
   };

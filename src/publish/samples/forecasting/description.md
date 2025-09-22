@@ -13,6 +13,7 @@ As of now, the possible parameters are:
 - *'split': float[0-1] (default=0.7)* test to train split ratio.
 - *'lags': int (default=3)* lags to add into the data.
 - *'periodicity': list[Literal["day" | "week" | "month" | "year"]] (default=["day", "week", "month", "year"])* to add different periodicity info to your data.
+- *'is_zipped': boolean (default=false)* if the presented data is in zip format (expects a zip with a single csv).
 
 ## model:
 
@@ -51,7 +52,8 @@ Dataset parameters:
     "week",
     "month",
     "year"
-  ]
+  ],
+  "is_zipped": false
 }
 ```
 

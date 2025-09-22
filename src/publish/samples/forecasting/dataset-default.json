@@ -9,5 +9,6 @@
     "week",
     "month",
     "year"
-  ]
+  ],
+  "is_zipped": false
 }
