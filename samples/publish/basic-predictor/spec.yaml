@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../types/schema.json
+# yaml-language-server: $schema=../../../src/types/schema.json
 metadata:
   type: algorithm
   name: SciKit-Learn Model Trainer

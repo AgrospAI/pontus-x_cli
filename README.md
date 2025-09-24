@@ -625,5 +625,5 @@ npm run postpack
 ## Generate JSON schema
 
 ```sh
-./node_modules/.bin/ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'types/schema.json'
+./node_modules/.bin/ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'src/types/schema.json'
 ```

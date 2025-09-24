@@ -31,11 +31,23 @@
         },
         "type": {
           "description": "Field type.",
-          "enum": ["text", "number", "boolean", "select"],
+          "enum": [
+            "text",
+            "number",
+            "boolean",
+            "select"
+          ],
           "type": "string"
         }
       },
-      "required": ["name", "type", "label", "required", "description", "default"],
+      "required": [
+        "name",
+        "type",
+        "label",
+        "required",
+        "description",
+        "default"
+      ],
       "type": "object"
     },
     "ExtendedConsumerParameter": {
@@ -72,15 +84,33 @@
         },
         "type": {
           "description": "Field type.",
-          "enum": ["text", "number", "boolean", "select"],
+          "enum": [
+            "text",
+            "number",
+            "boolean",
+            "select"
+          ],
           "type": "string"
         }
       },
-      "required": ["default", "description", "label", "name", "required", "type"],
+      "required": [
+        "default",
+        "description",
+        "label",
+        "name",
+        "required",
+        "type"
+      ],
       "type": "object"
     },
     "FileTypes": {
-      "enum": ["url", "graphql", "arweave", "ipfs", "smartcontract"],
+      "enum": [
+        "url",
+        "graphql",
+        "arweave",
+        "ipfs",
+        "smartcontract"
+      ],
       "type": "string"
     },
     "MetadataConfig": {
@@ -127,7 +157,12 @@
                   "type": "string"
                 }
               },
-              "required": ["entrypoint", "image", "tag", "checksum"],
+              "required": [
+                "entrypoint",
+                "image",
+                "tag",
+                "checksum"
+              ],
               "type": "object"
             },
             "language": {
@@ -143,7 +178,9 @@
               "type": "string"
             }
           },
-          "required": ["container"],
+          "required": [
+            "container"
+          ],
           "type": "object"
         },
         "author": {
@@ -193,11 +230,20 @@
         },
         "type": {
           "description": "Asset type. Includes \"dataset\" (e.g. csv file), \"algorithm\" (e.g. Python script). Each type needs a different subset of metadata attributes.",
-          "enum": ["dataset", "algorithm"],
+          "enum": [
+            "dataset",
+            "algorithm"
+          ],
           "type": "string"
         }
       },
-      "required": ["author", "description", "license", "name", "type"],
+      "required": [
+        "author",
+        "description",
+        "license",
+        "name",
+        "type"
+      ],
       "type": "object"
     },
     "NftCreateDataWithoutOwner": {
@@ -219,7 +265,13 @@
           "type": "boolean"
         }
       },
-      "required": ["name", "symbol", "templateIndex", "tokenURI", "transferable"],
+      "required": [
+        "name",
+        "symbol",
+        "templateIndex",
+        "tokenURI",
+        "transferable"
+      ],
       "type": "object"
     },
     "PublishConfig": {
@@ -271,7 +323,10 @@
                   "type": "string"
                 }
               },
-              "required": ["name", "symbol"],
+              "required": [
+                "name",
+                "symbol"
+              ],
               "type": "object"
             },
             "fileType": {
@@ -290,15 +345,23 @@
                   "type": "number"
                 },
                 "currency": {
-                  "enum": ["OCEAN", "EUROe"],
+                  "enum": [
+                    "OCEAN",
+                    "EUROe"
+                  ],
                   "type": "string"
                 },
                 "type": {
-                  "enum": ["free", "fixed"],
+                  "enum": [
+                    "free",
+                    "fixed"
+                  ],
                   "type": "string"
                 }
               },
-              "required": ["type"],
+              "required": [
+                "type"
+              ],
               "type": "object"
             },
             "serviceEndpoint": {
@@ -311,7 +374,15 @@
               "type": "number"
             }
           },
-          "required": ["serviceType", "fileType", "serviceEndpoint", "timeout", "files", "pricing", "datatoken"],
+          "required": [
+            "serviceType",
+            "fileType",
+            "serviceEndpoint",
+            "timeout",
+            "files",
+            "pricing",
+            "datatoken"
+          ],
           "type": "object"
         },
         "trustOwnerAlgorithms": {
@@ -330,14 +401,21 @@
           "type": "array"
         }
       },
-      "required": ["metadata", "nftData", "service"],
+      "required": [
+        "metadata",
+        "nftData",
+        "service"
+      ],
       "type": "object"
     },
     "ServiceFileType": {
       "$ref": "#/definitions/UrlFile"
     },
     "ServiceTypes": {
-      "enum": ["access", "compute"],
+      "enum": [
+        "access",
+        "compute"
+      ],
       "type": "string"
     },
     "TrustedAlgorithmAsset": {
@@ -353,7 +431,9 @@
           "type": "array"
         }
       },
-      "required": ["did"],
+      "required": [
+        "did"
+      ],
       "type": "object"
     },
     "UrlFile": {
@@ -383,7 +463,11 @@
           "type": "string"
         }
       },
-      "required": ["type", "url", "method"],
+      "required": [
+        "type",
+        "url",
+        "method"
+      ],
       "type": "object"
     }
   }

@@ -82,7 +82,7 @@
     "test:ui": "vitest --ui",
     "test:once": "vitest --run",
     "tsc": "tsc --noEmit",
-    "schema": "./node_modules/.bin/ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'types/schema.json'"
+    "schema": "./node_modules/.bin/ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'src/types/schema.json'"
   },
   "types": "dist/index.d.ts"
 }
