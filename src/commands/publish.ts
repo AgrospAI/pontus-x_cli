@@ -2,7 +2,7 @@ import {Args, Command, Flags} from '@oclif/core'
 import * as fs from 'node:fs'
 import * as vm from 'node:vm'
 import * as ts from 'typescript'
-
+import {publishFromFile} from '../lib/publishFromFile'
 import {Connection} from '../utils/connection'
 
 async function invokeFunctionFromFile(filePath: string, functionName: string, ...args: any[]) {
@@ -31,15 +31,16 @@ async function invokeFunctionFromFile(filePath: string, functionName: string, ..
 
 export default class Publish extends Command {
   static args = {
-    scriptFolder: Args.directory({
-      description: 'Path to the script folder',
+    path: Args.directory({
+      description: 'Path to the JSON/YAML or TS file describing the asset to publish',
       required: true,
     }),
   }
   static description = 'Publish the asset as instructed in the provided script folder.'
   static examples: Command.Example[] = [
-    '<%= config.bin %> <%= command.id %> -p https://provider.agrospai.udl.cat samples/publish/downloadable-data',
-    '<%= config.bin %> <%= command.id %> -p https://provider.agrospai.udl.cat samples/publish/algo --dry-run',
+    '<%= config.bin %> <%= command.id %> samples/publish/algo/spec.json',
+    '<%= config.bin %> <%= command.id %> samples/publish/algo/spec.yaml',
+    '<%= config.bin %> <%= command.id %> samples/publish/algo/index.ts',
   ]
   static flags = {
     'dry-run': Flags.boolean({
@@ -50,6 +51,7 @@ export default class Publish extends Command {
       char: 'p',
       description: 'The Provider URL',
       required: true,
+      default: 'https://provider.agrospai.udl.cat',
     }),
   }
 
@@ -57,18 +59,17 @@ export default class Publish extends Command {
     const {args, flags} = await this.parse(Publish)
     const connection = await Connection.connect()
 
-    this.log(
-      `Publishing asset ${args.scriptFolder} in provider ${flags.provider} from wallet ${connection.wallet.address}`,
-    )
+    this.log(`Publishing asset ${args.path} in provider ${flags.provider} from wallet ${connection.wallet.address}`)
+
     try {
-      await invokeFunctionFromFile(
-        `${args.scriptFolder}/index.ts`,
-        'publish',
-        args.scriptFolder,
-        connection,
-        flags.provider,
-        flags['dry-run'],
-      )
+      if (args.path.endsWith('.ts')) {
+        const dirPath = args.path.split('/').slice(0, -1).join('/')
+        await invokeFunctionFromFile(args.path, 'publish', dirPath, connection, flags.provider, flags['dry-run'])
+      } else if (args.path.endsWith('.json') || args.path.endsWith('.yaml')) {
+        await publishFromFile(args.path, flags.provider, connection, flags['dry-run'])
+      } else {
+        this.error('The provided file must be a .json/.yaml or .ts file')
+      }
     } catch (error) {
       this.error(error as string)
     }

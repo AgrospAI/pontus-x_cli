@@ -1,4 +1,4 @@
-## Train a **Scikit-Learn model** (sklearn) and a generic preprocessing pipeline for the input tabular data.
+## Train a **Scikit-Learn model** (sklearn) and a generic preprocessing pipeline for the input tabular data
 
 The input data is loaded using [**pandas**](https://pandas.pydata.org), then it's preprocessed in a generic way and the specified sklearn model is trained on it.
 
@@ -6,7 +6,7 @@ The algorithm requires two input parameters, the dataset parameters, to tweak th
 
 As of now, the possible parameters are:
 
-## dataset:
+## dataset
 
 - **'separator': str (default=None)** separator character used to split the CSV.
 - **'target_column': str** name of the dataset training column.
@@ -14,7 +14,7 @@ As of now, the possible parameters are:
 - **'random_state': int (default=42)** random seed to split the data with.
 - **'stratify': boolean (default=False)** to stratify the target column.
 
-## model:
+## model
 
 - **'name': str** name of the model to train, must be one of the valid _sci-kit learn_ models. (See below)
 - **'params': JSON** custom parameters for the selected _sci-kit learn_ model, look up _sci-kit learn_ docs for specifics.

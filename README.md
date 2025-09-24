@@ -589,6 +589,8 @@ npm run tsc
 
 ## Testing
 
+  You need to have the `samples/data/d999baae98ac5246568fd726be8832c49626867d.json` file. Which you can generate with the command: `pontus-x_cli export-private-key` and the private key of the 'Universitat de Lleida (UdL)' account.
+
 ### All tests in watch mode
 
 ```sh
@@ -618,4 +620,10 @@ npm run test:ui
 ```sh
 npm run prepack
 npm run postpack
+```
+
+## Generate JSON schema
+
+```sh
+./node_modules/.bin/ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'types/schema.json'
 ```

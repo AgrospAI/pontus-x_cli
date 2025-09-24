@@ -11,18 +11,23 @@
     "@deltadao/nautilus": "^1.1.0",
     "@gaia-x/did-web-generator": "^1.1.0",
     "@gaia-x/json-web-signature-2020": "^2.3.0",
+    "@oceanprotocol/ddo-js": "^0.1.3",
     "@oceanprotocol/lib": "^5.0.2",
     "@oclif/core": "^4",
     "@oclif/plugin-autocomplete": "^3.2.34",
     "@oclif/plugin-help": "^6",
+    "@types/js-yaml": "^4.0.9",
+    "ajv": "^8.17.1",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "ethereumjs-wallet": "^1.0.2",
     "ethers": "^5.7.2",
     "figlet": "^1.7.0",
     "handlebars": "^4.7.8",
+    "js-yaml": "^4.1.0",
     "oclif": "^4.22.14",
-    "readline-sync": "^1.4.10"
+    "readline-sync": "^1.4.10",
+    "ts-json-schema-generator": "^2.4.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1",
@@ -42,9 +47,6 @@
     "ts-node": "^10",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
-  },
-  "engines": {
-    "node": ">=23.11.0"
   },
   "files": [
     "./bin",
@@ -69,7 +71,7 @@
   },
   "repository": "AgrospAI/pontus-x_cli",
   "scripts": {
-    "build": "shx rm -rf dist &&tsc -b",
+    "build": "shx rm -rf dist && tsc -b",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "postpack": "shx rm -f oclif.manifest.json",
@@ -79,7 +81,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:once": "vitest --run",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "schema": "./node_modules/.bin/ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'types/schema.json'"
   },
   "types": "dist/index.d.ts"
 }

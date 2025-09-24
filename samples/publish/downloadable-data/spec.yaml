@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../../types/schema.json
+metadata:
+  type: dataset
+  name: Red Wine Dataset
+  author: 'Cortez et al., 2009'
+  description: description.md
+  tags:
+    - agriculture
+    - wine
+    - agrospai
+    - udl
+    - tabular-data
+  license: CC-BY-4.0
+  links:
+    - 'https://archive.ics.uci.edu/dataset/186/wine+quality'
+nftData:
+  name: Red Wine
+  symbol: RED
+  templateIndex: 1
+  tokenURI: >-
+    https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Red_and_white_wine_12-2015.jpg/240px-Red_and_white_wine_12-2015.jpg
+  transferable: false
+service:
+  serviceType: access
+  fileType: url
+  serviceEndpoint: 'https://provider.pontus-x.eu'
+  timeout: 0
+  files:
+    - method: GET
+      type: url
+      url: >-
+        https://raw.githubusercontent.com/plotly/datasets/master/winequality-red.csv
+  pricing:
+    type: free
+  datatoken:
+    name: Red Wine
+    symbol: RED
+
