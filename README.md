@@ -569,6 +569,12 @@ npm run build
 ./bin/run.js COMMAND
 ```
 
+### Global installation
+
+```sh
+npm install -g .
+```
+
 ## Formatting
 
 ```sh
