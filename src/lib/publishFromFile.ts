@@ -28,7 +28,7 @@ export const publishFromFile = async (
   const config: PublishConfig = parseConfig(filePath)
 
   const ajv = new Ajv()
-  const schema = JSON.parse(readFileSync(path.resolve(__dirname, '../../types/schema.json'), 'utf-8'))
+  const schema = JSON.parse(readFileSync(path.resolve(__dirname, '../types/schema.json'), 'utf-8'))
   const validate = ajv.compile(schema)
   const valid = validate(config)
 
