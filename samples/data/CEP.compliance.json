@@ -1,0 +1,45 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/security/suites/jws-2020/v1",
+    "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#"
+  ],
+  "type": ["VerifiableCredential"],
+  "id": "https://undefined/.well-known/CEP.compliance.json",
+  "issuer": "did:web:compliance.lab.gaia-x.eu:v1",
+  "issuanceDate": "2025-09-04T18:30:31.408Z",
+  "expirationDate": "2025-12-03T18:30:31.408Z",
+  "credentialSubject": [
+    {
+      "type": "gx:compliance",
+      "id": "https://compliance.agrospai.udl.cat/.well-known/CEP.vp.json#participant",
+      "gx:integrity": "sha256-76778f3a7c416401206fe33d07ea2f4c783a2aa0a41b31766bf1012403b9b677",
+      "gx:integrityNormalization": "RFC8785:JCS",
+      "gx:version": "22.10",
+      "gx:type": "gx:LegalParticipant"
+    },
+    {
+      "type": "gx:compliance",
+      "id": "https://compliance.agrospai.udl.cat/.well-known/CEP.vp.json#lrn",
+      "gx:integrity": "sha256-2f3bd50cbb6216401cb3aac676c9e718bf4aec5057c08ccacbff4357a2005dfe",
+      "gx:integrityNormalization": "RFC8785:JCS",
+      "gx:version": "22.10",
+      "gx:type": "gx:legalRegistrationNumber"
+    },
+    {
+      "type": "gx:compliance",
+      "id": "https://compliance.agrospai.udl.cat/.well-known/CEP.vp.json#tandc",
+      "gx:integrity": "sha256-8db9c173f310d780cbacce5587cefde33a5eb7c4190a06f74a7a4159358b1b0a",
+      "gx:integrityNormalization": "RFC8785:JCS",
+      "gx:version": "22.10",
+      "gx:type": "gx:GaiaXTermsAndConditions"
+    }
+  ],
+  "proof": {
+    "type": "JsonWebSignature2020",
+    "created": "2025-09-04T18:30:31.451Z",
+    "proofPurpose": "assertionMethod",
+    "verificationMethod": "did:web:compliance.lab.gaia-x.eu:v1#X509-JWK2020",
+    "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..TCFEtY8qobySakOe3t8r1oEx7doFAdofCqOIKVbLICRXVOXOSfnb5eWo464XIPxpjpFt9s1bsDMbSUOeI_ivGWqNrKtPZsHVg2qR1Jgt25hD_s7ix3ocgFjIzn-cqe4NVY-IhOb0SJb7HC5C8cjT9xdAK-WKwN0U2qQWguM3Cz1a0wtT8G9-bP_1NEoG9LSI8V4DpMHo6SsH24rtSdH84WHOIm5s1XShMUOLNm5KEiaFhrwcd75PhU_BaCfXbewXdPbo6MZ_FUf5GJBenhcf5XO_-gMsobXOySZv6O0VY0GaGSKRUTqu6x9hsPskjdl54HGmCxGEPjAZ4K5q6-Z43Q"
+  }
+}

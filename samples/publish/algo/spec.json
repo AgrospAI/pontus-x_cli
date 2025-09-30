@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "type": "algorithm",
+    "author": "Universitat de Lleida (UdL)",
+    "name": "Exploratory Data Analysis",
+    "description": "description.md",
+    "tags": ["eda", "exploratory data analysis", "profiling", "tabular-data", "pandas", "agrospai", "udl"],
+    "license": "MIT",
+    "algorithm": {
+      "container": {
+        "checksum": "sha256:105d404c9b00438c08c2199d5356fcd17d7349cff514c923d066ced56d9baa93",
+        "entrypoint": "python $ALGO",
+        "image": "rogargon/pandas-profiling",
+        "tag": "4.9.0"
+      },
+      "language": "python",
+      "version": "0.2"
+    }
+  },
+  "nftData": {
+    "name": "UdL EDA Algo",
+    "symbol": "UDL-EDA",
+    "templateIndex": 1,
+    "tokenURI": "https://docs.profiling.ydata.ai/latest/_static/img/multivariate_profiling.png",
+    "transferable": false
+  },
+  "service": {
+    "serviceType": "compute",
+    "fileType": "url",
+    "serviceEndpoint": "https://provider.pontus-x.eu",
+    "timeout": 0,
+    "files": [
+      {
+        "method": "GET",
+        "type": "url",
+        "url": "https://raw.githubusercontent.com/rogargon/ocean-algo/eda/eda.py"
+      }
+    ],
+    "pricing": {
+      "type": "free"
+    },
+    "datatoken": {"name": "UdL EDA Algo", "symbol": "UDL-EDA"}
+  }
+}

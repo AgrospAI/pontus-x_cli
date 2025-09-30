@@ -1,0 +1,474 @@
+{
+  "$ref": "#/definitions/PublishConfig",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ConsumerParameter": {
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "description": "Field default value. For select types, string key of default option.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Field description.",
+          "type": "string"
+        },
+        "label": {
+          "description": "Displayed field label.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Parameter name.",
+          "type": "string"
+        },
+        "options": {
+          "description": "For select types, a list of options.",
+          "type": "string"
+        },
+        "required": {
+          "description": "Defines if customer input for this field is mandatory.",
+          "type": "boolean"
+        },
+        "type": {
+          "description": "Field type.",
+          "enum": [
+            "text",
+            "number",
+            "boolean",
+            "select"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "label",
+        "required",
+        "description",
+        "default"
+      ],
+      "type": "object"
+    },
+    "ExtendedConsumerParameter": {
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "description": "Field default value. For select types, string key of default option.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Field description.",
+          "type": "string"
+        },
+        "label": {
+          "description": "Displayed field label.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Parameter name.",
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "required": {
+          "description": "Defines if customer input for this field is mandatory.",
+          "type": "boolean"
+        },
+        "type": {
+          "description": "Field type.",
+          "enum": [
+            "text",
+            "number",
+            "boolean",
+            "select"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "default",
+        "description",
+        "label",
+        "name",
+        "required",
+        "type"
+      ],
+      "type": "object"
+    },
+    "FileTypes": {
+      "enum": [
+        "url",
+        "graphql",
+        "arweave",
+        "ipfs",
+        "smartcontract"
+      ],
+      "type": "string"
+    },
+    "MetadataConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "additionalInformation": {
+          "description": "Stores additional information, this is customizable by publisher"
+        },
+        "algorithm": {
+          "additionalProperties": false,
+          "properties": {
+            "consumerParameters": {
+              "description": "Array of objects describing the consumer parameters",
+              "items": {
+                "$ref": "#/definitions/ConsumerParameter"
+              },
+              "type": "array"
+            },
+            "container": {
+              "additionalProperties": false,
+              "description": "Object describing the Docker container image.",
+              "properties": {
+                "checksum": {
+                  "description": "Checksum of the Docker image.",
+                  "type": "string"
+                },
+                "consumerParameters": {
+                  "description": "Array of objects describing the consumer parameters",
+                  "items": {
+                    "$ref": "#/definitions/ConsumerParameter"
+                  },
+                  "type": "array"
+                },
+                "entrypoint": {
+                  "description": "The command to execute, or script to run inside the Docker image.",
+                  "type": "string"
+                },
+                "image": {
+                  "description": "Name of the Docker image.",
+                  "type": "string"
+                },
+                "tag": {
+                  "description": "Tag of the Docker image.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "entrypoint",
+                "image",
+                "tag",
+                "checksum"
+              ],
+              "type": "object"
+            },
+            "language": {
+              "description": "Programming language used to implement the software.",
+              "type": "string"
+            },
+            "rawcode": {
+              "description": "Rawcode",
+              "type": "string"
+            },
+            "version": {
+              "description": "Version of the software preferably in SemVer notation.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "container"
+          ],
+          "type": "object"
+        },
+        "author": {
+          "description": "Name of the entity generating this data (e.g. Tfl, Disney Corp, etc.).",
+          "type": "string"
+        },
+        "categories": {
+          "description": "Array of categories associated to the asset. Note: recommended to use tags instead of this.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "contentLanguage": {
+          "description": "The language of the content. Use one of the language codes from the IETF BCP 47 standard",
+          "type": "string"
+        },
+        "copyrightHolder": {
+          "description": "The party holding the legal copyright. Empty by default.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Details of what the resource is.",
+          "type": "string"
+        },
+        "license": {
+          "description": "Short name referencing the license of the asset. If it’s not specified, the following value will be added: “No License Specified”.",
+          "type": "string"
+        },
+        "links": {
+          "description": "Mapping of URL strings for data samples, or links to find out more information. Links may be to either a URL or another asset.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "name": {
+          "description": "Descriptive name or title of the asset.",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Array of keywords or tags used to describe this content. Empty by default.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "type": {
+          "description": "Asset type. Includes \"dataset\" (e.g. csv file), \"algorithm\" (e.g. Python script). Each type needs a different subset of metadata attributes.",
+          "enum": [
+            "dataset",
+            "algorithm"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "author",
+        "description",
+        "license",
+        "name",
+        "type"
+      ],
+      "type": "object"
+    },
+    "NftCreateDataWithoutOwner": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "templateIndex": {
+          "type": "number"
+        },
+        "tokenURI": {
+          "type": "string"
+        },
+        "transferable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "symbol",
+        "templateIndex",
+        "tokenURI",
+        "transferable"
+      ],
+      "type": "object"
+    },
+    "PublishConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "allowAlgorithmNetworkAccess": {
+          "type": "boolean"
+        },
+        "credentials": {
+          "additionalProperties": false,
+          "properties": {
+            "allow": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "deny": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "metadata": {
+          "$ref": "#/definitions/MetadataConfig"
+        },
+        "nftData": {
+          "$ref": "#/definitions/NftCreateDataWithoutOwner"
+        },
+        "service": {
+          "additionalProperties": false,
+          "properties": {
+            "consumerParameters": {
+              "items": {
+                "$ref": "#/definitions/ExtendedConsumerParameter"
+              },
+              "type": "array"
+            },
+            "datatoken": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "symbol": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "symbol"
+              ],
+              "type": "object"
+            },
+            "fileType": {
+              "$ref": "#/definitions/FileTypes"
+            },
+            "files": {
+              "items": {
+                "$ref": "#/definitions/ServiceFileType"
+              },
+              "type": "array"
+            },
+            "pricing": {
+              "additionalProperties": false,
+              "properties": {
+                "amount": {
+                  "type": "number"
+                },
+                "currency": {
+                  "enum": [
+                    "OCEAN",
+                    "EUROe"
+                  ],
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "free",
+                    "fixed"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "type": "object"
+            },
+            "serviceEndpoint": {
+              "type": "string"
+            },
+            "serviceType": {
+              "$ref": "#/definitions/ServiceTypes"
+            },
+            "timeout": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "serviceType",
+            "fileType",
+            "serviceEndpoint",
+            "timeout",
+            "files",
+            "pricing",
+            "datatoken"
+          ],
+          "type": "object"
+        },
+        "trustOwnerAlgorithms": {
+          "type": "boolean"
+        },
+        "trustedAlgorithmPublishers": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "trustedAlgorithms": {
+          "items": {
+            "$ref": "#/definitions/TrustedAlgorithmAsset"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "metadata",
+        "nftData",
+        "service"
+      ],
+      "type": "object"
+    },
+    "ServiceFileType": {
+      "$ref": "#/definitions/UrlFile"
+    },
+    "ServiceTypes": {
+      "enum": [
+        "access",
+        "compute"
+      ],
+      "type": "string"
+    },
+    "TrustedAlgorithmAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "did": {
+          "type": "string"
+        },
+        "serviceIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "did"
+      ],
+      "type": "object"
+    },
+    "UrlFile": {
+      "additionalProperties": false,
+      "properties": {
+        "headers": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Headers key value pairs associated with the asset GET request",
+          "type": "object"
+        },
+        "index": {
+          "description": "File index.",
+          "type": "number"
+        },
+        "method": {
+          "description": "HTTP method used",
+          "type": "string"
+        },
+        "type": {
+          "const": "url",
+          "type": "string"
+        },
+        "url": {
+          "description": "File URL.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "url",
+        "method"
+      ],
+      "type": "object"
+    }
+  }
+}

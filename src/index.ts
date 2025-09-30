@@ -32,7 +32,7 @@ program
     .command("export-private-key")
     .description(
         "Export your private key as a JSON file," +
-        " to use latter with the login command or for Pontus-X portals automation"
+            " to use latter with the login command or for Pontus-X portals automation"
     )
     .action(() => {
         exportKeyAsJson();
@@ -115,20 +115,23 @@ program
     .action(async (dids: string[]) => {
         const connection = await Connection.connect();
         if (readlineSync.keyInYNStrict(`Revoke assets ${dids.join(", ")}? `)) {
-            const deleteDid = async (did: string) => {
-                try {
-                    connection.nautilus.getAquariusAsset(did).then((asset) => {
-                        console.log("Revoking asset ...");
-                        connection.nautilus.setAssetLifecycleState(asset, LifecycleStates.REVOKED_BY_PUBLISHER).then(tx => {
-                            console.log(`Asset revoked ${connection.networkConfig.explorerUri}/tx/${tx.transactionHash}`);
-                        })
-                    })
-                } catch (e) {
-                    console.error(`Error revoking asset: ${e}`);
+            try {
+                for (const did of dids) {
+                    const aquariusAsset =
+                        await connection.nautilus.getAquariusAsset(did);
+                    console.log("Sending transaction to revoke asset...");
+                    const tx = await connection.nautilus.setAssetLifecycleState(
+                        aquariusAsset,
+                        LifecycleStates.REVOKED_BY_PUBLISHER
+                    );
+                    console.log(
+                        `Asset revoked, ` +
+                            `transaction: ${connection.networkConfig.explorerUri}/tx/${tx.transactionHash}\n`
+                    );
                 }
+            } catch (e) {
+                console.error(`Error revoking asset: ${e}`);
             }
-
-            await Promise.all(dids.map(deleteDid));
         }
         process.exit(0);
     });
@@ -162,7 +165,7 @@ program
                 const result = await connection.nautilus.edit(asset);
                 console.log(
                     `Self-description associated to the asset, ` +
-                    `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`
+                        `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`
                 );
             } catch (e) {
                 console.error(`Error attaching self description: ${e}`);
@@ -195,7 +198,7 @@ program
                 );
                 console.log(
                     `Price updated for asset, ` +
-                    `transaction: ${connection.networkConfig.explorerUri}/tx/${tx.transactionHash}\n`
+                        `transaction: ${connection.networkConfig.explorerUri}/tx/${tx.transactionHash}\n`
                 );
             } catch (e) {
                 console.error(`Error changing the price: ${e}`);
@@ -212,7 +215,7 @@ program
         if (
             readlineSync.keyInYNStrict(
                 `Change the container metadata for asset ${did}` +
-                `to ${image}:${tag} and image checksum ${checksum}? `
+                    `to ${image}:${tag} and image checksum ${checksum}? `
             )
         ) {
             try {
@@ -234,7 +237,7 @@ program
                 const result = await connection.nautilus.edit(asset);
                 console.log(
                     `Container metadata updated for the algorithm, ` +
-                    `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`
+                        `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`
                 );
             } catch (e) {
                 console.error(`Error editing container metadata: ${e}`);
@@ -253,7 +256,7 @@ program
         if (
             readlineSync.keyInYNStrict(
                 `Changing the trusted algorithms for ${did} ` +
-                `to [${algos.join(", ")}]? `
+                    `to [${algos.join(", ")}]? `
             )
         ) {
             try {
@@ -272,7 +275,7 @@ program
                 const result = await connection.nautilus.edit(asset);
                 console.log(
                     `Edited the trusted algorithms, ` +
-                    `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`
+                        `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`
                 );
             } catch (e) {
                 console.error(`Error editing the trusted algorithms: ${e}`);
@@ -305,7 +308,7 @@ program
                 const result = await connection.nautilus.edit(asset);
                 console.log(
                     `Changed asset URL, ` +
-                    `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`
+                        `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`
                 );
             } catch (e) {
                 console.error(`Error changing dataset URL: ${e}`);
@@ -318,7 +321,7 @@ program
     .command("publish <script-folder>")
     .description(
         "Publish the asset as instructed in the provided script, " +
-        "for instance the sample scripts in https://github.com/rhizomik/pontus-x_cli/tree/master/src/publish/samples'"
+            "for instance the sample scripts in https://github.com/rhizomik/pontus-x_cli/tree/master/src/publish/samples'"
     )
     .requiredOption("-p, --provider <provider>", "The Provider URL")
     .option("--dry-run", "Dry run the publishing process")
@@ -351,7 +354,7 @@ program
         if (
             readlineSync.keyInYNStrict(
                 `Computing algorithm ${algo} ` +
-                `on datasets [${datasets.join(", ")}]? `
+                    `on datasets [${datasets.join(", ")}]? `
             )
         ) {
             try {
@@ -370,7 +373,7 @@ program
                 })) as ComputeJob[];
                 console.log(
                     `Compute started, check status using command:\n` +
-                    `pontus-x_cli compute-status ${computeJob[0].jobId} -p ${provider}\n`
+                        `pontus-x_cli compute-status ${computeJob[0].jobId} -p ${provider}\n`
                 );
             } catch (e) {
                 console.error(`Error starting compute: ${e}`);
@@ -396,7 +399,7 @@ program
             if (computeJobStatus.statusText === "Job finished") {
                 console.log(
                     `Get results using command:\n` +
-                    `pontus-x_cli compute-results ${jobId} -p ${options.provider}\n`
+                        `pontus-x_cli compute-results ${jobId} -p ${options.provider}\n`
                 );
             }
         } catch (e) {
@@ -469,7 +472,7 @@ program
     .action(async (options) => {
         try {
             const password = readlineSync.question(
-                `Enter the password for your private key file ${options.certificate}: `, { hideEchoBack: true });
+                `Enter the password for your private key file ${options.certificate}: `, {hideEchoBack: true});
             await generateCredentials(
                 options.participant,
                 options.didjson,
@@ -502,7 +505,7 @@ program
         console.log(`Asset ${did} metadata: \n\n ${JSON.stringify(ddo, null, 2)} \n`);
         try {
             const password = readlineSync.question(
-                `Enter the password for your private key file ${options.certificate}: `, { hideEchoBack: true });
+                `Enter the password for your private key file ${options.certificate}: `, {hideEchoBack: true});
             await generateCredentials(options.participant, options.didjson, options.certificate, password, ddo);
             process.exit(0);
         } catch (error) {

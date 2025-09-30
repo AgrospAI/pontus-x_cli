@@ -1,0 +1,95 @@
+{
+  "@context": "https://www.w3.org/2018/credentials/v1",
+  "type": "VerifiablePresentation",
+  "verifiableCredential": [
+    {
+      "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://w3id.org/security/suites/jws-2020/v1",
+        "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#"
+      ],
+      "id": "https://compliance.agrospai.udl.cat/.well-known/CEP.vp.json#participant",
+      "type": "VerifiableCredential",
+      "issuer": "did:web:compliance.agrospai.udl.cat",
+      "issuanceDate": "2025-08-09T18:23:30.613Z",
+      "credentialSubject": {
+        "id": "https://www.elcep.net",
+        "type": "gx:LegalParticipant",
+        "gx:legalName": "Consorci Centre d'Estudis Porcins",
+        "gx:legalRegistrationNumber": {
+          "id": "https://www.elcep.net#lrn"
+        },
+        "gx:headquarterAddress": {
+          "gx:streetAddress": "Carrer Balaguer, s/n",
+          "gx:postalCode": "25138",
+          "gx:locality": "Torrelameu",
+          "gx:countrySubdivisionCode": "ES-L"
+        },
+        "gx:legalAddress": {
+          "gx:streetAddress": "Carrer Balaguer, s/n",
+          "gx:postalCode": "25138",
+          "gx:locality": "Torrelameu",
+          "gx:countrySubdivisionCode": "ES-L"
+        }
+      },
+      "proof": {
+        "type": "JsonWebSignature2020",
+        "created": "2025-08-09T20:23:30.630+02:00",
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": "did:web:compliance.agrospai.udl.cat#X509-JWK2020",
+        "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..bMc2D5-g__Z106MUT1MpficZJ60a2APLAZnlLWv_KKTMlm2_3UoZKa_D7C9OlN6KJy1mK8Zg22IizvKA_x4BZwXLUTmfNGk61JThMObxoLs_QRdRF4-Skl1qtywWmJuoGW3Jde7UL6BhtJf81hSmU2DZ6ucAlR5XoTho_UKt1lpB7CTGLd8jB-yqEhSbmPmLySpRqCd9k6CPJLjUIW_PTEL3jemD2LLgKDW3Cz4rvIhm3LFDKMnB75DI2sJqEdO1BKdX-Fg9dx3Z6EthPJNPUfbNzNG_KPWIKQlvrxjRD2sNRiO6FiCZxG4VWX2B3aDEbZuOHqJKTaLjSI_g-Qxfkw"
+      }
+    },
+    {
+      "@context": ["https://www.w3.org/2018/credentials/v1", "https://w3id.org/security/suites/jws-2020/v1"],
+      "type": ["VerifiableCredential"],
+      "id": "https://compliance.agrospai.udl.cat/.well-known/CEP.vp.json#lrn",
+      "issuer": "did:web:gx-notary.arsys.es:v1",
+      "issuanceDate": "2025-08-09T18:23:31.137Z",
+      "credentialSubject": {
+        "@context": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
+        "type": "gx:legalRegistrationNumber",
+        "id": "https://www.elcep.net#lrn",
+        "gx:vatID": "ESP2500031F",
+        "gx:vatID-countryCode": "ES"
+      },
+      "evidence": [
+        {
+          "gx:evidenceURL": "http://ec.europa.eu/taxation_customs/vies/services/checkVatService",
+          "gx:executionDate": "2025-08-09T18:23:31.137Z",
+          "gx:evidenceOf": "gx:vatID"
+        }
+      ],
+      "proof": {
+        "type": "JsonWebSignature2020",
+        "created": "2025-08-09T18:23:31.148Z",
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": "did:web:gx-notary.arsys.es:v1#X509-JWK2020",
+        "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..o_TozVd0IXIYKe9FxIhetM3h-6s8zxoXmJdlRalSQwDwx1UBijbomOyfHy2eeNmlhbMUFIcOD9M305nqVYQlcOoDRN1AvPCpn8vONXyxcEJ8g3dUYOW7WUE219Tr7zYlnx66AI_1hSOmorxWNRTuqjfDdn5OuJMSGDHl4TcTESaxxpjpirxpentTsr5Zl-0B9ukj6Obf9e4xl66XQQhtI6yt8KLsdbGuPtogzWaXHK7754xCFZSkNQxQLVPHYPkinmhMNf8fZAnpxSjjMTOTvfTqYl-D2eeN-mZXrmcrNylfsmDJ7_H3sI8ti7VZCXpZ_frNeIrS3hLkvayz2uW8PPOJX6vXRWqHTS9tpNmSrpAeX1jTx4ncBms1cW3o9uQOmXK5tH9yPBjP3g5DPOyvSOkd89YioGuD5aat0T8YFqXfkH4ZYebaH0X5-Ijyk_foDjLFOAXfqliBmg59l-Vo4PAFL6_oo2471MihXqlB1i2QBYVqZwS_jX-BGG3JNSbes-UWSa7t47kO6VC8n8mjWQ1NbcomUAIzX5UfeHHGrKD8Yc2Kmo6zzfRHrgoYfoRCTErHRS6QuYd-_n28x2KUmg7SINKVJmDFcXUImCv_b6b_nplxYsaX6lvP4Oz8ay7CjANmKOrQs5UqIyqCVzvLl8wIJ_9XF4_38Fd-aMHmNtE"
+      }
+    },
+    {
+      "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://w3id.org/security/suites/jws-2020/v1",
+        "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#"
+      ],
+      "id": "https://compliance.agrospai.udl.cat/.well-known/CEP.vp.json#tandc",
+      "type": "VerifiableCredential",
+      "issuer": "did:web:compliance.agrospai.udl.cat",
+      "issuanceDate": "2025-08-09T18:23:30.613Z",
+      "credentialSubject": {
+        "id": "https://www.elcep.net#tandc",
+        "type": "gx:GaiaXTermsAndConditions",
+        "gx:termsAndConditions": "The PARTICIPANT signing the Self-Description agrees as follows:\n- to update its descriptions about any changes, be it technical, organizational, or legal - especially but not limited to contractual in regards to the indicated attributes present in the descriptions.\n\nThe keypair used to sign Verifiable Credentials will be revoked where Gaia-X Association becomes aware of any inaccurate statements in regards to the claims which result in a non-compliance with the Trust Framework and policy rules defined in the Policy Rules and Labelling Document (PRLD)."
+      },
+      "proof": {
+        "type": "JsonWebSignature2020",
+        "created": "2025-08-09T20:23:30.655+02:00",
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": "did:web:compliance.agrospai.udl.cat#X509-JWK2020",
+        "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..UzPR5_EIdL9l9tVtwrQS-ojSNsz1MD3naCnpwdbXWu7uqF3xANtPvspySKlxwTaTXXP5mw8DI6uEmhXClGgzcF7uLQx5M6q64OT34RWXGNg0lcKRawblkNRhpimngmIv2WVntTlfNOCAd1EoDfvhQYgav6JQ7A-skDfokjsQMrmB4YzhtHmLwh-qlQGCKB78CULFa1KOnQ7HDpaLRA5fjjv2BZxlEhFz0g1bqyQjJ_7zvp-AfDrtcGxeaygpmDKE56QcHe3RGbS6C5-g6LNxOIUerthSM6_ofIG8EGZ7nFby52avtupeeQBcDrVdeU4CwxkQLe8kmjhWYDfHZh7NJQ"
+      }
+    }
+  ]
+}

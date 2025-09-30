@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "type": "algorithm",
+    "name": "SciKit-Learn Forecasting Model Trainer",
+    "author": "Universitat de Lleida (UdL)",
+    "description": "description.md",
+    "tags": ["forecasting", "ml", "sklearn", "scikit-learn", "tabular-data", "pandas", "udl", "agrospai"],
+    "license": "MIT",
+    "algorithm": {
+      "consumerParameters": [
+        {
+          "name": "Dataset parameters",
+          "label": "dataset",
+          "description": "Dataset parameters to train the model with, such as: separator, target_column, split, random_state and stratify.",
+          "default": "{\"separator\":\",\",\"target_column\":\"Sales\",\"datetime_column\":\"Date\",\"split\":0.7,\"lags\":3,\"periodicity\":[\"day\",\"week\",\"month\",\"year\"]}",
+          "required": true,
+          "type": "text"
+        },
+        {
+          "name": "Model parameters",
+          "label": "model",
+          "description": "Model parameters to train the model with, such as: name, parameters and metrics.",
+          "default": "{\"name\":\"AdaBoostRegressor\",\"parameters\":{\"n_estimators\":500,\"learning_rate\":0.05,\"loss\":\"linear\"},\"metrics\":[\"neg_mean_squared_error\"]}",
+          "required": true,
+          "type": "text"
+        }
+      ],
+      "container": {
+        "checksum": "sha256:bd4e4ba94a5f93cb44934d7e5e3e9ab102aea148e09bbf16d6860fa64925f30b",
+        "entrypoint": "python $ALGO",
+        "image": "clopezgarcia/timeseries-forecast",
+        "tag": "latest"
+      },
+      "language": "python",
+      "version": "0.1"
+    }
+  },
+  "nftData": {
+    "name": "UdL scikit-learn forecasting model trainer",
+    "symbol": "UDL-SKLEARN",
+    "templateIndex": 1,
+    "tokenURI": "https://scikit-learn.org/stable/_static/scikit-learn-logo-small.png",
+    "transferable": false
+  },
+  "service": {
+    "serviceType": "compute",
+    "fileType": "url",
+    "serviceEndpoint": "https://provider.pontus-x.eu",
+    "timeout": 0,
+    "files": [
+      {
+        "method": "GET",
+        "type": "url",
+        "url": "https://raw.githubusercontent.com/AgrospAI/ocean-algo/refs/heads/main/timeseries-forecast/algorithm/src/main.py"
+      }
+    ],
+    "pricing": {
+      "type": "free"
+    },
+    "datatoken": {"name": "UdL scikit-learn forecasting model trainer", "symbol": "UDL-SKFORECAST"}
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "@context": ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/jws-2020/v1"],
+  "id": "did:web:compliance.agrospai.udl.cat",
+  "verificationMethod": [
+    {
+      "@context": "https://w3c-ccg.github.io/lds-jws2020/contexts/v1/",
+      "id": "did:web:compliance.agrospai.udl.cat#X509-JWK2020",
+      "type": "JsonWebKey2020",
+      "controller": "did:web:compliance.agrospai.udl.cat",
+      "publicKeyJwk": {
+        "kty": "RSA",
+        "n": "07Q8fiX4X3dq_poqu3T-sJd30YXhuf6xDDf9473gmi0rrRoZivZt24-xCGGV6BzwSy-YuMg8ixYsi2whw6jHcYYDWUbkpNgNmeahuCxm7UTjrJlenVCDsBKVrt94x9XpHhwvn4FG1O6_kuFslTAHMcH0vJiLdArxHEx9w1G-p3P4qROBgZ1ipYATcvyVO4DH02_q3KYt9FqmH5H5smHQYMzvGAjk6raWz8vcJVD970agtlDSMGPL_cThZI0gJ--IibBIcbD6qKDTrl_Eu-adgRpfp6FT5NX2TsqcJuCiW6044hljoc03MuuTdPEvxnFJImdYNYFdDUEtS81jYh101Q",
+        "e": "AQAB",
+        "alg": "RS256",
+        "x5u": "https://compliance.agrospai.udl.cat/.well-known/certificate-chain.crt"
+      }
+    }
+  ],
+  "assertionMethod": ["did:web:compliance.agrospai.udl.cat#X509-JWK2020"]
+}

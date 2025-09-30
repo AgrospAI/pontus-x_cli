@@ -1,299 +1,629 @@
-# Pontus-X CLI
+# pontus-x_cli
 
-Command Line Interface for the Pontus-X Data Space Ecosystem.
+A new CLI generated with oclif
 
-## Installation
+[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
+[![Version](https://img.shields.io/npm/v/pontus-x_cli.svg)](https://npmjs.org/package/pontus-x_cli)
+[![Downloads/week](https://img.shields.io/npm/dw/pontus-x_cli.svg)](https://npmjs.org/package/pontus-x_cli)
 
-If you don't have npm installed, install Node.js and NPM following the instructions at <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>
+<!-- toc -->
+* [pontus-x_cli](#pontus-x_cli)
+* [Usage](#usage)
+* [Commands](#commands)
+* [Useful information](#useful-information)
+* [Development](#development)
+<!-- tocstop -->
 
-Then, install the Pontus-X CLI globally using npm:
+# Usage
 
-```shell
-npm install -g pontus-x_cli
+<!-- usage -->
+```sh-session
+$ npm install -g pontus-x_cli
+$ pontus-x_cli COMMAND
+running command...
+$ pontus-x_cli (--version)
+pontus-x_cli/1.0.0 darwin-arm64 node-v23.11.1
+$ pontus-x_cli --help [COMMAND]
+USAGE
+  $ pontus-x_cli COMMAND
+...
+```
+<!-- usagestop -->
+
+# Commands
+
+<!-- commands -->
+* [`pontus-x_cli access DID`](#pontus-x_cli-access-did)
+* [`pontus-x_cli autocomplete [SHELL]`](#pontus-x_cli-autocomplete-shell)
+* [`pontus-x_cli change-price DID NEWPRICE`](#pontus-x_cli-change-price-did-newprice)
+* [`pontus-x_cli check-participant-compliance`](#pontus-x_cli-check-participant-compliance)
+* [`pontus-x_cli compute ALGO`](#pontus-x_cli-compute-algo)
+* [`pontus-x_cli compute-results JOBID`](#pontus-x_cli-compute-results-jobid)
+* [`pontus-x_cli compute-status JOBID`](#pontus-x_cli-compute-status-jobid)
+* [`pontus-x_cli edit-algo CHECKSUM DID IMAGE TAG`](#pontus-x_cli-edit-algo-checksum-did-image-tag)
+* [`pontus-x_cli edit-asset-url DID URL`](#pontus-x_cli-edit-asset-url-did-url)
+* [`pontus-x_cli edit-trusted-algos DID`](#pontus-x_cli-edit-trusted-algos-did)
+* [`pontus-x_cli export-private-key`](#pontus-x_cli-export-private-key)
+* [`pontus-x_cli generate-asset-credentials DID`](#pontus-x_cli-generate-asset-credentials-did)
+* [`pontus-x_cli generate-did-web`](#pontus-x_cli-generate-did-web)
+* [`pontus-x_cli generate-participant-credentials`](#pontus-x_cli-generate-participant-credentials)
+* [`pontus-x_cli get DID`](#pontus-x_cli-get-did)
+* [`pontus-x_cli help [COMMAND]`](#pontus-x_cli-help-command)
+* [`pontus-x_cli login KEYFILE`](#pontus-x_cli-login-keyfile)
+* [`pontus-x_cli logout`](#pontus-x_cli-logout)
+* [`pontus-x_cli publish SCRIPTFOLDER`](#pontus-x_cli-publish-scriptfolder)
+* [`pontus-x_cli revoke DIDS`](#pontus-x_cli-revoke-dids)
+* [`pontus-x_cli self-description DID SDURL`](#pontus-x_cli-self-description-did-sdurl)
+
+## `pontus-x_cli access DID`
+
+Access an asset that can be downloaded given its DID
+
+```
+USAGE
+  $ pontus-x_cli access DID
+
+ARGUMENTS
+  DID  DID of the asset
+
+DESCRIPTION
+  Access an asset that can be downloaded given its DID
+
+EXAMPLES
+  $ pontus-x_cli access did:op:af3e93c4f18903f91b108e7204b8a752e7605f4547ed507212bd6aca63af5686
 ```
 
-Then, create a `.env` file in your working directory with the network to be used, for instance, PONTUSXDEV or PONTUSXTEST:
+_See code: [src/commands/access.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/access.ts)_
+
+## `pontus-x_cli autocomplete [SHELL]`
+
+Display autocomplete installation instructions.
 
 ```
-NETWORK=PONTUSXDEV
+USAGE
+  $ pontus-x_cli autocomplete [SHELL] [-r]
+
+ARGUMENTS
+  SHELL  (zsh|bash|powershell) Shell type
+
+FLAGS
+  -r, --refresh-cache  Refresh cache (ignores displaying instructions)
+
+DESCRIPTION
+  Display autocomplete installation instructions.
+
+EXAMPLES
+  $ pontus-x_cli autocomplete
+
+  $ pontus-x_cli autocomplete bash
+
+  $ pontus-x_cli autocomplete zsh
+
+  $ pontus-x_cli autocomplete powershell
+
+  $ pontus-x_cli autocomplete --refresh-cache
 ```
 
-### Autocompletion
+_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v3.2.34/src/commands/autocomplete/index.ts)_
 
-To enable autocompletion for the Pontus-X CLI, run the following command:
-
-```shell
-pontus-x_cli install-completion
-```
-
-## Currently available commands
-
-The following subsections detail the available command to interact with the Pontus-X Data Space Ecosystem. Additionally, there is a final section [Prepare yourself for Gaia-X compliance](#prepare-yourself-for-gaia-x-compliance) that will guide you through the process of setting up a DID-Web server and generating the necessary participant credentials following the Gaia-X Trust Framework using two additional `pontus-x_cli` commands.
-
-### export-private-key
-
-Export your private key as a JSON file, to use later with the login command or for Pontus-X portals automation. More details at [export-key-as-json](./src/export-key-as-json/README.md)
-
-### login \<keyFile.json>
-
-Login to retrieve your private key from a JSON key store and store it in .env:
-
-```shell
-pontus-x_cli login 62078f05eb4450272d7e492f3660835826906822.json
-```
-
-### logout
-
-Logout to remove your private key from .env file:
-
-```shell
-pontus-x_cli logout
-```
-
-### get \<did>
-
-Get the available metadata to the asset with the given DID:
-
-```shell
-pontus-x_cli get did:op:34d5f73d77550843201ee1a43ad9d404d3e557ed6a70772e9afde7a27d863b8f
-```
-
-### access \<did>
-
-Access a downloadable asset (either a dataset or algorithm) given its DID:
-
-```shell
-pontus-x_cli access did:op:34d5f73d77550843201ee1a43ad9d404d3e557ed6a70772e9afde7a27d863b8f
-```
-
-### revoke \<dids...>
-
-Publisher revocation of one or more owned DIDs
-
-```shell
-pontus-x_cli revoke did:op:052eb04066d696a27430116676c859c6303d82257c7a0ebda51f4e80363f6bca did:op:052eb04066d696a27430116676c859c6303d82257c7a0ebda51f4e80363f6bca
-```
-
-### self-description \<did> \<sdurl>
-
-Associate Gaia-X Self-Description to the asset with the given DID
-
-Edit a DID metadata to link it to a Gaia-X Self Description available from the provided URL (it should be compliant with the configured Gaia-X Digital Clearing House, for instance <https://compliance.lab.gaia-x.eu/v1-staging/docs>):
-
-```shell
-pontus-x_cli self-description did:op:34d5f73d77550843201ee1a43ad9d404d3e557ed6a70772e9afde7a27d863b8f https://compliance.agrospai.udl.cat/.well-known/service_EDA_UdL_devnet.vp.json
-```
-
-### change-price \<did> \<newPrice>
+## `pontus-x_cli change-price DID NEWPRICE`
 
 Change the price keeping the existing currency for an asset with the given DID
 
-Edit the price of an existing DID, keeping the current currency:
+```
+USAGE
+  $ pontus-x_cli change-price DID NEWPRICE
 
-```shell
-pontus-x_cli change-price did:op:34d5f73d77550843201ee1a43ad9d404d3e557ed6a70772e9afde7a27d863b8f 0.1
+ARGUMENTS
+  DID       DID of the asset
+  NEWPRICE  New price for the asset
+
+DESCRIPTION
+  Change the price keeping the existing currency for an asset with the given DID
+
+EXAMPLES
+  $ pontus-x_cli change-price did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a 10
 ```
 
-### edit-algo \<did> \<image> \<tag> \<checksum>
+_See code: [src/commands/change-price.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/change-price.ts)_
 
-Change the container metadata for a given algorithm DID:
+## `pontus-x_cli check-participant-compliance`
 
-```shell
-pontus-x_cli edit-algo did:op:34d5f73d77550843201ee1a43ad9d404d3e557ed6a70772e9afde7a27d863b8f rogargon/pandas-profiling 4.9.0 sha256:105d404c9b00438c08c2199d5356fcd17d7349cff514c923d066ced56d9baa93
-```
-
-### edit-trusted-algos \<did> \<algos...>
-
-Overwrite the trusted algorithms for a data asset to the provided algorithm DIDs:
-
-```shell
-pontus-x_cli edit-trusted-algos did:op:f7946c46eb87318b2cd34efdd5f33b19ea9223a90b67f447da6a92aa68ca007c did:op:34d5f73d77550843201ee1a43ad9d404d3e557ed6a70772e9afde7a27d863b8f did:op:d20f956e79709fb2469fffe2bd85cf2fec95a21d2497998bb530043c6bbec901
-```
-
-### edit-dataset-url \<did> \<url>
-
-Change the URL of a dataset DID:
-
-```shell
-pontus-x_cli edit-dataset-url did:op:f7946c46eb87318b2cd34efdd5f33b19ea9223a90b67f447da6a92aa68ca007c https://new.url/dataset.csv
-```
-
-### publish \[options] \<script-folder>
-
-Publish the asset as instructed in the provided script:
-
-```shell
-pontus-x_cli publish --provider https://provider.agrospai.udl.cat src/publish/samples/data --dry-run
-```
-
-Remove the flag `--dry-run` to actually publish the asset.
-
-The script should be a TypeScript file `index.ts` in the input script-folder, which should have a function `publish` with the following signature:
-
-```typescript
-const publish = async (folder: string, connection: any, provider: string, dryRun: boolean) => {
-    // Your publishing logic here
-}
-```
-
-In the same folder, you should have a `description.md` file with the description of the asset to be published using Markdown syntax.
-
-There are samples of publish scripts and description Markdown files for algorithms and datasets in the [src/publish/samples](src/publish/samples) folder.
-
-## Prepare yourself for Gaia-X compliance
-
-This section will help you to prepare your institution for Gaia-X compliance. It will guide you through the process of setting up a DID-Web server and generating the necessary participant credentials following the Gaia-X Trust Framework.
-
-### Obtaining a domain and SSL certificate
-
-Get a root domain for DID-Web and the associated SSL certificate. We will use for this Let's Encrypt certificates, the free alternative among Gaia-X's [list of defined Trust Anchors](https://gaia-x.gitlab.io/policy-rules-committee/trust-framework/trust_anchors/#list-of-defined-trust-anchors).
-
-There are different ways of getting a Let's Encrypt certificate: <https://letsencrypt.org/getting-started/>
-
-For this example, and as later we will need to publish online some of the generated documents, we will use a Kubernetes cluster with Cert Manager to automate the certificate issuance, plus NGINX to serve the generated documents.
-
-First of all, you will need a Kubernetes cluster that is publicly accessible. You can use a cloud provider like Google Cloud Platform (GCP) or Amazon Web Services (AWS), or a local Kubernetes cluster like [Minikube](https://minikube.sigs.k8s.io/docs/start/).
-
-Once Minikube is running, don't forget to enable the ingress addon using the command: `minikube addons enable ingress`. Then, install Cert Manager following the instructions at <https://cert-manager.io/docs/installation/>
-
-After Cert Manager is installed, you can create a ClusterIssuer resource to issue Let's Encrypt certificates. The file [letsencrypt-production.yaml](src/gaia-x_compliance/letsencrypt-production.yaml) provides an example of a ClusterIssuer resource, which can be applied to your cluster using the command:
-
-```shell
-kubectl apply -f letsencrypt-production.yaml
-```
-
-Now, you can create a NGINX deployment, with associated service and ingress, which will request the certificate from Let's Encrypt, for instance that defined at [test-nginx.yaml](src/gaia-x_compliance/test-nginx.yaml). It can be deployed using the commands:
-
-```shell
-kubectl create namespace test
-kubectl apply -f test-nginx.yaml
-```
-
-Just wait for all the resources to be ready and the certificate to be issued. You can check the status of all the resource in the test namespace using the command:
-
-```shell
-kubectl get all -n test
-```
-
-And check the certificate to be issued using the command:
-
-```shell
-kubectl get certificate -n test
-```
-
-Wait till the certificate is marked as ready:
+Use Gaia-X Compliance to check a participant Verifiable Presentation
 
 ```
-NAME                    READY   SECRET                  AGE
-your.domain.org-cert    True    your.domain.org-cert    2m
+USAGE
+  $ pontus-x_cli check-participant-compliance -p <value> --vp <value>
+
+FLAGS
+  -p, --participant=<value>  (required) Path to the JSON file including the required participant data
+      --vp=<value>           (required) Path to the participant Verifiable Presentation file
+
+DESCRIPTION
+  Use Gaia-X Compliance to check a participant Verifiable Presentation
+
+EXAMPLES
+  $ pontus-x_cli check-participant-compliance -p ./CEP.data.json --vp ./CEP.vp.json
 ```
 
-Now, you can retrieve the certificate chain including the root certificate as required by Gaia-X. We can use an online service like <https://whatsmychaincert.com>. Use the following command configuring you domain name, e.g. `your.domain.org`, to retrieve the whole chain and store it in `certificate-chain.crt`:
+_See code: [src/commands/check-participant-compliance.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/check-participant-compliance.ts)_
 
-```shell
-curl -o certificate-chain.crt "https://whatsmychaincert.com/generate?include_leaf=1&include_root=1&host=your.domain.org"
+## `pontus-x_cli compute ALGO`
+
+Compute the algorithm on one or more datasets.
+
+```
+USAGE
+  $ pontus-x_cli compute ALGO -d <value>...
+
+ARGUMENTS
+  ALGO  Algorithm DID
+
+FLAGS
+  -d, --datasets=<value>...  (required) Dataset DIDs
+
+DESCRIPTION
+  Compute the algorithm on one or more datasets.
+
+EXAMPLES
+  $ pontus-x_cli compute did:op:34e2ff9baf030318b13ff3940ab0885bb11fee49a8597123392983f5a0db8a35 -d did:op:d8a36ff74d36e54ce245d27689330fc39debb2fdfeac09d4a08b24b68cf5053d
 ```
 
-Also retrieve the secret key for the certificate using the command:
+_See code: [src/commands/compute.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/compute.ts)_
 
-```shell
-kubectl get secret your.domain.org-cert -n test -o jsonpath='{.data.tls\.key}' | base64 --decode > certificate.key
+## `pontus-x_cli compute-results JOBID`
+
+Get the compute job results.
+
+```
+USAGE
+  $ pontus-x_cli compute-results JOBID -p <value>
+
+ARGUMENTS
+  JOBID  Compute job ID
+
+FLAGS
+  -p, --provider=<value>  (required) The Provider URL
+
+DESCRIPTION
+  Get the compute job results.
+
+EXAMPLES
+  $ pontus-x_cli compute-results 215bae450c8f40f59bfc5d1ccada3931 -p https://provider.agrospai.udl.cat
 ```
 
-### Setting up a DID-Web server
+_See code: [src/commands/compute-results.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/compute-results.ts)_
 
-Once we have set a public domain and its associated SSL certificate, we can set up a DID-Web source where we can publish Gaia-X complaint credentials for participants and assets.
+## `pontus-x_cli compute-status JOBID`
 
-To generate the did.json file required for DID-Web, we will use the Gaia-X [did-web-generator](https://gitlab.com/gaia-x/lab/did-web-generator) and provide as input the base URL for DID-Web, e.g. <https://your.domain.org>, and the name of the file with the SSL certificate, e.g. `certificate-chain.crt`.
+Check compute job status.
 
-The did.json file is generated using the `generate-did-web` command provided by `pontus-x_cli`:
+```
+USAGE
+  $ pontus-x_cli compute-status JOBID -p <value>
 
-```shell
-pontus-x_cli generate-did-web -d https://your.domain.org -c certificate-chain.crt
+ARGUMENTS
+  JOBID  Compute job ID
+
+FLAGS
+  -p, --provider=<value>  (required) The Provider URL
+
+DESCRIPTION
+  Check compute job status.
+
+EXAMPLES
+  $ pontus-x_cli compute-status 215bae450c8f40f59bfc5d1ccada3931 -p https://provider.agrospai.udl.cat
 ```
 
-The output is stored in a file named `did.json` and is to be made available from the DID-Web domain at the well-known path `/.well-known/did.json` together with the certificate file.
+_See code: [src/commands/compute-status.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/compute-status.ts)_
 
-To do so, we will use the NGINX server we have set up before. We will create a ConfigMap with the did.json file and the certificate file, and mount it in the NGINX deployment.
+## `pontus-x_cli edit-algo CHECKSUM DID IMAGE TAG`
 
-First, we create the config map in the test namespace from the `did.json` and `certificate-chain.crt` files using the following command:
+Change the container metadata for a given algorithm DID
 
-```shell
-kubectl --namespace test create configmap did-web-config --from-file=did.json --from-file=certificate-chain.crt --dry-run=client -o yaml | kubectl apply -f -
+```
+USAGE
+  $ pontus-x_cli edit-algo CHECKSUM DID IMAGE TAG
+
+ARGUMENTS
+  CHECKSUM  Container checksum
+  DID       Algorithm DID
+  IMAGE     Container image
+  TAG       Container tag
+
+DESCRIPTION
+  Change the container metadata for a given algorithm DID
+
+EXAMPLES
+  $ pontus-x_cli edit-algo did:op:dcdb747f8feff3122c6d6c0f45a339a6e09415e721f98f61cc2c1d62ab35a21f rogargon/pandas-profiling 4.16 sha256:81dca5439f07dff4d56097546a9fce7335be3de8e2622dc105c64e54376f86b5
 ```
 
-Then, we update the NGINX deployment to mount the config map in the `/usr/share/nginx/html/.well-known` path. The updated deployment is defined in the file [test-nginx-did-web.yaml](src/gaia-x_compliance/test-nginx-did-web.yaml) and can be applied using the command:
+_See code: [src/commands/edit-algo.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/edit-algo.ts)_
 
-```shell
-kubectl apply -f test-nginx-did-web.yaml
+## `pontus-x_cli edit-asset-url DID URL`
+
+Change the URL of an asset DID
+
+```
+USAGE
+  $ pontus-x_cli edit-asset-url DID URL
+
+ARGUMENTS
+  DID  DID of the asset
+  URL  New URL for the asset
+
+DESCRIPTION
+  Change the URL of an asset DID
+
+EXAMPLES
+  $ pontus-x_cli edit-asset-url did:op:af3e93c4f18903f91b108e7204b8a752e7605f4547ed507212bd6aca63af5686 https://raw.githubusercontent.com/plotly/datasets/refs/heads/master/titanic.csv
 ```
 
-Now, the `did.json` should be available at <https://your.domain.org/.well-known/did.json> and the certificate chain at <https://your.domain.org/.well-known/certificate-chain.crt>.
+_See code: [src/commands/edit-asset-url.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/edit-asset-url.ts)_
 
-The chain can be checked to see if it constitutes a valid trust anchor chain using the Gaia-X [Trust Anchor Registry](https://registry.lab.gaia-x.eu/v1-staging/docs#/TrustAnchor/TrustAnchorController_verifyTrustAnchorChain) API. The `v1-staging` version accepts Extended Validation (EV) Secure Sockets Layer (SSL) certificate issuers like Let's Encrypt, while the `v1` version only accepts the official [Gaia-X Trust Anchors]((<https://gaia-x.gitlab.io/policy-rules-committee/trust-framework/trust_anchors/#list-of-defined-trust-anchors>). EV SSL certificates are just recommended for testing.
+## `pontus-x_cli edit-trusted-algos DID`
 
-### Generating Gaia-X Compliant Participant Credentials
+Overwrite the trusted algorithms for a data asset to the provided algorithm DIDs
 
-To generate the credentials required by the Gaia-X Trust Framework to identify a Participant, we will use the `generate-participant-credentials` command provided by `pontus-x_cli`. This command requires as input a JSON file with the participant's data and the DID-Web URL where the credentials will be published. For instance, for the Universitat de Lleida, a sample [UdL.data.json](src/gaia-x_compliance/UdL.data.json) file is provided with the following content:
+```
+USAGE
+  $ pontus-x_cli edit-trusted-algos DID --algos <value>...
 
-```json
-{
-  "participant_name": "UdL",
-  "participant_uri": "https://www.udl.cat",
-  "participant_legal_name": "Universitat de Lleida",
-  "participant_vat_id": "ESQ7550001G",
-  "participant_country_subdivision_code": "ES-L",
-  "participant_street_address": "Victor Siurana, 1",
-  "participant_postal_code": "25003",
-  "participant_locality": "Lleida"
-}
+ARGUMENTS
+  DID  DID of the asset
+
+FLAGS
+  --algos=<value>...  (required) Algorithm DIDs
+
+DESCRIPTION
+  Overwrite the trusted algorithms for a data asset to the provided algorithm DIDs
+
+EXAMPLES
+  $ pontus-x_cli edit-trusted-algos did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a --algos did:op:8f9994d01975cadd0196a2f7f811ed850e5d02a7223e7c5a31faaebe7371c81a did:op:0b970c95211cb8ef4574383386376646081bb7eb949b2a75e1e2171ea25949a7
 ```
 
-To generate the Verifiable Presentation of the Gaia-X credentials for Universitat de Lleida using the previous DID-Web server, we can use the following command. The Verifiable Presentation (VP) file will be generated in the same folder as the JSON file with the input data about the participant:
+_See code: [src/commands/edit-trusted-algos.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/edit-trusted-algos.ts)_
 
-```shell
-pontus-x_cli generate-participant-credentials -p UdL.data.json -d did.json -c certificate.key
+## `pontus-x_cli export-private-key`
+
+Export your private key as a JSON file, to use later with the login command or for Pontus-X portals automation
+
+```
+USAGE
+  $ pontus-x_cli export-private-key [-p <value>] [-k <value>]
+
+FLAGS
+  -k, --privateKey=<value>  Your private key
+  -p, --password=<value>    Password to encrypt the private key file
+
+DESCRIPTION
+  Export your private key as a JSON file, to use later with the login command or for Pontus-X portals automation
+
+EXAMPLES
+  $ pontus-x_cli export-private-key
 ```
 
-To generate the VPs for other participants, just create a new JSON file with the participant's data and run the script with the new file. For instance, there is another sample JSON file for CEP in [CEP.data.json](src/gaia-x_compliance/CEP.data.json), which can be used to generate the credentials for the "Consorci Centre d'Estudis Porcins" using the command:
+_See code: [src/commands/export-private-key.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/export-private-key.ts)_
 
-```shell
-pontus-x_cli generate-participant-credentials -p CEP.data.json -d did.json -c certificate.key
+## `pontus-x_cli generate-asset-credentials DID`
+
+Generate the Gaia-X credentials for the input DID asset, including its verifiable presentation
+
+```
+USAGE
+  $ pontus-x_cli generate-asset-credentials DID -c <value> -d <value> -p <value> [-w <value>]
+
+ARGUMENTS
+  DID  DID of the asset
+
+FLAGS
+  -c, --certificate=<value>  (required) Path to the certificate.key file
+  -d, --didjson=<value>      (required) Path to the did.json file
+  -p, --participant=<value>  (required) Path to the JSON file including the required participant data
+  -w, --password=<value>     Password for the private key file (if not provided, it will be asked interactively)
+
+DESCRIPTION
+  Generate the Gaia-X credentials for the input DID asset, including its verifiable presentation
+
+EXAMPLES
+  $ pontus-x_cli generate-asset-credentials -p ./CEP.data.json -d ./did.json -c certificate.key did:op:01f8bc1e797a854dc718bd7a802acb07c5fc39f706b03dd454bceb66be6828c6
 ```
 
-## Publishing the Gaia-X Compliant Participant Credentials
+_See code: [src/commands/generate-asset-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/generate-asset-credentials.ts)_
 
-To publish the generated credentials, we will use the NGINX server we have set up before and expand the ConfigMap to also include the files for the credentials (there is no need to also publish the Gaia-X Compliance responses). The following command will generate a new version of the config map including all the credentials for UdL and CEP participants, in addition to the original `did.json` and `certificate-chain.crt` files:
+## `pontus-x_cli generate-did-web`
 
-```shell
-kubectl --namespace test create configmap did-web-config --from-file=did.json --from-file=certificate-chain.crt \
-  --from-file=UdL.vp.json --from-file=CEP.vp.json \
-  --dry-run=client -o yaml | kubectl apply -f -
+Generate a did.json to set up a DID-Web source to publish Gaia-X complaint credentials
+
+```
+USAGE
+  $ pontus-x_cli generate-did-web -c <value> -d <value>
+
+FLAGS
+  -c, --certificate=<value>  (required) Path to the file with the certificate chain for the DID domain URL
+  -d, --domain=<value>       (required) URL where the DID-Web document will be hosted
+
+DESCRIPTION
+  Generate a did.json to set up a DID-Web source to publish Gaia-X complaint credentials
+
+EXAMPLES
+  $ pontus-x_cli generate-did-web -d <https://compliance.agrospai.udl.cat> -c certificate-chain.crt
 ```
 
-### Dealing with Certificate Expiration
+_See code: [src/commands/generate-did-web.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/generate-did-web.ts)_
 
-In case of SSL certificate expiration, just regenerate and publish at well-know the certificate chain `certificate-chain.crt`
+## `pontus-x_cli generate-participant-credentials`
 
-**Important**: public and private keys do not change and nothing more needs to be done, not even updating the `did.json` file.
+Generate the Gaia-X credentials for the participant including their verifiable presentation
 
-So basically, download again the certificate chain after renewal using the previous command:
+```
+USAGE
+  $ pontus-x_cli generate-participant-credentials -c <value> -d <value> -p <value> [-w <value>]
 
-```shell
-curl -o certificate-chain.crt "https://whatsmychaincert.com/generate?include_leaf=1&include_root=1&host=your.domain.org"
+FLAGS
+  -c, --certificate=<value>  (required) Path to the certificate.key file
+  -d, --didjson=<value>      (required) Path to the did.json file
+  -p, --participant=<value>  (required) Path to the JSON file including the required participant data
+  -w, --password=<value>     Password for the private key file (if not provided, it will be asked interactively)
+
+DESCRIPTION
+  Generate the Gaia-X credentials for the participant including their verifiable presentation
+
+EXAMPLES
+  $ pontus-x_cli generate-participant-credentials -p ./CEP.data.json -d ./did.json -c certificate.key
 ```
 
-And update the ConfigMap with the new certificate chain, without forgetting the rest of files being already published:
+_See code: [src/commands/generate-participant-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/generate-participant-credentials.ts)_
 
-```shell
-kubectl --namespace test create configmap did-web-config --from-file=did.json --from-file=certificate-chain.crt \
-  --from-file=UdL.vp.json --from-file=CEP.vp.json \
-  --dry-run=client -o yaml | kubectl apply -f -
+## `pontus-x_cli get DID`
+
+Get the available metadata to the asset with the given DID
+
+```
+USAGE
+  $ pontus-x_cli get DID
+
+ARGUMENTS
+  DID  DID of the asset
+
+DESCRIPTION
+  Get the available metadata to the asset with the given DID
+
+EXAMPLES
+  $ pontus-x_cli get did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a
 ```
 
-### Additional References
+_See code: [src/commands/get.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/get.ts)_
 
-Gaia-X: onboarding, first credentials' issuance.
+## `pontus-x_cli help [COMMAND]`
 
-* Video tutorial: <https://www.youtube.com/watch?v=xHaBM-T2--k>
-* Jupyter notebook: <https://gitlab.com/gaia-x/lab/workshops/gaia-x-101>
+Display help for pontus-x_cli.
+
+```
+USAGE
+  $ pontus-x_cli help [COMMAND...] [-n]
+
+ARGUMENTS
+  COMMAND...  Command to show help for.
+
+FLAGS
+  -n, --nested-commands  Include all nested commands in the output.
+
+DESCRIPTION
+  Display help for pontus-x_cli.
+```
+
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.32/src/commands/help.ts)_
+
+## `pontus-x_cli login KEYFILE`
+
+Login to retrieve your private key from a JSON key store and store it in .env
+
+```
+USAGE
+  $ pontus-x_cli login KEYFILE [-p <value>]
+
+ARGUMENTS
+  KEYFILE  Path to the keyFile.json
+
+FLAGS
+  -p, --password=<value>  Password to decrypt the key file
+
+DESCRIPTION
+  Login to retrieve your private key from a JSON key store and store it in .env
+
+EXAMPLES
+  $ pontus-x_cli login d999baae98ac5246568fd726be8832c49626867d.json
+```
+
+_See code: [src/commands/login.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/login.ts)_
+
+## `pontus-x_cli logout`
+
+Logout to remove your private key from .env file
+
+```
+USAGE
+  $ pontus-x_cli logout
+
+DESCRIPTION
+  Logout to remove your private key from .env file
+
+EXAMPLES
+  $ pontus-x_cli logout
+```
+
+_See code: [src/commands/logout.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/logout.ts)_
+
+## `pontus-x_cli publish SCRIPTFOLDER`
+
+Publish the asset as instructed in the provided script folder.
+
+```
+USAGE
+  $ pontus-x_cli publish SCRIPTFOLDER -p <value> [--dry-run]
+
+ARGUMENTS
+  SCRIPTFOLDER  Path to the script folder
+
+FLAGS
+  -p, --provider=<value>  (required) The Provider URL
+      --dry-run           Dry run the publishing process
+
+DESCRIPTION
+  Publish the asset as instructed in the provided script folder.
+
+EXAMPLES
+  $ pontus-x_cli publish -p https://provider.agrospai.udl.cat samples/publish/downloadable-data
+
+  $ pontus-x_cli publish -p https://provider.agrospai.udl.cat samples/publish/algo --dry-run
+```
+
+_See code: [src/commands/publish.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/publish.ts)_
+
+## `pontus-x_cli revoke DIDS`
+
+Publisher revocation of one or more owned DIDs
+
+```
+USAGE
+  $ pontus-x_cli revoke DIDS
+
+ARGUMENTS
+  DIDS  DIDs to revoke
+
+DESCRIPTION
+  Publisher revocation of one or more owned DIDs
+
+EXAMPLES
+  $ pontus-x_cli revoke did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a
+```
+
+_See code: [src/commands/revoke.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/revoke.ts)_
+
+## `pontus-x_cli self-description DID SDURL`
+
+Associate Gaia-X Self-Description to the asset with the given DID
+
+```
+USAGE
+  $ pontus-x_cli self-description DID SDURL
+
+ARGUMENTS
+  DID    DID of the asset
+  SDURL  URL of the Self-Description
+
+DESCRIPTION
+  Associate Gaia-X Self-Description to the asset with the given DID
+
+EXAMPLES
+  $ pontus-x_cli self-description
+```
+
+_See code: [src/commands/self-description.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.0.0/src/commands/self-description.ts)_
+<!-- commandsstop -->
+
+# Useful information
+
+## How to obtain the certificate chain
+
+You can use the following command to obtain the certificate chain for the compliance service:
+
+```bash
+curl -o certificate-chain.crt "https://whatsmychaincert.com/generate?include_leaf=1&include_root=1&host=compliance.agrospai.udl.cat"
+```
+
+## How to obtain the certificate key
+
+If you are using Kubernetes with cert-manager, you can extract the key with the following command:
+
+```bash
+kubectl get secret compliance-tls -n tenant-1 -o jsonpath='{.data.tls\.key}' | base64 --decode > certificate.key
+```
+
+# Development
+
+## Install dependencies
+
+```sh
+npm install
+```
+
+## Build the CLI
+
+```sh
+npm run build
+```
+
+## Run the built CLI
+
+### Development
+
+```sh
+./bin/dev.js COMMAND
+```
+
+### Production
+
+```sh
+./bin/run.js COMMAND
+```
+
+## Formatting
+
+```sh
+npm run format
+```
+
+## Linting
+
+```sh
+npm run lint
+```
+
+## Typing
+
+```sh
+npm run tsc
+```
+
+## Testing
+
+  You need to have the `samples/data/d999baae98ac5246568fd726be8832c49626867d.json` file. Which you can generate with the command: `pontus-x_cli export-private-key` and the private key of the 'Universitat de Lleida (UdL)' account.
+
+### All tests in watch mode
+
+```sh
+npm run test
+```
+
+### A specific test file in watch mode
+
+```sh
+npm run test TEST_NAME # example: access, login, get, etc.
+```
+
+### A specific test file once
+
+```sh
+npm run test:once TEST_NAME # example: access, login, get, etc.
+```
+
+### Open the Vitest UI
+
+```sh
+npm run test:ui
+```
+
+## Generate documentation
+
+```sh
+npm run prepack
+npm run postpack
+```
+
+## Generate JSON schema
+
+```sh
+./node_modules/.bin/ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'src/types/schema.json'
+```

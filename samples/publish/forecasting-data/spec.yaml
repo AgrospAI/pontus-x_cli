@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../../src/types/schema.json
+metadata:
+  type: dataset
+  name: Timeseries Forecasting Testing Dataset
+  author: sudipmanchare
+  description: description.md
+  tags:
+  - forecasting
+  - sample
+  - agrospai
+  - udl
+  - tabular-data
+  license: CC-BY-4.0
+  links:
+  - >-
+    https://www.kaggle.com/api/v1/datasets/download/sudipmanchare/simulated-sales-data-with-timeseries-features
+nftData:
+  name: Timeseries Forecasting Dataset
+  symbol: TFD
+  templateIndex: 1
+  tokenURI: >-
+    https://www.veeqo.com/_next/image?url=https%3A%2F%2Fimages.ctfassets.net%2Fhfb264dqso7g%2F4QovdfnQYcBgP0X4PN0QfM%2F6313238ef1c4def0614eb43b209bbf5b%2Fdemand-forecasting.jpg&w=2560&q=75
+  transferable: false
+service:
+  serviceType: compute
+  fileType: url
+  serviceEndpoint: 'https://provider.pontus-x.eu'
+  timeout: 0
+  files:
+  - method: GET
+    type: url
+    url: >-
+      https://www.kaggle.com/api/v1/datasets/download/sudipmanchare/simulated-sales-data-with-timeseries-features
+  pricing:
+    type: free
+  datatoken:
+    name: Timeseries Forecasting Dataset
+    symbol: TFD
+trustOwnerAlgorithms: true
+allowAlgorithmNetworkAccess: false

@@ -1,0 +1,14 @@
+{
+  "files.associations": {
+    "*.hbs": "handlebars"
+  },
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "**/spec.json",
+        "**/spec.yaml",
+      ],
+      "url": "./types/schema.json"
+    }
+  ]
+}
