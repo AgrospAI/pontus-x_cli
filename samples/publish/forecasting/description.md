@@ -7,12 +7,12 @@ The algorithm requires two input parameters, the dataset parameters, to tweak th
 As of now, the possible parameters are:
 ## dataset:
 
-- _'separator': str (default=None)_ separator character used to split the CSV.
-- _'target_column': str_ name of the dataset training column.
-- _'datetime_column': str_ name of the dataset datetime column used for periodicity.
-- _'split': float[0-1] (default=0.7)_ test to train split ratio.
-- _'lags': int (default=3)_ lags to add into the data.
-- _'periodicity': list[Literal["day" | "week" | "month" | "year"]] (default=["day", "week", "month", "year"])_ to add different periodicity info to your data.
+- *'separator': str (default=None)* separator character used to split the CSV.
+- *'target_column': str* name of the dataset training column.
+- *'datetime_column': str* name of the dataset datetime column used for periodicity.
+- *'split': float[0-1] (default=0.7)* test to train split ratio.
+- *'lags': int (default=3)* lags to add into the data.
+- *'periodicity': list[Literal["day" | "week" | "month" | "year"]] (default=["day", "week", "month", "year"])* to add different periodicity info to your data.
 
 ## model:
 
@@ -52,7 +52,8 @@ Dataset parameters:
     "week",
     "month",
     "year"
-  ]
+  ],
+  "is_zipped": false
 }
 ```
 
