@@ -5,6 +5,7 @@ import {readFileSync} from 'node:fs'
 import path from 'node:path'
 import type PublishConfig from '../types/publish.js'
 import {Connection} from '../utils/connection.js'
+import schema from '../types/schema.js'
 
 function parseConfig(filePath: string): PublishConfig {
   const raw = readFileSync(filePath, 'utf-8')
@@ -28,7 +29,6 @@ export const publishFromFile = async (
   const config: PublishConfig = parseConfig(filePath)
 
   const ajv = new Ajv()
-  const schema = JSON.parse(readFileSync(path.resolve(__dirname, '../types/schema.json'), 'utf-8'))
   const validate = ajv.compile(schema)
   const valid = validate(config)
 
