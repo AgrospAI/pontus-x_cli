@@ -7,7 +7,7 @@ import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs'
 import {dirname, resolve} from 'node:path'
 
 function generateSignedDocument(data: any, templateFile: string, signer: Signer): Promise<VerifiableCredential> {
-  const fileContent = readFileSync(resolve('src/gaia-x_compliance/', templateFile), 'utf8')
+  const fileContent = readFileSync(resolve(__dirname, 'templates', templateFile), 'utf8')
   const template = Handlebars.compile(fileContent, {noEscape: true})
   const document: Omit<VerifiableCredential, 'proof'> = JSON.parse(template(data))
   return signer.sign(document)
@@ -15,23 +15,20 @@ function generateSignedDocument(data: any, templateFile: string, signer: Signer)
 
 async function generateParticipantVC(data: any, signer: Signer) {
   console.log(__dirname)
-  const templateFile = require.resolve('./templates/participant.hbs')
-  const participantVCSigned: VerifiableCredential = await generateSignedDocument(data, templateFile, signer)
+  const participantVCSigned: VerifiableCredential = await generateSignedDocument(data, 'participant.hbs', signer)
   console.log(`Verifiable Credential for participant ${data.participant_legal_name} successfully generated`)
   return participantVCSigned
 }
 
 async function generateParticipantTandCVC(data: any, signer: Signer) {
-  const templateFile = require.resolve('./templates/tandc.hbs')
-  const tandcVCSigned: VerifiableCredential = await generateSignedDocument(data, templateFile, signer)
+  const tandcVCSigned: VerifiableCredential = await generateSignedDocument(data, 'tandc.hbs', signer)
   console.log(`Signed Terms and Conditions for ${data.participant_legal_name} successfully generated`)
   return tandcVCSigned
 }
 
 async function generateParticipantLNRVC(data: any) {
-  const templateFile = require.resolve('./templates/lrn-request.hbs')
   const notaryService = 'https://gx-notary.arsys.es/v1/registrationNumberVC'
-  const fileContent = readFileSync(resolve(templateFile), 'utf8')
+  const fileContent = readFileSync(resolve(__dirname, 'templates', 'lrn-request.hbs'), 'utf8')
   const lnrRequestTemplate = Handlebars.compile(fileContent)
   const lnrRequest = lnrRequestTemplate(data)
   try {
@@ -126,10 +123,7 @@ function extractAssetFromDDO(ddo: any) {
 async function generateAssetVC(ddo: any, participantData: any, signer: Signer) {
   if (!ddo) return null
   const assetData = extractAssetFromDDO(ddo)
-  const templateFile: string =
-    assetData.type === 'dataset'
-      ? require.resolve('./templates/dataset.hbs')
-      : require.resolve('./templates/service.hbs')
+  const templateFile: string = assetData.type === 'dataset' ? 'dataset.hbs' : 'service.hbs'
   const assetVCSigned: VerifiableCredential = await generateSignedDocument(
     {...assetData, ...participantData},
     templateFile,

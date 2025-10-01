@@ -69,7 +69,7 @@
   },
   "repository": "AgrospAI/pontus-x_cli",
   "scripts": {
-    "build": "shx rm -rf dist && tsc -b",
+    "build": "shx rm -rf dist && tsc -b && shx cp -r src/lib/gaia-x_compliance/generate-credentials/templates dist/lib/gaia-x_compliance/generate-credentials/",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "postpack": "shx rm -f oclif.manifest.json",
