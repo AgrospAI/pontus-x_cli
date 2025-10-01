@@ -8,7 +8,7 @@
         "**/spec.json",
         "**/spec.yaml",
       ],
-      "url": "./types/schema.json"
+      "url": "./src/types/schema.json"
     }
   ]
 }
