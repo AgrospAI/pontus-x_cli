@@ -52,10 +52,14 @@ export default class ExportPrivateKey extends Command {
     const address = account.getAddress().toString('hex')
     console.log(`Generating encrypted file to store your private key, which corresponds to you account ${address}`)
 
-    account.toV3(password).then((value) => {
-      const file = `${address}.json`
-      fs.writeFileSync(file, JSON.stringify(value))
-      console.log(`Your encrypted private key has been saved to ${file}\n`)
-    })
+    account
+      .toV3(password, {
+        kdf: 'pbkdf2',
+      })
+      .then((value) => {
+        const file = `${address}.json`
+        fs.writeFileSync(file, JSON.stringify(value))
+        console.log(`Your encrypted private key has been saved to ${file}\n`)
+      })
   }
 }
