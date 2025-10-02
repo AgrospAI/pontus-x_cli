@@ -3,9 +3,9 @@ import Ajv from 'ajv'
 import yaml from 'js-yaml'
 import {readFileSync} from 'node:fs'
 import path from 'node:path'
-import type PublishConfig from '../types/publish.js'
-import {Connection} from '../utils/connection.js'
-import schema from '../types/schema.js'
+import type PublishConfig from '../types/publish'
+import {Connection} from '../utils/connection'
+import schema from '../types/schema'
 
 function parseConfig(filePath: string): PublishConfig {
   const raw = readFileSync(filePath, 'utf-8')
