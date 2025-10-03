@@ -2,6 +2,7 @@ import {Command, Flags} from '@oclif/core'
 import wallet from 'ethereumjs-wallet'
 import fs from 'node:fs'
 import readlineSync from 'readline-sync'
+import crypto from 'crypto'
 
 export default class ExportPrivateKey extends Command {
   static description =
@@ -11,13 +12,11 @@ export default class ExportPrivateKey extends Command {
     password: Flags.string({
       char: 'p',
       description: 'Password to encrypt the private key file',
-      env: 'PASSWORD',
       required: false,
     }),
     privateKey: Flags.string({
       char: 'k',
       description: 'Your private key',
-      env: 'PRIVATE_KEY',
       required: false,
     }),
   }
@@ -52,14 +51,17 @@ export default class ExportPrivateKey extends Command {
     const address = account.getAddress().toString('hex')
     console.log(`Generating encrypted file to store your private key, which corresponds to you account ${address}`)
 
-    account
-      .toV3(password, {
-        kdf: 'pbkdf2',
-      })
-      .then((value) => {
-        const file = `${address}.json`
-        fs.writeFileSync(file, JSON.stringify(value))
-        console.log(`Your encrypted private key has been saved to ${file}\n`)
-      })
+    account.toV3(password, {
+        kdf: "scrypt",
+        n: 1 << 14,       // cost factor (default is 2**18)
+        r: 8,
+        p: 1,
+        dklen: 32,
+        salt: crypto.randomBytes(32)
+    }).then(value => {
+      const file = `${address}.json`
+      fs.writeFileSync(file, JSON.stringify(value))
+      console.log(`Your encrypted private key has been saved to ${file}\n`)
+    })
   }
 }

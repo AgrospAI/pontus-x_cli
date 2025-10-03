@@ -94,7 +94,7 @@ function generateAssetVP(
   )
   console.log(
     `Verifiable Presentation of the credentials for ${ddo.metadata.name} ` +
-      `generated and stored in ${data.participant_name}/${ddo.datatokens[0].symbol}.${assetData.network}.vp.json`,
+      `generated and stored in ${data.participant_name}/${ddo.datatokens[0].symbol}_${assetData.network}.vp.json`,
   )
 }
 
