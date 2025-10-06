@@ -142,14 +142,14 @@ export async function generateCredentials(
 ) {
   const folder = dirname(participantDataFile)
   const participantData = JSON.parse(readFileSync(participantDataFile, 'utf8'))
-  participantData.issuanceDate = new Date().toISOString()
+  participantData.issuance_date = new Date().toISOString()
   const didJson = JSON.parse(readFileSync(didjsonFile, 'utf8'))
-  participantData.issuerDomain = didJson.id.slice(Math.max(0, didJson.id.lastIndexOf(':') + 1))
+  participantData.issuer_domain = didJson.id.slice(Math.max(0, didJson.id.lastIndexOf(':') + 1))
   console.log(`Asset DDO: ${ddo ? JSON.stringify(ddo, null, 2) : 'N/A'}`)
   console.log(
     `Generating Gaia-X credentials for ` + ddo
       ? `asset ${ddo?.metadata?.name}`
-      : `participant ${participantData.participantLegalName} with issuer ${participantData.issuerDomain}`,
+      : `participant ${participantData.participant_legal_name} with issuer ${participantData.issuer_domain}`,
   )
 
   const pkcs1 = readFileSync(certificateKeyFile, 'utf8')
