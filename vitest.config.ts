@@ -13,5 +13,9 @@ export default defineConfig({
       NODE_NO_WARNINGS: '1',
     },
     setupFiles: [resolve(__dirname, 'test/setup.ts')],
+    // Enable test grouping and filtering
+    testTimeout: 30_000, // Default timeout for most tests
+    // Configure different test patterns
+    exclude: ['**/node_modules/**', '**/dist/**'],
   },
 })

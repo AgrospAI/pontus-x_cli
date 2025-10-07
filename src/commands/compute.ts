@@ -2,6 +2,7 @@ import {Args, Command, Flags} from '@oclif/core'
 import readlineSync from 'readline-sync'
 
 import {Connection} from '../utils/connection'
+import {ComputeJob} from '@oceanprotocol/lib'
 
 export default class Compute extends Command {
   static args = {
@@ -18,14 +19,20 @@ export default class Compute extends Command {
       multiple: true,
       required: true,
     }),
+    yes: Flags.boolean({
+      char: 'y',
+      description: 'Automatic yes to prompts',
+      required: false,
+      default: false,
+    }),
   }
 
-  async run(): Promise<void> {
+  async run(): Promise<ComputeJob | ComputeJob[] | void> {
     const {args, flags} = await this.parse(Compute)
     const {algo} = args
     const {datasets} = flags
     const connection = await Connection.connect()
-    if (readlineSync.keyInYNStrict(`Computing algorithm ${algo} on datasets [${datasets.join(', ')}]? `)) {
+    if (flags.yes || readlineSync.keyInYNStrict(`Computing algorithm ${algo} on datasets [${datasets.join(', ')}]? `)) {
       try {
         const firstDatasetAsset = await connection.nautilus.getAquariusAsset(datasets[0])
         const provider = firstDatasetAsset.services[0].serviceEndpoint
@@ -50,6 +57,7 @@ export default class Compute extends Command {
             `Compute started, check status using command:\n pontus-x_cli compute-status ${computeJob.jobId} -p ${provider}\n`,
           )
         }
+        return computeJob
       } catch (error) {
         this.error(`Error starting compute: ${error}`)
       }

@@ -28,10 +28,11 @@
       }
     ],
     "pricing": {
-      "type": "free"
+      "type": "fixed",
+      "amount": 1,
+      "currency": "EUROe"
     },
     "datatoken": {"name": "Red Wine", "symbol": "RED"}
   },
-  "trustOwnerAlgorithms": true,
   "allowAlgorithmNetworkAccess": false
 }

@@ -10,6 +10,7 @@
       "./node_modules/@types"
     ],
     "allowJs": true,
+    "composite": true,
     "sourceMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

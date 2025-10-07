@@ -1,5 +1,5 @@
 import {AssetBuilder} from '@deltadao/nautilus'
-import {Args, Command} from '@oclif/core'
+import {Args, Command, Flags} from '@oclif/core'
 import readlineSync from 'readline-sync'
 
 import {Connection} from '../utils/connection'
@@ -12,14 +12,19 @@ export default class SelfDescription extends Command {
       required: true,
     }),
   }
+  static flags = {
+    yes: Flags.boolean({char: 'y', description: 'Skip confirmation prompt', default: false}),
+  }
   static description = 'Associate Gaia-X Self-Description to the asset with the given DID'
-  static examples: Command.Example[] = ['<%= config.bin %> <%= command.id %>']
+  static examples: Command.Example[] = [
+    '<%= config.bin %> <%= command.id %> did:op:d22954f2cbf6a85c897ce605c275cc786e099592cc59e3b7dd66b93e784bed8c https://example.com/self-description.json',
+  ]
 
   async run(): Promise<void> {
-    const {args} = await this.parse(SelfDescription)
+    const {args, flags} = await this.parse(SelfDescription)
     const {did, sdurl} = args
     const connection = await Connection.connect()
-    if (readlineSync.keyInYNStrict(`Attach self description at ${sdurl} to asset ${did}? `)) {
+    if (flags.yes || readlineSync.keyInYNStrict(`Attach self description at ${sdurl} to asset ${did}? `)) {
       try {
         const aquariusAsset = await connection.nautilus.getAquariusAsset(did)
         const assetBuilder = new AssetBuilder(aquariusAsset)

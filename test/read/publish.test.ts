@@ -4,14 +4,12 @@ import Publish from '../../src/commands/publish'
 import {withLogin} from '../helpers/login'
 import {extractJson} from '../helpers/parser'
 
-const SCRIPT_FOLDER = 'samples/publish/downloadable-data/index.ts'
+const SCRIPT_FOLDER = 'samples/publish/downloadable-data/spec.yaml'
 
 test(
   'publish command works with valid script folder after login',
   withLogin(async () => {
-    const result = await Publish.run([SCRIPT_FOLDER, '--dry-run'])
-    console.log('Publish result:', result)
-    console.log('Publish command executed successfully')
+    await Publish.run([SCRIPT_FOLDER, '--dry-run'])
   }),
 )
 

@@ -1,8 +1,7 @@
 import Login from '../../src/commands/login'
 import Logout from '../../src/commands/logout'
+import {PRIVATE_KEY_PASSWORD, PRIVATE_KEY_PATH} from '../config'
 import {getEnvVariable} from './env-mock'
-
-const LOGIN_PATH = 'samples/data/d999baae98ac5246568fd726be8832c49626867d.json'
 
 /**
  * Wraps a test body with login/logout
@@ -10,7 +9,7 @@ const LOGIN_PATH = 'samples/data/d999baae98ac5246568fd726be8832c49626867d.json'
 export function withLogin(fn: () => Promise<void>) {
   return async () => {
     try {
-      await Login.run([LOGIN_PATH, '-p', ''])
+      await Login.run([PRIVATE_KEY_PATH, '-p', PRIVATE_KEY_PASSWORD])
       process.env.PRIVATE_KEY = getEnvVariable('PRIVATE_KEY') ?? ''
       await fn()
     } finally {

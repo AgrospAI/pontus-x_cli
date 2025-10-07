@@ -1,5 +1,5 @@
 import {AssetBuilder} from '@deltadao/nautilus'
-import {Args, Command} from '@oclif/core'
+import {Args, Command, Flags} from '@oclif/core'
 import readlineSync from 'readline-sync'
 
 import {Connection} from '../utils/connection'
@@ -11,7 +11,9 @@ export default class EditAlgo extends Command {
     tag: Args.string({description: 'Container tag', required: true}),
     checksum: Args.string({description: 'Image checksum', required: true}),
     entrypoint: Args.string({description: 'Algorithm entrypoint', required: true}),
-
+  }
+  static flags = {
+    yes: Flags.boolean({char: 'y', description: 'Skip confirmation prompt', required: false, default: false}),
   }
   static description = 'Change the container metadata for a given algorithm DID'
   static examples: Command.Example[] = [
@@ -19,12 +21,16 @@ export default class EditAlgo extends Command {
   ]
 
   async run(): Promise<void> {
-    const {args} = await this.parse(EditAlgo)
+    const {args, flags} = await this.parse(EditAlgo)
     const {checksum, did, image, tag, entrypoint} = args
     const connection = await Connection.connect()
-    if (readlineSync.keyInYNStrict(
-            `Change the container metadata for asset ${did}` +
-            `to entrypoint "${entrypoint}" for ${image}:${tag} and image checksum ${checksum}? `)) {
+    if (
+      flags.yes ||
+      readlineSync.keyInYNStrict(
+        `Change the container metadata for asset ${did}` +
+          `to entrypoint "${entrypoint}" for ${image}:${tag} and image checksum ${checksum}? `,
+      )
+    ) {
       try {
         const aquariusAsset = await connection.nautilus.getAquariusAsset(did)
         const assetBuilder = new AssetBuilder(aquariusAsset)
@@ -36,7 +42,7 @@ export default class EditAlgo extends Command {
               checksum,
               image,
               tag,
-              entrypoint
+              entrypoint,
             },
           })
           .build()

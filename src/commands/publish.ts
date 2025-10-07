@@ -55,7 +55,7 @@ export default class Publish extends Command {
     }),
   }
 
-  async run(): Promise<void> {
+  async run(): Promise<string | void> {
     const {args, flags} = await this.parse(Publish)
     const connection = await Connection.connect()
 
@@ -66,7 +66,7 @@ export default class Publish extends Command {
         const dirPath = args.path.split('/').slice(0, -1).join('/')
         await invokeFunctionFromFile(args.path, 'publish', dirPath, connection, flags.provider, flags['dry-run'])
       } else if (args.path.endsWith('.json') || args.path.endsWith('.yaml')) {
-        await publishFromFile(args.path, flags.provider, connection, flags['dry-run'])
+        return await publishFromFile(args.path, flags.provider, connection, flags['dry-run'])
       } else {
         this.error('The provided file must be a .json/.yaml or .ts file')
       }

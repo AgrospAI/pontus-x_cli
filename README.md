@@ -595,24 +595,63 @@ npm run tsc
 
 ## Testing
 
-  You need to have the `samples/data/d999baae98ac5246568fd726be8832c49626867d.json` file. Which you can generate with the command: `pontus-x_cli export-private-key` and the private key of the 'Universitat de Lleida (UdL)' account.
+You can customize the tests in `test/config.ts` file. The two most important parameters are `PRIVATE_KEY_PATH` and `PRIVATE_KEY_PASSWORD`.
 
-### All tests in watch mode
+By default, you need to have the `privateKey.json` file in the base root. Which you can generate with the command: `npm run dev export-private-key -f privateKey.json`.
+
+### Structure
+
+The tests are organized in folders by functionality:
+
+```text
+test/
+├── auth/
+├── read/
+└── write/
+```
+
+* **auth**: commands related to authentication.
+* **read**: commands that do not make modifications in the blockchain.
+* **write**: commands that make modifications in the blockchain. There is one exception: the `access` command, which causes problems when run in parallel with other write commands. All write commands are run sequentially to avoid conflicts.
+
+### Initialization
+
+Because the tests interact with the blockchain, we need to first deploy some assets manually and keep track of their DIDs in the `STATE_FILE` (by default `./.vitest-state.json`).
+
+```sh
+npm run test:init
+```
+
+### Clean up
+
+Whenever you want to clean up the deployed assets in the blockchain, you can run:
+
+```sh
+npm run test:clean
+```
+
+### Run all tests once
 
 ```sh
 npm run test
 ```
 
-### A specific test file in watch mode
+### Run a specific test file once
 
 ```sh
 npm run test TEST_NAME # example: access, login, get, etc.
 ```
 
-### A specific test file once
+### Run a specific test folder
 
 ```sh
-npm run test:once TEST_NAME # example: access, login, get, etc.
+npm run test TEST_FOLDER # example: auth, read, write
+```
+
+### Run a specific test file in watch mode
+
+```sh
+npm run test:watch TEST_NAME # example: access, login, get, etc.
 ```
 
 ### Open the Vitest UI

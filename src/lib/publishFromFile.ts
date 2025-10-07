@@ -167,7 +167,12 @@ export const publishFromFile = async (
 
   const result = await connection.nautilus.publish(asset)
   console.log(
-    `✅ Asset published, ` +
-      `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`,
+    [
+      '✅ Asset published.',
+      `🔗 Transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}`,
+      `🌐 Asset: https://portal.agrospai.udl.cat/asset/${result.ddo.id}`,
+    ].join('\n'),
   )
+
+  return asset.ddo.id
 }

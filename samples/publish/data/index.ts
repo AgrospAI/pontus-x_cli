@@ -34,10 +34,8 @@ const publish = async (folder: string, connection: any, provider: string, dryRun
     .setServiceEndpoint(provider) // the access controller to be in control of this asset
     .setTimeout(0) // Timeout in seconds (0 means unlimited access after purchase)
     .addFile(urlFile)
-    .addTrustedAlgorithmPublisher(connection.wallet.address)
-    // .addTrustedAlgorithms([{ did: 'did:op:c1e39404719ee92613b3bf9c276bbdcd63473c1189b34cef9f3de22cdb8eaf53' }])
     .allowAlgorithmNetworkAccess(false)
-    .setPricing(connection.pricingConfig.fixedRateEUROe(0))
+    .setPricing(connection.pricingConfig.fixedRateEUROe(1))
     .setDatatokenNameAndSymbol(`Red Wine`, `RED`)
     .build()
   assetBuilder.addService(service)

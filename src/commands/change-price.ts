@@ -1,4 +1,4 @@
-import {Args, Command} from '@oclif/core'
+import {Args, Command, Flags} from '@oclif/core'
 import readlineSync from 'readline-sync'
 
 import {Connection} from '../utils/connection'
@@ -11,17 +11,25 @@ export default class ChangePrice extends Command {
       required: true,
     }),
   }
+  static flags = {
+    yes: Flags.boolean({
+      char: 'y',
+      description: 'Automatic yes to prompts',
+      required: false,
+      default: false,
+    }),
+  }
   static description = 'Change the price keeping the existing currency for an asset with the given DID'
   static examples: Command.Example[] = [
     '<%= config.bin %> <%= command.id %> did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a 10',
   ]
 
   async run(): Promise<void> {
-    const {args} = await this.parse(ChangePrice)
+    const {args, flags} = await this.parse(ChangePrice)
     const {did, newPrice} = args
     const connection = await Connection.connect()
     const newPriceNumber: number = Number.parseFloat(newPrice.replace(',', '.'))
-    if (readlineSync.keyInYNStrict(`Set the price to ${newPriceNumber.toString()} for asset ${did}? `)) {
+    if (flags.yes || readlineSync.keyInYNStrict(`Set the price to ${newPriceNumber.toString()} for asset ${did}? `)) {
       try {
         const aquariusAsset = await connection.nautilus.getAquariusAsset(did)
         const serviceId = aquariusAsset.services?.[0]?.id

@@ -1,5 +1,5 @@
 import {AssetBuilder, ServiceBuilder} from '@deltadao/nautilus'
-import {Args, Command} from '@oclif/core'
+import {Args, Command, Flags} from '@oclif/core'
 import readlineSync from 'readline-sync'
 
 import {Connection} from '../utils/connection'
@@ -12,16 +12,24 @@ export default class EditAssetUrl extends Command {
       required: true,
     }),
   }
+  static flags = {
+    yes: Flags.boolean({
+      char: 'y',
+      description: 'Automatic yes to prompts',
+      required: false,
+      default: false,
+    }),
+  }
   static description = 'Change the URL of an asset DID'
   static examples: Command.Example[] = [
     '<%= config.bin %> <%= command.id %> did:op:af3e93c4f18903f91b108e7204b8a752e7605f4547ed507212bd6aca63af5686 https://raw.githubusercontent.com/plotly/datasets/refs/heads/master/titanic.csv',
   ]
 
   async run(): Promise<void> {
-    const {args} = await this.parse(EditAssetUrl)
+    const {args, flags} = await this.parse(EditAssetUrl)
     const {did, url} = args
     const connection = await Connection.connect()
-    if (readlineSync.keyInYNStrict(`Changing the URL for ${did} to ${url}? `)) {
+    if (flags.yes || readlineSync.keyInYNStrict(`Changing the URL for ${did} to ${url}? `)) {
       try {
         const aquariusAsset = await connection.nautilus.getAquariusAsset(did)
         const assetBuilder = new AssetBuilder(aquariusAsset)

@@ -15,6 +15,7 @@ export default class ComputeResults extends Command {
       char: 'p',
       description: 'The Provider URL',
       required: true,
+      default: 'https://provider.agrospai.udl.cat',
     }),
   }
 

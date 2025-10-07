@@ -18,6 +18,7 @@ export default class EditTrustedAlgos extends Command {
       multiple: true,
       required: true,
     }),
+    yes: Flags.boolean({char: 'y', description: 'Skip confirmation prompt', default: false}),
   }
 
   async run(): Promise<void> {
@@ -25,7 +26,10 @@ export default class EditTrustedAlgos extends Command {
     const {did} = args
     const {algos} = flags
     const connection = await Connection.connect()
-    if (readlineSync.keyInYNStrict(`Changing the trusted algorithms for ${did} to [${algos.join(', ')}]? `)) {
+    if (
+      flags.yes ||
+      readlineSync.keyInYNStrict(`Changing the trusted algorithms for ${did} to [${algos.join(', ')}]? `)
+    ) {
       try {
         const aquariusAsset = await connection.nautilus.getAquariusAsset(did)
         const assetBuilder = new AssetBuilder(aquariusAsset)
@@ -33,7 +37,7 @@ export default class EditTrustedAlgos extends Command {
           aquariusAsset,
           serviceId: aquariusAsset.services[0].id,
         })
-        serviceBuilder.setAllAlgorithmsUntrusted(); // Remove existing trusted algorithms
+        serviceBuilder.setAllAlgorithmsUntrusted() // Remove existing trusted algorithms
         serviceBuilder.addTrustedAlgorithms(algos.map((algo: string) => ({did: algo})))
         const service = serviceBuilder.build()
         const asset = assetBuilder.addService(service).build()

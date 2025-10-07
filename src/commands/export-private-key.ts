@@ -19,6 +19,11 @@ export default class ExportPrivateKey extends Command {
       description: 'Your private key',
       required: false,
     }),
+    filepath: Flags.string({
+      char: 'f',
+      description: 'File path to save the encrypted private key (default is <address>.json)',
+      required: false,
+    }),
   }
 
   async run(): Promise<void> {
@@ -51,17 +56,19 @@ export default class ExportPrivateKey extends Command {
     const address = account.getAddress().toString('hex')
     console.log(`Generating encrypted file to store your private key, which corresponds to you account ${address}`)
 
-    account.toV3(password, {
-        kdf: "scrypt",
-        n: 1 << 14,       // cost factor (default is 2**18)
+    account
+      .toV3(password, {
+        kdf: 'scrypt',
+        n: 1 << 14, // cost factor (default is 2**18)
         r: 8,
         p: 1,
         dklen: 32,
-        salt: crypto.randomBytes(32)
-    }).then(value => {
-      const file = `${address}.json`
-      fs.writeFileSync(file, JSON.stringify(value))
-      console.log(`Your encrypted private key has been saved to ${file}\n`)
-    })
+        salt: crypto.randomBytes(32),
+      })
+      .then((value) => {
+        const file = flags.filepath ?? `${address}.json`
+        fs.writeFileSync(file, JSON.stringify(value))
+        console.log(`Your encrypted private key has been saved to ${file}\n`)
+      })
   }
 }
