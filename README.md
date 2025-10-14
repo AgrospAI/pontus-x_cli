@@ -225,6 +225,12 @@ npm run test:watch TEST_NAME # example: access, login, get, etc.
 npm run test:ui
 ```
 
+### Generate report
+
+```sh
+npx vitest --reporter=html
+```
+
 ## Generate documentation
 
 ```sh
@@ -235,5 +241,5 @@ npm run postpack
 ## Generate JSON schema
 
 ```sh
-./node_modules/.bin/ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'src/types/schema.json'
+npm run schema
 ```
