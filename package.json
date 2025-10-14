@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "author": "AgrospAI",
   "bin": {
-    "pontus-x_cli": "./bin/run.js"
+    "pontus-x_cli": "bin/run.js"
   },
   "bugs": "https://github.com/AgrospAI/pontus-x_cli/issues",
   "dependencies": {
@@ -25,7 +25,8 @@
     "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0",
     "oclif": "^4.22.14",
-    "readline-sync": "^1.4.10"
+    "readline-sync": "^1.4.10",
+    "ts-json-schema-generator": "^2.4.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1",
@@ -67,7 +68,10 @@
     ],
     "topicSeparator": " "
   },
-  "repository": "AgrospAI/pontus-x_cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AgrospAI/pontus-x_cli.git"
+  },
   "scripts": {
     "dev": "ts-node ./bin/dev.js",
     "build": "shx rm -rf dist tsconfig.tsbuildinfo && tsc -b && shx cp -r src/lib/gaia-x_compliance/generate-credentials/templates dist/lib/gaia-x_compliance/generate-credentials/",
@@ -83,7 +87,7 @@
     "test:ui": "vitest --ui",
     "test:watch": "vitest --watch",
     "tsc": "tsc --noEmit",
-    "schema": "./node_modules/.bin/ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'src/types/schema.json'",
+    "schema": "ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'src/types/schema.json'",
     "local-install": "npm install -g ."
   },
   "types": "dist/index.d.ts"
