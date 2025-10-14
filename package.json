@@ -6,7 +6,7 @@
   "bin": {
     "pontus-x_cli": "./bin/run.js"
   },
-  "bugs": "https://github.com/pontus-x_cli/pontus-x_cli/issues",
+  "bugs": "https://github.com/AgrospAI/pontus-x_cli/issues",
   "dependencies": {
     "@deltadao/nautilus": "^1.1.0",
     "@gaia-x/did-web-generator": "^1.1.0",
@@ -51,7 +51,7 @@
     "./dist",
     "./oclif.manifest.json"
   ],
-  "homepage": "https://github.com/pontus-x_cli/pontus-x_cli",
+  "homepage": "https://github.com/AgrospAI/pontus-x_cli",
   "keywords": [
     "oclif"
   ],
