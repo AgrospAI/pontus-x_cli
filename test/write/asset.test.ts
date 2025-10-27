@@ -1,12 +1,15 @@
-import {describe, test} from 'vitest'
-import {getAssets} from '../helpers/assets'
-import ChangePrice from '../../src/commands/change-price'
-import {withLogin} from '../helpers/login'
-import EditAssetUrl from '../../src/commands/edit-asset-url'
-import EditAlgo from '../../src/commands/edit-algo'
-import EditTrustedAlgos from '../../src/commands/edit-trusted-algos'
+import {describe, expect, test} from 'vitest'
 import Access from '../../src/commands/access'
+import ChangePrice from '../../src/commands/change-price'
+import Compute from '../../src/commands/compute'
+import ComputeResults from '../../src/commands/compute-results'
+import ComputeStatus from '../../src/commands/compute-status'
+import EditAlgo from '../../src/commands/edit-algo'
+import EditAssetUrl from '../../src/commands/edit-asset-url'
+import EditTrustedAlgos from '../../src/commands/edit-trusted-algos'
 import SelfDescription from '../../src/commands/self-description'
+import {getAssets} from '../helpers/assets'
+import {withLogin} from '../helpers/login'
 
 describe('Asset Commands', () => {
   test(
@@ -70,6 +73,25 @@ describe('Asset Commands', () => {
       await SelfDescription.run([algorithmDid, sdUrl, '-y'])
     }),
     30_000,
+  )
+})
+
+describe('Compute Asset Commands', () => {
+  const algorithmDid = getAssets().algorithm1Did
+  const datasetDid = getAssets().dataset2Did
+
+  test(
+    'compute job works',
+    withLogin(async () => {
+      const computeJob = await Compute.run([algorithmDid, '-d', datasetDid, '-y'])
+      expect(computeJob).toBeDefined()
+      const firstJob = Array.isArray(computeJob) ? computeJob[0] : computeJob
+      const jobDid = firstJob?.jobId
+      expect(jobDid).toBeDefined()
+      await ComputeResults.run([jobDid as string])
+      await ComputeStatus.run([jobDid as string])
+    }),
+    60_000,
   )
 })
 

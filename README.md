@@ -177,7 +177,7 @@ test/
 
 * **auth**: commands related to authentication.
 * **read**: commands that do not make modifications in the blockchain.
-* **write**: commands that make modifications in the blockchain. There is one exception: the `access` command, which causes problems when run in parallel with other write commands. All write commands are run sequentially to avoid conflicts.
+* **write**: commands that make modifications in the blockchain. All write commands are run sequentially to avoid conflicts.
 
 ### Initialization
 

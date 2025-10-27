@@ -2,7 +2,7 @@ import {Args, Command, Flags} from '@oclif/core'
 import readlineSync from 'readline-sync'
 
 import {Connection} from '../utils/connection'
-import {ComputeJob} from '@oceanprotocol/lib'
+import { ComputeJob } from '@oceanprotocol/lib';
 
 export default class Compute extends Command {
   static args = {
