@@ -2,6 +2,7 @@
 
 // eslint-disable-next-line unicorn/prefer-top-level-await
 (async () => {
+  require('dotenv').config()
   const oclif = await import('@oclif/core')
   await oclif.execute({ dir: __dirname })
 })()
