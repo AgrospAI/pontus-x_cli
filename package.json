@@ -1,7 +1,7 @@
 {
   "name": "pontus-x_cli",
   "description": "Command Line Interface for the Pontus-X Data Space Ecosystem",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "AgrospAI",
   "bin": {
     "pontus-x_cli": "bin/run.js"
