@@ -22,7 +22,7 @@ $ npm install -g pontus-x_cli
 $ pontus-x_cli COMMAND
 running command...
 $ pontus-x_cli (--version)
-pontus-x_cli/1.0.1 linux-x64 node-v20.19.5
+pontus-x_cli/1.0.2 linux-x64 node-v20.19.5
 $ pontus-x_cli --help [COMMAND]
 USAGE
   $ pontus-x_cli COMMAND
@@ -45,7 +45,7 @@ USAGE
   $ pontus-x_cli autocomplete [SHELL] [-r]
 
 ARGUMENTS
-  SHELL  (zsh|bash|powershell) Shell type
+  [SHELL]  (zsh|bash|powershell) Shell type
 
 FLAGS
   -r, --refresh-cache  Refresh cache (ignores displaying instructions)
@@ -65,7 +65,7 @@ EXAMPLES
   $ pontus-x_cli autocomplete --refresh-cache
 ```
 
-_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v3.2.34/src/commands/autocomplete/index.ts)_
+_See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v3.2.38/src/commands/autocomplete/index.ts)_
 
 ## `pontus-x_cli help [COMMAND]`
 
@@ -76,7 +76,7 @@ USAGE
   $ pontus-x_cli help [COMMAND...] [-n]
 
 ARGUMENTS
-  COMMAND...  Command to show help for.
+  [COMMAND...]  Command to show help for.
 
 FLAGS
   -n, --nested-commands  Include all nested commands in the output.
@@ -85,7 +85,7 @@ DESCRIPTION
   Display help for pontus-x_cli.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.32/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.34/src/commands/help.ts)_
 <!-- commandsstop -->
 
 # Useful information
