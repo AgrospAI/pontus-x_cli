@@ -8,6 +8,7 @@ interface Assets {
   algorithm2Did: string
   dataset1Did: string
   dataset2Did: string
+  dataset3Did: string
 }
 
 export async function initializeAssets() {
@@ -25,6 +26,7 @@ export async function initializeAssets() {
   const algorithm2Did = await PublishAsset(ALGORITHM2_SPEC)
   const dataset1Did = await PublishAsset(DATASET1_SPEC)
   const dataset2Did = await PublishAsset(DATASET2_SPEC)
+  const dataset3Did = await PublishAsset(DATASET2_SPEC)
 
   fs.writeFileSync(
     STATE_FILE,
@@ -34,6 +36,7 @@ export async function initializeAssets() {
         algorithm2Did,
         dataset1Did,
         dataset2Did,
+        dataset3Did,
       },
       null,
       2,

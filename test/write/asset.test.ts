@@ -79,11 +79,26 @@ describe('Asset Commands', () => {
 describe('Compute Asset Commands', () => {
   const algorithmDid = getAssets().algorithm1Did
   const datasetDid = getAssets().dataset2Did
+  const dataset2Did = getAssets().dataset3Did
 
   test(
     'compute job works',
     withLogin(async () => {
       const computeJob = await Compute.run([algorithmDid, '-d', datasetDid, '-y'])
+      expect(computeJob).toBeDefined()
+      const firstJob = Array.isArray(computeJob) ? computeJob[0] : computeJob
+      const jobDid = firstJob?.jobId
+      expect(jobDid).toBeDefined()
+      await ComputeResults.run([jobDid as string])
+      await ComputeStatus.run([jobDid as string])
+    }),
+    60_000,
+  )
+
+  test(
+    'compute job with multiple datasets works',
+    withLogin(async () => {
+      const computeJob = await Compute.run([algorithmDid, '-d', datasetDid, '-d', dataset2Did, '-y'])
       expect(computeJob).toBeDefined()
       const firstJob = Array.isArray(computeJob) ? computeJob[0] : computeJob
       const jobDid = firstJob?.jobId
