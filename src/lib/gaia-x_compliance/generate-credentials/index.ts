@@ -27,7 +27,7 @@ async function generateParticipantTandCVC(data: any, signer: Signer) {
 }
 
 async function generateParticipantLNRVC(data: any) {
-  const notaryService = 'https://gx-notary.arsys.es/v1/registrationNumberVC'
+  const notaryService = 'https://www.delta-dao.com/notary/v1/registrationNumberVC'
   const fileContent = readFileSync(resolve(__dirname, 'templates', 'lrn-request.hbs'), 'utf8')
   const lnrRequestTemplate = Handlebars.compile(fileContent)
   const lnrRequest = lnrRequestTemplate(data)
