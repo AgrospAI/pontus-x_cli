@@ -20,6 +20,24 @@ const publish = async (folder: string, connection: any, provider: string, dryRun
       transferable: false,
     })
     .addLinks(['https://archive.ics.uci.edu/dataset/186/wine+quality'])
+    .addAdditionalInformation({
+      "termsAndConditions": true,
+      "gaiaXInformation": {
+        "termsAndConditions": [
+          {
+            "url": "https://creativecommons.org/licenses/by/4.0/"
+          }
+        ]
+      },
+      "http://purl.org/dc/terms/spatial": {
+        "@type": ["http://purl.org/dc/terms/Location", "http://www.w3.org/2004/02/skos/core#Concept"],
+        "http://www.w3.org/2004/02/skos/core#prefLabel": "Denominação de Origem Vinho Verde",
+        "http://www.w3.org/ns/dcat#bbox": {
+          "@type": "http://www.opengis.net/ont/geosparql#wktLiteral",
+          "@value": "POLYGON(( -8.8 40.95, -7.60 40.95, -7.60 42.00, -8.8 42.00, -8.8 40.95 ))"
+        }
+      }
+    })
 
   const serviceBuilder = new ServiceBuilder({fileType: FileTypes.URL, serviceType: ServiceTypes.COMPUTE})
   const urlFile: ServiceFileType<FileTypes> = {
@@ -32,10 +50,11 @@ const publish = async (folder: string, connection: any, provider: string, dryRun
   }
   const service = serviceBuilder
     .setServiceEndpoint(provider) // the access controller to be in control of this asset
-    .setTimeout(0) // Timeout in seconds (0 means unlimited access after purchase)
+    .setTimeout(3600) // Timeout in seconds, 0 means unlimited access after purchase, while:
+      // 1 year = 31536000, 1 month = 2630000, 1 week = 604800, 1 day = 86400, 1 hour = 3600
     .addFile(urlFile)
     .allowAlgorithmNetworkAccess(false)
-    .setPricing(connection.pricingConfig.fixedRateEUROe(1))
+    .setPricing(connection.pricingConfig.fixedRateEURAU(1))
     .setDatatokenNameAndSymbol(`Red Wine`, `RED`)
     .build()
   assetBuilder.addService(service)
