@@ -1,0 +1,41 @@
+{
+  "@context": {
+    "dcat": "http://www.w3.org/ns/dcat#",
+    "dct": "http://purl.org/dc/terms/",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "geo": "http://www.opengis.net/ont/geosparql#"
+  },
+
+  "dct:spatial": {
+    "@type": ["dct:Location", "skos:Concept"],
+    "dcat:bbox": {
+      "@type":"geo:wktLiteral",
+      "@value":"POLYGON((0.984288 41.716989,1.152648 41.716989,1.152648 41.859594,0.984288 41.859594,0.984288 41.716989))"
+    },
+    "skos:prefLabel":"Agramunt"
+  },
+
+  "dcat:theme": [
+    {
+      "@id": "http://aims.fao.org/aos/agrovoc/c_203",
+      "@type": "skos:Concept",
+      "skos:prefLabel": { "@value": "agriculture", "@language": "en" }
+    },
+    {
+      "@id": "http://aims.fao.org/aos/agrovoc/c_541",
+      "@type": "skos:Concept",
+      "skos:prefLabel": { "@value": "apples", "@language": "en" }
+    },
+    {
+      "@id": "http://aims.fao.org/aos/agrovoc/c_3131",
+      "@type": "skos:Concept",
+      "skos:prefLabel": { "@value": "fruits", "@language": "en" }
+    },
+    {
+      "@id": "http://aims.fao.org/aos/agrovoc/c_92363",
+      "@type": "skos:Concept",
+      "skos:prefLabel": { "@value": "precision agriculture", "@language": "en" }
+    }
+  ]
+}
