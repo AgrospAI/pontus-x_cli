@@ -5,15 +5,15 @@ metadata:
   author: sudipmanchare
   description: description.md
   tags:
-  - forecasting
-  - sample
-  - agrospai
-  - udl
-  - tabular-data
+    - forecasting
+    - sample
+    - agrospai
+    - udl
+    - tabular-data
   license: CC-BY-4.0
   links:
-  - >-
-    https://www.kaggle.com/api/v1/datasets/download/sudipmanchare/simulated-sales-data-with-timeseries-features
+    - >-
+      https://www.kaggle.com/api/v1/datasets/download/sudipmanchare/simulated-sales-data-with-timeseries-features
 nftData:
   name: Timeseries Forecasting Dataset
   symbol: TFD
@@ -27,10 +27,10 @@ service:
   serviceEndpoint: 'https://provider.pontus-x.eu'
   timeout: 0
   files:
-  - method: GET
-    type: url
-    url: >-
-      https://www.kaggle.com/api/v1/datasets/download/sudipmanchare/simulated-sales-data-with-timeseries-features
+    - method: GET
+      type: url
+      url: >-
+        https://www.kaggle.com/api/v1/datasets/download/sudipmanchare/simulated-sales-data-with-timeseries-features
   pricing:
     type: free
   datatoken:

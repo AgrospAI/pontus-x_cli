@@ -4,7 +4,16 @@
     "name": "SciKit-Learn Forecasting Model Trainer",
     "author": "Universitat de Lleida (UdL)",
     "description": "description.md",
-    "tags": ["forecasting", "ml", "sklearn", "scikit-learn", "tabular-data", "pandas", "udl", "agrospai"],
+    "tags": [
+      "forecasting",
+      "ml",
+      "sklearn",
+      "scikit-learn",
+      "tabular-data",
+      "pandas",
+      "udl",
+      "agrospai"
+    ],
     "license": "MIT",
     "algorithm": {
       "consumerParameters": [
@@ -57,6 +66,9 @@
     "pricing": {
       "type": "free"
     },
-    "datatoken": {"name": "UdL scikit-learn forecasting model trainer", "symbol": "UDL-SKFORECAST"}
+    "datatoken": {
+      "name": "UdL scikit-learn forecasting model trainer",
+      "symbol": "UDL-SKFORECAST"
+    }
   }
 }

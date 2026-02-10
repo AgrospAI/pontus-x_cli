@@ -30,6 +30,6 @@
     "pricing": {
       "type": "free"
     },
-    "datatoken": {"name": "Red Wine", "symbol": "RED"}
+    "datatoken": { "name": "Red Wine", "symbol": "RED" }
   }
 }

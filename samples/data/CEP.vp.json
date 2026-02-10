@@ -6,12 +6,15 @@
       "@context": [
         "https://www.w3.org/2018/credentials/v1",
         "https://w3id.org/security/suites/jws-2020/v1",
-        "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#"
+        "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
+        {
+          "pontus-x": "https://pontus-x.eu/vocabulary/"
+        }
       ],
       "id": "https://compliance.agrospai.udl.cat/.well-known/CEP.vp.json#participant",
       "type": "VerifiableCredential",
       "issuer": "did:web:compliance.agrospai.udl.cat",
-      "issuanceDate": "2025-08-09T18:23:30.613Z",
+      "issuanceDate": "2026-01-14T13:17:16.940Z",
       "credentialSubject": {
         "id": "https://www.elcep.net",
         "type": "gx:LegalParticipant",
@@ -19,6 +22,10 @@
         "gx:legalRegistrationNumber": {
           "id": "https://www.elcep.net#lrn"
         },
+        "pontus-x:accounts": [
+          "0xDf7a37EA1f42588Ea219Ec19328757F67BaBCeCD",
+          "0x38f8c44FFaa8bE015F2DCDcD258ceBBed911840d"
+        ],
         "gx:headquarterAddress": {
           "gx:streetAddress": "Carrer Balaguer, s/n",
           "gx:postalCode": "25138",
@@ -34,18 +41,21 @@
       },
       "proof": {
         "type": "JsonWebSignature2020",
-        "created": "2025-08-09T20:23:30.630+02:00",
+        "created": "2026-01-14T14:17:16.973+01:00",
         "proofPurpose": "assertionMethod",
         "verificationMethod": "did:web:compliance.agrospai.udl.cat#X509-JWK2020",
-        "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..bMc2D5-g__Z106MUT1MpficZJ60a2APLAZnlLWv_KKTMlm2_3UoZKa_D7C9OlN6KJy1mK8Zg22IizvKA_x4BZwXLUTmfNGk61JThMObxoLs_QRdRF4-Skl1qtywWmJuoGW3Jde7UL6BhtJf81hSmU2DZ6ucAlR5XoTho_UKt1lpB7CTGLd8jB-yqEhSbmPmLySpRqCd9k6CPJLjUIW_PTEL3jemD2LLgKDW3Cz4rvIhm3LFDKMnB75DI2sJqEdO1BKdX-Fg9dx3Z6EthPJNPUfbNzNG_KPWIKQlvrxjRD2sNRiO6FiCZxG4VWX2B3aDEbZuOHqJKTaLjSI_g-Qxfkw"
+        "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..ny6lZN-WNnSXt9W6AP4_dLUOKKLcFH_rXs86sUbOnSzvvxm_ZLHB2VPL04cVsgt1jZ_889IT6x4ZHik3gJdtwEt_stPJ-cnBHrgEmQXhwcf2VAFWmKLaknNr9Ir9Pt4yAqcBaiNbfRWopzaAkAAZycvCMBncwfX0yL9A09aderQJcdSoc1ox6GP8i9XfM6Dv5kVBGddUKB-lJ6FeCWZ2yJukFtiyd_ZNwaNXM1C_k_tu_fFbQ1ycgpDl9P1rC9x11A3t9OQp67j98s19kAU8Y9dinTwKI0QUJfnBQCJvTjah4_JQQVOy9KpX-Y_HA2bbaEp_jUjCjD4vJcb4GSDhBg"
       }
     },
     {
-      "@context": ["https://www.w3.org/2018/credentials/v1", "https://w3id.org/security/suites/jws-2020/v1"],
+      "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://w3id.org/security/suites/jws-2020/v1"
+      ],
       "type": ["VerifiableCredential"],
       "id": "https://compliance.agrospai.udl.cat/.well-known/CEP.vp.json#lrn",
-      "issuer": "did:web:gx-notary.arsys.es:v1",
-      "issuanceDate": "2025-08-09T18:23:31.137Z",
+      "issuer": "did:web:www.delta-dao.com:notary:v1",
+      "issuanceDate": "2026-01-14T13:17:17.372Z",
       "credentialSubject": {
         "@context": "https://registry.lab.gaia-x.eu/development/api/trusted-shape-registry/v1/shapes/jsonld/trustframework#",
         "type": "gx:legalRegistrationNumber",
@@ -56,16 +66,16 @@
       "evidence": [
         {
           "gx:evidenceURL": "http://ec.europa.eu/taxation_customs/vies/services/checkVatService",
-          "gx:executionDate": "2025-08-09T18:23:31.137Z",
+          "gx:executionDate": "2026-01-14T13:17:17.372Z",
           "gx:evidenceOf": "gx:vatID"
         }
       ],
       "proof": {
         "type": "JsonWebSignature2020",
-        "created": "2025-08-09T18:23:31.148Z",
+        "created": "2026-01-14T13:17:17.384Z",
         "proofPurpose": "assertionMethod",
-        "verificationMethod": "did:web:gx-notary.arsys.es:v1#X509-JWK2020",
-        "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..o_TozVd0IXIYKe9FxIhetM3h-6s8zxoXmJdlRalSQwDwx1UBijbomOyfHy2eeNmlhbMUFIcOD9M305nqVYQlcOoDRN1AvPCpn8vONXyxcEJ8g3dUYOW7WUE219Tr7zYlnx66AI_1hSOmorxWNRTuqjfDdn5OuJMSGDHl4TcTESaxxpjpirxpentTsr5Zl-0B9ukj6Obf9e4xl66XQQhtI6yt8KLsdbGuPtogzWaXHK7754xCFZSkNQxQLVPHYPkinmhMNf8fZAnpxSjjMTOTvfTqYl-D2eeN-mZXrmcrNylfsmDJ7_H3sI8ti7VZCXpZ_frNeIrS3hLkvayz2uW8PPOJX6vXRWqHTS9tpNmSrpAeX1jTx4ncBms1cW3o9uQOmXK5tH9yPBjP3g5DPOyvSOkd89YioGuD5aat0T8YFqXfkH4ZYebaH0X5-Ijyk_foDjLFOAXfqliBmg59l-Vo4PAFL6_oo2471MihXqlB1i2QBYVqZwS_jX-BGG3JNSbes-UWSa7t47kO6VC8n8mjWQ1NbcomUAIzX5UfeHHGrKD8Yc2Kmo6zzfRHrgoYfoRCTErHRS6QuYd-_n28x2KUmg7SINKVJmDFcXUImCv_b6b_nplxYsaX6lvP4Oz8ay7CjANmKOrQs5UqIyqCVzvLl8wIJ_9XF4_38Fd-aMHmNtE"
+        "verificationMethod": "did:web:www.delta-dao.com:notary:v1#X509-JWK2020",
+        "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..EA_IoxI4OsfCEI36EKjzifD5dthCYGx1YYPcMNz2SogOJ5IKadMjTw9IN3mmEBMWneeapa9pzQJTJ56OKSy8TOEzBEUy3haD1ORjVU5cWOfAucKqNPij_P7mltwqIcImdqyXINsK_uaudtbCmiUm2GXDvGg8qR308i2vMZXnnAJUC0sCt9fA-u675yiIoT08aym06SMk99A9QGhyCcZ2rGV6XszMThzqnyUAQkeU7Jmzy5q4l7YBiJ291c9Cp0kNlRYF4GaFnnGyN1faoskID913OqyeZ0L3hbQ9d-mJsPtbVmcC6H8udvkgRVYz3yOdv-mOO_Zvarv2Pyaomh-ZVo0JxQ8QEIUL-_ECEXFgBWWzaXnIVCCSFlzjK8W-Vh1AScZpMkabzcKsK6EbQHMVd0JG-5V1_DhQAJaQIWZf3f9ol0g9LW9TMVNY4qG-Kp91w63iAWGqlOpXXAzdnjQjVYho76CZa4p87nqKOL9vDdSONUNkdmf1zm0KSjxsYI8bXFTqndmbBZ15REDMk-Hr48yQN5XEsj8i8vCEbTcR2Rc1ZfA3gqCc-rhq-TKa-xGkyzKh9CyP0Soxg1olocM3HvAnKDJ6_pAhrfnKv2ZUBn1puf7BP1T9cKA0VFH5Na7HEXu3vnVkkG7fknAuLMypeFfExXzHmRIEwWlO-F32PGs"
       }
     },
     {
@@ -77,7 +87,7 @@
       "id": "https://compliance.agrospai.udl.cat/.well-known/CEP.vp.json#tandc",
       "type": "VerifiableCredential",
       "issuer": "did:web:compliance.agrospai.udl.cat",
-      "issuanceDate": "2025-08-09T18:23:30.613Z",
+      "issuanceDate": "2026-01-14T13:17:16.940Z",
       "credentialSubject": {
         "id": "https://www.elcep.net#tandc",
         "type": "gx:GaiaXTermsAndConditions",
@@ -85,10 +95,10 @@
       },
       "proof": {
         "type": "JsonWebSignature2020",
-        "created": "2025-08-09T20:23:30.655+02:00",
+        "created": "2026-01-14T14:17:16.992+01:00",
         "proofPurpose": "assertionMethod",
         "verificationMethod": "did:web:compliance.agrospai.udl.cat#X509-JWK2020",
-        "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..UzPR5_EIdL9l9tVtwrQS-ojSNsz1MD3naCnpwdbXWu7uqF3xANtPvspySKlxwTaTXXP5mw8DI6uEmhXClGgzcF7uLQx5M6q64OT34RWXGNg0lcKRawblkNRhpimngmIv2WVntTlfNOCAd1EoDfvhQYgav6JQ7A-skDfokjsQMrmB4YzhtHmLwh-qlQGCKB78CULFa1KOnQ7HDpaLRA5fjjv2BZxlEhFz0g1bqyQjJ_7zvp-AfDrtcGxeaygpmDKE56QcHe3RGbS6C5-g6LNxOIUerthSM6_ofIG8EGZ7nFby52avtupeeQBcDrVdeU4CwxkQLe8kmjhWYDfHZh7NJQ"
+        "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..O1P8n9b-Q7c_iG6iu_znQY4jQc4Bb3OvPez97Mst_0JK5L2k55pnUD_WthQqLm72Yv94sPY49ZuXnV_23L4L_WrfX5VrpFfKjatLlhSY8I7sE92Scem3YZE0Un1oM-VAqrV26ZRtWo5Tvu4R8kvDXPe9RkAS1hpK7ynz7Ysva8SqN0q3FWc5q7EV8KeWVe5gd185GG0Dg8eBg4Udp63cNhaT8dSlJAbnB003vIDR3tsmik4tccub1ufZ97vWAtwZdXl45rTeNLtR8kg5f_-FeZ3COaD2778yxD0E3Nm_O0DG1r4cnU4fuCJFejg4ufcnbbNY8tf6hy-YizwqMNHNAg"
       }
     }
   ]

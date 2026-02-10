@@ -4,7 +4,15 @@
     "name": "SciKit-Learn Model Trainer",
     "author": "Universitat de Lleida (UdL)",
     "description": "description.md",
-    "tags": ["ml", "sklearn", "scikit-learn", "tabular-data", "pandas", "udl", "agrospai"],
+    "tags": [
+      "ml",
+      "sklearn",
+      "scikit-learn",
+      "tabular-data",
+      "pandas",
+      "udl",
+      "agrospai"
+    ],
     "license": "MIT",
     "algorithm": {
       "consumerParameters": [
@@ -57,6 +65,9 @@
     "pricing": {
       "type": "free"
     },
-    "datatoken": {"name": "UdL scikit-learn model trainer", "symbol": "UDL-SKLEARN"}
+    "datatoken": {
+      "name": "UdL scikit-learn model trainer",
+      "symbol": "UDL-SKLEARN"
+    }
   }
 }

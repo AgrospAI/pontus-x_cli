@@ -5,14 +5,27 @@ metadata:
   author: 'Cortez et al., 2009'
   description: description.md
   tags:
-  - agriculture
-  - wine
-  - agrospai
-  - udl
-  - tabular-data
+    - agriculture
+    - wine
+    - agrospai
+    - udl
+    - tabular-data
   license: CC-BY-4.0
   links:
-  - 'https://archive.ics.uci.edu/dataset/186/wine+quality'
+    - 'https://archive.ics.uci.edu/dataset/186/wine+quality'
+  additionalInformation:
+    termsAndConditions: true
+    gaiaXInformation:
+      termsAndConditions:
+        - url: 'https://creativecommons.org/licenses/by/4.0/'
+    http://purl.org/dc/terms/spatial:
+      '@type':
+        - 'http://purl.org/dc/terms/Location'
+        - 'http://www.w3.org/2004/02/skos/core#Concept'
+      http://www.w3.org/2004/02/skos/core#prefLabel: 'Denominação de Origem Vinho Verde'
+      http://www.w3.org/ns/dcat#bbox:
+        '@type': 'http://www.opengis.net/ont/geosparql#wktLiteral'
+        '@value': 'POLYGON(( -8.8 40.95, -7.60 40.95, -7.60 42.00, -8.8 42.00, -8.8 40.95 ))'
 nftData:
   name: Red Wine
   symbol: RED
@@ -24,16 +37,16 @@ service:
   serviceType: compute
   fileType: url
   serviceEndpoint: 'https://provider.pontus-x.eu'
-  timeout: 0
+  timeout: 3600
   files:
-  - method: GET
-    type: url
-    url: >-
-      https://raw.githubusercontent.com/plotly/datasets/master/winequality-red.csv
+    - method: GET
+      type: url
+      url: >-
+        https://raw.githubusercontent.com/plotly/datasets/master/winequality-red.csv
   pricing:
     type: fixed
     amount: 1
-    currency: EUROe
+    currency: EURAU
   datatoken:
     name: Red Wine
     symbol: RED

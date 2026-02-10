@@ -2,13 +2,25 @@
   "files.associations": {
     "*.hbs": "handlebars"
   },
+  "json.schemaDownload.trustedDomains": {
+    "*": true
+  },
   "json.schemas": [
     {
-      "fileMatch": [
-        "**/spec.json",
-        "**/spec.yaml",
-      ],
+      "fileMatch": ["**/spec.json", "**/spec.yaml"],
       "url": "./src/types/schema.json"
     }
-  ]
+  ],
+  "prettier.prettierPath": "./node_modules/prettier",
+  "prettier.configPath": "./prettier.config.js",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "always",
+    "source.fixAll.biome": "always"
+  },
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "biomejs.biome",
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
 }

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "accounts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "privateKeyPath": {
+            "type": "string"
+          },
+          "passwordEnvKey": {
+            "type": "string"
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "spec": {
+                  "type": "string"
+                },
+                "did": {
+                  "type": "string"
+                }
+              },
+              "required": ["spec"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["address", "privateKeyPath", "passwordEnvKey", "assets"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["accounts"],
+  "additionalProperties": false
+}

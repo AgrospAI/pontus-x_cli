@@ -1,0 +1,5 @@
+accounts:
+  - name: Universitat de Lleida (UdL)
+    address: '0xd999baae98ac5246568fd726be8832c49626867d'
+    privateKeyPath: keys/d999baae98ac5246568fd726be8832c49626867d.json
+    passwordEnvKey: UDL_KEY_PASSWORD

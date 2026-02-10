@@ -1,6 +1,7 @@
 {
-    "recommendations": [
-        "redhat.vscode-yaml",
-        "kennylong.kubernetes-yaml-formatter"
-    ]
+  "recommendations": [
+    "redhat.vscode-yaml",
+    "kennylong.kubernetes-yaml-formatter",
+    "esbenp.prettier-vscode"
+  ]
 }

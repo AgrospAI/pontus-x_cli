@@ -32,7 +32,7 @@
     "pricing": {
       "type": "free"
     },
-    "datatoken": {"name": "Timeseries Forecasting Dataset", "symbol": "TFD"}
+    "datatoken": { "name": "Timeseries Forecasting Dataset", "symbol": "TFD" }
   },
   "trustOwnerAlgorithms": true,
   "allowAlgorithmNetworkAccess": false

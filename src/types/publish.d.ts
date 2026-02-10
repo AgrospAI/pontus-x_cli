@@ -5,47 +5,58 @@ import type {
   ServiceFileType,
   ServiceTypes,
   TrustedAlgorithmAsset,
-} from '@deltadao/nautilus'
-import type {Metadata, MetadataAlgorithm, ConsumerParameter} from '@oceanprotocol/ddo-js'
+} from "@deltadao/nautilus";
+import type {
+  ConsumerParameter,
+  Metadata,
+  MetadataAlgorithm,
+} from "@oceanprotocol/ddo-js";
 
-type ExtendedConsumerParameter = Omit<ConsumerParameter, 'options'> & {
-  options?: {[value: string]: string}[]
-}
+type ExtendedConsumerParameter = Omit<ConsumerParameter, "options"> & {
+  options?: { [value: string]: string }[];
+};
 
-type MetadataConfig = Omit<Metadata, 'created' | 'updated' | 'algorithm'> & {
+type MetadataConfig = Omit<
+  Metadata,
+  "algorithm" | "author" | "created" | "updated"
+> & {
   algorithm?: MetadataAlgorithm & {
-    consumerParameters?: ExtendedConsumerParameter[]
-  }
-}
+    consumerParameters?: ExtendedConsumerParameter[];
+  };
+  author?: string;
+  did?: string;
+  network?: string;
+  owner?: string;
+};
 
-export type PricingType = PricingConfig['type']
+export type PricingType = PricingConfig["type"];
 
 export default interface PublishConfig {
-  metadata: MetadataConfig
-  nftData: NftCreateDataWithoutOwner
+  allowAlgorithmNetworkAccess?: boolean;
   credentials?: {
-    allow?: string[]
-    deny?: string[]
-  }
-  trustedAlgorithms?: TrustedAlgorithmAsset[]
-  trustedAlgorithmPublishers?: string[]
-  trustOwnerAlgorithms?: boolean
-  allowAlgorithmNetworkAccess?: boolean
+    allow?: string[];
+    deny?: string[];
+  };
+  metadata: MetadataConfig;
+  nftData: NftCreateDataWithoutOwner;
   service: {
-    serviceType: ServiceTypes
-    fileType: FileTypes
-    serviceEndpoint: string
-    timeout: number
-    files: ServiceFileType[]
-    pricing: {
-      type: 'free' | 'fixed'
-      currency?: 'OCEAN' | 'EUROe'
-      amount?: number
-    }
+    consumerParameters?: ExtendedConsumerParameter[];
     datatoken: {
-      name: string
-      symbol: string
-    }
-    consumerParameters?: ExtendedConsumerParameter[]
-  }
+      name: string;
+      symbol: string;
+    };
+    files: ServiceFileType[];
+    fileType: FileTypes;
+    pricing: {
+      amount?: number;
+      currency?: "EURAU" | "EUROe" | "OCEAN";
+      type: "fixed" | "free";
+    };
+    serviceEndpoint: string;
+    serviceType: ServiceTypes;
+    timeout: number;
+  };
+  trustedAlgorithmPublishers?: string[];
+  trustedAlgorithms?: TrustedAlgorithmAsset[];
+  trustOwnerAlgorithms?: boolean;
 }

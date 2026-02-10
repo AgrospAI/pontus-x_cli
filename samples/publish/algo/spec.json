@@ -4,7 +4,15 @@
     "author": "Universitat de Lleida (UdL)",
     "name": "Exploratory Data Analysis",
     "description": "description.md",
-    "tags": ["eda", "exploratory data analysis", "profiling", "tabular-data", "pandas", "agrospai", "udl"],
+    "tags": [
+      "eda",
+      "exploratory data analysis",
+      "profiling",
+      "tabular-data",
+      "pandas",
+      "agrospai",
+      "udl"
+    ],
     "license": "MIT",
     "algorithm": {
       "container": {
@@ -39,6 +47,6 @@
     "pricing": {
       "type": "free"
     },
-    "datatoken": {"name": "UdL EDA Algo", "symbol": "UDL-EDA"}
+    "datatoken": { "name": "UdL EDA Algo", "symbol": "UDL-EDA" }
   }
 }

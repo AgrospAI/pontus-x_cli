@@ -5,6 +5,7 @@ The input data is loaded using pandas, then it's preprocessed in a generic way a
 The algorithm requires two input parameters, the dataset parameters, to tweak the training for the selected dataset, and the model paramenters, to select the trained model and its parameters.
 
 As of now, the possible parameters are:
+
 ##  dataset:
 
 - _'separator': str (default=None)_ separator character used to split the CSV.

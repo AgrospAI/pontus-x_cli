@@ -31,12 +31,7 @@
         },
         "type": {
           "description": "Field type.",
-          "enum": [
-            "text",
-            "number",
-            "boolean",
-            "select"
-          ],
+          "enum": ["text", "number", "boolean", "select"],
           "type": "string"
         }
       },
@@ -84,12 +79,7 @@
         },
         "type": {
           "description": "Field type.",
-          "enum": [
-            "text",
-            "number",
-            "boolean",
-            "select"
-          ],
+          "enum": ["text", "number", "boolean", "select"],
           "type": "string"
         }
       },
@@ -104,13 +94,7 @@
       "type": "object"
     },
     "FileTypes": {
-      "enum": [
-        "url",
-        "graphql",
-        "arweave",
-        "ipfs",
-        "smartcontract"
-      ],
+      "enum": ["url", "graphql", "arweave", "ipfs", "smartcontract"],
       "type": "string"
     },
     "MetadataConfig": {
@@ -157,12 +141,7 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "entrypoint",
-                "image",
-                "tag",
-                "checksum"
-              ],
+              "required": ["entrypoint", "image", "tag", "checksum"],
               "type": "object"
             },
             "language": {
@@ -178,13 +157,10 @@
               "type": "string"
             }
           },
-          "required": [
-            "container"
-          ],
+          "required": ["container"],
           "type": "object"
         },
         "author": {
-          "description": "Name of the entity generating this data (e.g. Tfl, Disney Corp, etc.).",
           "type": "string"
         },
         "categories": {
@@ -206,6 +182,9 @@
           "description": "Details of what the resource is.",
           "type": "string"
         },
+        "did": {
+          "type": "string"
+        },
         "license": {
           "description": "Short name referencing the license of the asset. If it’s not specified, the following value will be added: “No License Specified”.",
           "type": "string"
@@ -221,6 +200,12 @@
           "description": "Descriptive name or title of the asset.",
           "type": "string"
         },
+        "network": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
         "tags": {
           "description": "Array of keywords or tags used to describe this content. Empty by default.",
           "items": {
@@ -230,20 +215,11 @@
         },
         "type": {
           "description": "Asset type. Includes \"dataset\" (e.g. csv file), \"algorithm\" (e.g. Python script). Each type needs a different subset of metadata attributes.",
-          "enum": [
-            "dataset",
-            "algorithm"
-          ],
+          "enum": ["dataset", "algorithm"],
           "type": "string"
         }
       },
-      "required": [
-        "author",
-        "description",
-        "license",
-        "name",
-        "type"
-      ],
+      "required": ["description", "license", "name", "type"],
       "type": "object"
     },
     "NftCreateDataWithoutOwner": {
@@ -323,10 +299,7 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "name",
-                "symbol"
-              ],
+              "required": ["name", "symbol"],
               "type": "object"
             },
             "fileType": {
@@ -345,23 +318,15 @@
                   "type": "number"
                 },
                 "currency": {
-                  "enum": [
-                    "OCEAN",
-                    "EUROe"
-                  ],
+                  "enum": ["OCEAN", "EUROe", "EURAU"],
                   "type": "string"
                 },
                 "type": {
-                  "enum": [
-                    "free",
-                    "fixed"
-                  ],
+                  "enum": ["free", "fixed"],
                   "type": "string"
                 }
               },
-              "required": [
-                "type"
-              ],
+              "required": ["type"],
               "type": "object"
             },
             "serviceEndpoint": {
@@ -401,21 +366,14 @@
           "type": "array"
         }
       },
-      "required": [
-        "metadata",
-        "nftData",
-        "service"
-      ],
+      "required": ["metadata", "nftData", "service"],
       "type": "object"
     },
     "ServiceFileType": {
       "$ref": "#/definitions/UrlFile"
     },
     "ServiceTypes": {
-      "enum": [
-        "access",
-        "compute"
-      ],
+      "enum": ["access", "compute"],
       "type": "string"
     },
     "TrustedAlgorithmAsset": {
@@ -431,9 +389,7 @@
           "type": "array"
         }
       },
-      "required": [
-        "did"
-      ],
+      "required": ["did"],
       "type": "object"
     },
     "UrlFile": {
@@ -463,11 +419,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "type",
-        "url",
-        "method"
-      ],
+      "required": ["type", "url", "method"],
       "type": "object"
     }
   }

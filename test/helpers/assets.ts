@@ -1,114 +1,66 @@
-import Publish from '../../src/commands/publish'
-import Revoke from '../../src/commands/revoke'
-import {ALGORITHM1_SPEC, ALGORITHM2_SPEC, DATASET1_SPEC, DATASET2_SPEC, STATE_FILE} from '../config'
-import fs from 'node:fs'
+import fs from "node:fs";
+import dotenv from "dotenv";
+
+import Publish from "@/commands/publish";
+import Revoke from "@/commands/revoke";
+import { parseConfig } from "@/lib/spec";
+
+dotenv.config();
 
 interface Assets {
-  algorithm1Did: string
-  algorithm2Did: string
-  dataset1Did: string
-  dataset2Did: string
-  dataset3Did: string
+  algorithm1Did: string;
+  algorithm2Did: string;
+  dataset1Did: string;
+  dataset2Did: string;
+  dataset3Did: string;
 }
+
+export const assetPaths = {
+  algorithm1: "test/assets/algorithm1/spec.yaml",
+  algorithm2: "test/assets/algorithm2/spec.yaml",
+  dataset1: "test/assets/dataset1/spec.yaml",
+  dataset2: "test/assets/dataset2/spec.yaml",
+  dataset3: "test/assets/dataset3/spec.yaml",
+};
 
 export async function initializeAssets() {
-  console.log('🚀 Publishing assets for integration tests...')
-
-  const PublishAsset = async (spec: string) => {
-    console.log(`Publishing ${spec}...`)
-    const did = await Publish.run([spec])
-    console.log(`✅ Published ${spec}: ${did}`)
-    return did as string
-  }
-
-  // NOTE: we publish sequentially because parallel publishing throws errors
-  const algorithm1Did = await PublishAsset(ALGORITHM1_SPEC)
-  const algorithm2Did = await PublishAsset(ALGORITHM2_SPEC)
-  const dataset1Did = await PublishAsset(DATASET1_SPEC)
-  const dataset2Did = await PublishAsset(DATASET2_SPEC)
-  const dataset3Did = await PublishAsset(DATASET2_SPEC)
-
-  fs.writeFileSync(
-    STATE_FILE,
-    JSON.stringify(
-      {
-        algorithm1Did,
-        algorithm2Did,
-        dataset1Did,
-        dataset2Did,
-        dataset3Did,
-      },
-      null,
-      2,
-    ),
-  )
-
-  console.log('⏳ Waiting for assets to propagate on the network...')
-  await new Promise((resolve) => setTimeout(resolve, 5000))
-
-  console.log('✅ All assets ready for integration tests.')
-}
-
-export function getAssets() {
-  if (!fs.existsSync(STATE_FILE)) {
-    throw new Error('State file not found. Please run initializeAssets() first.')
-  }
-
-  const state = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'))
-
-  if (!state) {
-    throw new Error('No state found in state file. Please run initializeAssets() first.')
-  }
-
-  return state as Assets
+  console.log("🚀 Publishing assets for integration tests...");
+  await Publish.run(["./test/assets", "-r"]);
 }
 
 export async function revokeAssets() {
-  console.log('🛑 Revoking assets used in integration tests...')
-
-  if (!fs.existsSync(STATE_FILE)) {
-    console.log('No state file found, skipping revocation.')
-    return
-  }
-
-  const state = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'))
-
-  if (!state) {
-    console.log('No state found in state file, skipping revocation.')
-    return
-  }
-
-  const dids = Object.values(state) as string[]
-
-  if (dids.length === 0) {
-    console.log('No DIDs found in state file, skipping revocation.')
-    return
-  }
-
-  await Revoke.run([dids.join(' '), '-y'])
-
-  fs.unlinkSync(STATE_FILE)
-
-  console.log('✅ All assets revoked.')
+  console.log("🛑 Revoking assets used in integration tests...");
+  await Revoke.run(["-p", "./test/assets", "-r", "-y"]);
 }
 
-if (typeof require !== 'undefined' && require.main === module) {
-  const cmd = process.argv[2]
-  if (cmd === 'initializeAssets') {
-    initializeAssets().catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error(err)
-      process.exit(1)
-    })
-  } else if (cmd === 'revokeAssets') {
-    revokeAssets().catch((err) => {
-      // eslint-disable-next-line no-console
-      console.error(err)
-      process.exit(1)
-    })
-  } else {
-    // eslint-disable-next-line no-console
-    console.error('Usage: npx ts-node test/helpers/assets.ts <command>')
-    process.exit(2)
+export function getAssets(): Assets {
+  const dids = {} as any;
+  for (const [assetKey, assetPath] of Object.entries(assetPaths)) {
+    if (!fs.existsSync(assetPath)) {
+      throw new Error(`Asset file not found: ${assetPath}`);
+    }
+
+    const config = parseConfig(assetPath);
+
+    if (!config.metadata || !config.metadata.did) {
+      throw new Error(`Missing DID in asset config: ${assetPath}`);
+    }
+
+    dids[`${assetKey}Did`] = config.metadata.did;
   }
+
+  return dids as Assets;
+}
+
+if (typeof require !== "undefined" && require.main === module) {
+  (async () => {
+    const cmd = process.argv[2];
+    if (cmd === "initializeAssets") {
+      await initializeAssets();
+    } else if (cmd === "revokeAssets") {
+      await revokeAssets();
+    } else {
+      console.error("Usage: npx ts-node test/helpers/assets.ts <command>");
+    }
+  })();
 }

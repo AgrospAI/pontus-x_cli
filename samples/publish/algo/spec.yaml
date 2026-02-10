@@ -5,13 +5,13 @@ metadata:
   name: Exploratory Data Analysis
   description: description.md
   tags:
-  - eda
-  - exploratory data analysis
-  - profiling
-  - tabular-data
-  - pandas
-  - agrospai
-  - udl
+    - eda
+    - exploratory data analysis
+    - profiling
+    - tabular-data
+    - pandas
+    - agrospai
+    - udl
   license: MIT
   algorithm:
     container:
@@ -34,9 +34,9 @@ service:
   serviceEndpoint: 'https://provider.pontus-x.eu'
   timeout: 0
   files:
-  - method: GET
-    type: url
-    url: 'https://raw.githubusercontent.com/rogargon/ocean-algo/eda/eda.py'
+    - method: GET
+      type: url
+      url: 'https://raw.githubusercontent.com/rogargon/ocean-algo/eda/eda.py'
   pricing:
     type: free
   datatoken:

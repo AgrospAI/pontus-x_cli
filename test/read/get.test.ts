@@ -1,14 +1,13 @@
-import {test} from 'vitest'
+import { getAssets } from "@test/helpers/assets";
+import { withLogin } from "@test/helpers/login";
+import { test } from "vitest";
+import Get from "@/commands/get";
 
-import Get from '../../src/commands/get'
-import {withLogin} from '../helpers/login'
-import {getAssets} from '../helpers/assets'
-
-const did = getAssets().dataset1Did
+const did = getAssets().dataset1Did;
 
 test(
-  'get command retrieves asset metadata after login',
+  "get command retrieves asset metadata after login",
   withLogin(async () => {
-    await Get.run([did])
+    await Get.run([did]);
   }),
-)
+);

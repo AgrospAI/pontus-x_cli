@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
-export {run} from '@oclif/core'
+export { run } from "@oclif/core";

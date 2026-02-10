@@ -4,10 +4,5 @@
   "datetime_column": "Date",
   "split": 0.7,
   "lags": 3,
-  "periodicity": [
-    "day",
-    "week",
-    "month",
-    "year"
-  ]
+  "periodicity": ["day", "week", "month", "year"]
 }

@@ -11,10 +11,12 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@test/*": ["test/*"]
+    }
   },
-  "include": [
-    "src/**/*",
-    "src/**/*.json",
-  ]
+  "include": ["src/**/*", "src/**/*.json"]
 }

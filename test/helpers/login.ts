@@ -1,7 +1,8 @@
-import Login from '../../src/commands/login'
-import Logout from '../../src/commands/logout'
-import {PRIVATE_KEY_PASSWORD, PRIVATE_KEY_PATH} from '../config'
-import {getEnvVariable} from './env-mock'
+import { ACCOUNT_ADDRESS, MANIFEST_PATH } from "@test/config";
+import { getEnvVariable } from "@test/helpers/env-mock";
+import Login from "@/commands/login";
+import Logout from "@/commands/logout";
+import { getAccountByAddress, readManifest } from "@/lib/manifest";
 
 /**
  * Wraps a test body with login/logout
@@ -9,11 +10,22 @@ import {getEnvVariable} from './env-mock'
 export function withLogin(fn: () => Promise<void>) {
   return async () => {
     try {
-      await Login.run([PRIVATE_KEY_PATH, '-p', PRIVATE_KEY_PASSWORD])
-      process.env.PRIVATE_KEY = getEnvVariable('PRIVATE_KEY') ?? ''
-      await fn()
+      const manifest = readManifest(MANIFEST_PATH);
+      const account = getAccountByAddress(manifest, ACCOUNT_ADDRESS);
+
+      if (!account) {
+        throw new Error(
+          `Account with address ${ACCOUNT_ADDRESS} not found in manifest`,
+        );
+      }
+
+      const privateKey = account.privateKeyPath || "";
+      const password = process.env[account.passwordEnvKey] || "";
+      await Login.run([privateKey, "-p", password]);
+      process.env.PRIVATE_KEY = getEnvVariable("PRIVATE_KEY") ?? "";
+      await fn();
     } finally {
-      await Logout.run([])
+      await Logout.run([]);
     }
-  }
+  };
 }

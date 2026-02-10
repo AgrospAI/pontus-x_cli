@@ -1,11 +1,10 @@
-import {afterEach, beforeEach, vi} from 'vitest'
-
-import {resetEnvContent, setupEnvFsMock} from './helpers/env-mock'
+import { resetEnvContent, setupEnvFsMock } from "@test/helpers/env-mock";
+import { afterEach, beforeEach, vi } from "vitest";
 
 // let consoleOutput: string[] = []
 // export {consoleOutput}
 
-setupEnvFsMock()
+setupEnvFsMock();
 
 beforeEach(() => {
   // Capture console.log output
@@ -14,13 +13,10 @@ beforeEach(() => {
   //   consoleOutput.push(args.join(' '))
   // })
 
-  // Set required env variables for tests
-  process.env.NETWORK = 'PONTUSXDEV'
-
   // Reset in-memory .env before each test
-  resetEnvContent()
-})
+  resetEnvContent();
+});
 
 afterEach(() => {
-  vi.restoreAllMocks()
-})
+  vi.restoreAllMocks();
+});
