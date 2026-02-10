@@ -9,8 +9,6 @@ A new CLI generated with oclif
 <!-- toc -->
 * [pontus-x_cli](#pontus-x_cli)
 * [Usage](#usage)
-* [yaml-language-server: $schema=https://raw.githubusercontent.com/AgrospAI/pontus-x_cli/refs/heads/main/src/types/schema.json](#yaml-language-server-schemahttpsrawgithubusercontentcomagrospaipontus-x_clirefsheadsmainsrctypesschemajson)
-* [yaml-language-server: $schema=https://raw.githubusercontent.com/AgrospAI/pontus-x_cli/refs/heads/main/src/types/manifest-schema.json](#yaml-language-server-schemahttpsrawgithubusercontentcomagrospaipontus-x_clirefsheadsmainsrctypesmanifest-schemajson)
 * [Commands](#commands)
 * [Useful information](#useful-information)
 * [Development](#development)
@@ -24,7 +22,7 @@ $ npm install -g pontus-x_cli
 $ pontus-x_cli COMMAND
 running command...
 $ pontus-x_cli (--version)
-pontus-x_cli/1.1.4 linux-x64 node-v20.20.0
+pontus-x_cli/1.1.4 darwin-arm64 node-v20.19.4
 $ pontus-x_cli --help [COMMAND]
 USAGE
   $ pontus-x_cli COMMAND
@@ -37,7 +35,6 @@ USAGE
 Example:
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/AgrospAI/pontus-x_cli/refs/heads/main/src/types/schema.json
 metadata:
   type: algorithm
   author: Universitat de Lleida (UdL)
@@ -53,7 +50,6 @@ Check [samples/publish](samples/publish) folder for more examples.
 Example:
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/AgrospAI/pontus-x_cli/refs/heads/main/src/types/manifest-schema.json
 accounts:
   - name: Universitat de Lleida (UdL)
     address: '0xd999baae98ac5246568fd726be8832c49626867d'
@@ -64,8 +60,49 @@ accounts:
 # Commands
 
 <!-- commands -->
+* [`pontus-x_cli access DID`](#pontus-x_cli-access-did)
 * [`pontus-x_cli autocomplete [SHELL]`](#pontus-x_cli-autocomplete-shell)
+* [`pontus-x_cli change-price DID NEWPRICE`](#pontus-x_cli-change-price-did-newprice)
+* [`pontus-x_cli check-participant-compliance`](#pontus-x_cli-check-participant-compliance)
+* [`pontus-x_cli compute ALGO`](#pontus-x_cli-compute-algo)
+* [`pontus-x_cli compute-results JOBID`](#pontus-x_cli-compute-results-jobid)
+* [`pontus-x_cli compute-status JOBID`](#pontus-x_cli-compute-status-jobid)
+* [`pontus-x_cli edit-additional-metadata DID METADATAFILE`](#pontus-x_cli-edit-additional-metadata-did-metadatafile)
+* [`pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT`](#pontus-x_cli-edit-algo-did-image-tag-checksum-entrypoint)
+* [`pontus-x_cli edit-asset-url DID URL`](#pontus-x_cli-edit-asset-url-did-url)
+* [`pontus-x_cli edit-trusted-algos DID`](#pontus-x_cli-edit-trusted-algos-did)
+* [`pontus-x_cli export-private-key`](#pontus-x_cli-export-private-key)
+* [`pontus-x_cli generate-asset-credentials DID`](#pontus-x_cli-generate-asset-credentials-did)
+* [`pontus-x_cli generate-did-web`](#pontus-x_cli-generate-did-web)
+* [`pontus-x_cli generate-participant-credentials`](#pontus-x_cli-generate-participant-credentials)
+* [`pontus-x_cli get DID`](#pontus-x_cli-get-did)
 * [`pontus-x_cli help [COMMAND]`](#pontus-x_cli-help-command)
+* [`pontus-x_cli login KEYFILE`](#pontus-x_cli-login-keyfile)
+* [`pontus-x_cli logout`](#pontus-x_cli-logout)
+* [`pontus-x_cli publish PATH`](#pontus-x_cli-publish-path)
+* [`pontus-x_cli render [DID]`](#pontus-x_cli-render-did)
+* [`pontus-x_cli revoke`](#pontus-x_cli-revoke)
+* [`pontus-x_cli self-description DID SDURL`](#pontus-x_cli-self-description-did-sdurl)
+
+## `pontus-x_cli access DID`
+
+Access an asset that can be downloaded given its DID
+
+```
+USAGE
+  $ pontus-x_cli access DID
+
+ARGUMENTS
+  DID  DID of the asset
+
+DESCRIPTION
+  Access an asset that can be downloaded given its DID
+
+EXAMPLES
+  $ pontus-x_cli access did:op:af3e93c4f18903f91b108e7204b8a752e7605f4547ed507212bd6aca63af5686
+```
+
+_See code: [src/commands/access.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/access.ts)_
 
 ## `pontus-x_cli autocomplete [SHELL]`
 
@@ -98,6 +135,335 @@ EXAMPLES
 
 _See code: [@oclif/plugin-autocomplete](https://github.com/oclif/plugin-autocomplete/blob/v3.2.38/src/commands/autocomplete/index.ts)_
 
+## `pontus-x_cli change-price DID NEWPRICE`
+
+Change the price keeping the existing currency for an asset with the given DID
+
+```
+USAGE
+  $ pontus-x_cli change-price DID NEWPRICE [-y]
+
+ARGUMENTS
+  DID       DID of the asset
+  NEWPRICE  New price for the asset
+
+FLAGS
+  -y, --yes  Automatic yes to prompts
+
+DESCRIPTION
+  Change the price keeping the existing currency for an asset with the given DID
+
+EXAMPLES
+  $ pontus-x_cli change-price did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a 10
+```
+
+_See code: [src/commands/change-price.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/change-price.ts)_
+
+## `pontus-x_cli check-participant-compliance`
+
+Use Gaia-X Compliance to check a participant Verifiable Presentation
+
+```
+USAGE
+  $ pontus-x_cli check-participant-compliance -p <value> --vp <value>
+
+FLAGS
+  -p, --participant=<value>  (required) Path to the JSON file including the required participant data
+      --vp=<value>           (required) Path to the participant Verifiable Presentation file
+
+DESCRIPTION
+  Use Gaia-X Compliance to check a participant Verifiable Presentation
+
+EXAMPLES
+  $ pontus-x_cli check-participant-compliance -p ./CEP.data.json --vp ./CEP.vp.json
+```
+
+_See code: [src/commands/check-participant-compliance.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/check-participant-compliance.ts)_
+
+## `pontus-x_cli compute ALGO`
+
+Compute the algorithm on one or more datasets.
+
+```
+USAGE
+  $ pontus-x_cli compute ALGO [-d <value>...] [-t <value>...] [-y]
+
+ARGUMENTS
+  ALGO  Algorithm DID
+
+FLAGS
+  -d, --datasets=<value>...  Dataset DIDs
+  -t, --tags=<value>...      Tags to filter datasets (they must have all the provided tags)
+  -y, --yes                  Automatic yes to prompts
+
+DESCRIPTION
+  Compute the algorithm on one or more datasets.
+
+EXAMPLES
+  $ pontus-x_cli compute did:op:34e2f... -d did:op:d8a36... -d did:op:12b45...
+
+  $ pontus-x_cli compute did:op:34e2f... -t tag1 -t tag2
+```
+
+_See code: [src/commands/compute.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/compute.ts)_
+
+## `pontus-x_cli compute-results JOBID`
+
+Get the compute job results.
+
+```
+USAGE
+  $ pontus-x_cli compute-results JOBID -p <value>
+
+ARGUMENTS
+  JOBID  Compute job ID
+
+FLAGS
+  -p, --provider=<value>  (required) [default: https://provider.agrospai.udl.cat] The Provider URL
+
+DESCRIPTION
+  Get the compute job results.
+
+EXAMPLES
+  $ pontus-x_cli compute-results 215bae450c8f40f59bfc5d1ccada3931 -p https://provider.agrospai.udl.cat
+```
+
+_See code: [src/commands/compute-results.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/compute-results.ts)_
+
+## `pontus-x_cli compute-status JOBID`
+
+Check compute job status.
+
+```
+USAGE
+  $ pontus-x_cli compute-status JOBID -p <value>
+
+ARGUMENTS
+  JOBID  Compute job ID
+
+FLAGS
+  -p, --provider=<value>  (required) [default: https://provider.agrospai.udl.cat] The Provider URL
+
+DESCRIPTION
+  Check compute job status.
+
+EXAMPLES
+  $ pontus-x_cli compute-status 215bae450c8f40f59bfc5d1ccada3931 -p https://provider.agrospai.udl.cat
+```
+
+_See code: [src/commands/compute-status.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/compute-status.ts)_
+
+## `pontus-x_cli edit-additional-metadata DID METADATAFILE`
+
+Change the container additional metadata for a given DID
+
+```
+USAGE
+  $ pontus-x_cli edit-additional-metadata DID METADATAFILE [-y]
+
+ARGUMENTS
+  DID           Algorithm DID
+  METADATAFILE  JSON metadata file path
+
+FLAGS
+  -y, --yes  Skip confirmation prompt
+
+DESCRIPTION
+  Change the container additional metadata for a given DID
+
+EXAMPLES
+  $ pontus-x_cli edit-additional-metadata did:op:dcdb747f8feff3122c6d6c0f45a339a6e09415e721f98f61cc2c1d62ab35a21f ./metadata.json
+```
+
+_See code: [src/commands/edit-additional-metadata.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/edit-additional-metadata.ts)_
+
+## `pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT`
+
+Change the container metadata for a given algorithm DID
+
+```
+USAGE
+  $ pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT [-y]
+
+ARGUMENTS
+  DID         Algorithm DID
+  IMAGE       Container image
+  TAG         Container tag
+  CHECKSUM    Image checksum
+  ENTRYPOINT  Algorithm entrypoint
+
+FLAGS
+  -y, --yes  Skip confirmation prompt
+
+DESCRIPTION
+  Change the container metadata for a given algorithm DID
+
+EXAMPLES
+  $ pontus-x_cli edit-algo did:op:dcdb747f8feff3122c6d6c0f45a339a6e09415e721f98f61cc2c1d62ab35a21f rogargon/pandas-profiling 4.16 sha256:81dca5439f07dff4d56097546a9fce7335be3de8e2622dc105c64e54376f86b5 "python /algorithm/src/main.py"
+```
+
+_See code: [src/commands/edit-algo.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/edit-algo.ts)_
+
+## `pontus-x_cli edit-asset-url DID URL`
+
+Change the URL of an asset DID
+
+```
+USAGE
+  $ pontus-x_cli edit-asset-url DID URL [-y]
+
+ARGUMENTS
+  DID  DID of the asset
+  URL  New URL for the asset
+
+FLAGS
+  -y, --yes  Automatic yes to prompts
+
+DESCRIPTION
+  Change the URL of an asset DID
+
+EXAMPLES
+  $ pontus-x_cli edit-asset-url did:op:af3e93c4f18903f91b108e7204b8a752e7605f4547ed507212bd6aca63af5686 https://raw.githubusercontent.com/plotly/datasets/refs/heads/master/titanic.csv
+```
+
+_See code: [src/commands/edit-asset-url.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/edit-asset-url.ts)_
+
+## `pontus-x_cli edit-trusted-algos DID`
+
+Overwrite the trusted algorithms for a data asset to the provided algorithm DIDs
+
+```
+USAGE
+  $ pontus-x_cli edit-trusted-algos DID --algos <value>... [-y]
+
+ARGUMENTS
+  DID  DID of the asset
+
+FLAGS
+  -y, --yes               Skip confirmation prompt
+      --algos=<value>...  (required) Algorithm DIDs
+
+DESCRIPTION
+  Overwrite the trusted algorithms for a data asset to the provided algorithm DIDs
+
+EXAMPLES
+  $ pontus-x_cli edit-trusted-algos did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a --algos did:op:8f9994d01975cadd0196a2f7f811ed850e5d02a7223e7c5a31faaebe7371c81a did:op:0b970c95211cb8ef4574383386376646081bb7eb949b2a75e1e2171ea25949a7
+```
+
+_See code: [src/commands/edit-trusted-algos.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/edit-trusted-algos.ts)_
+
+## `pontus-x_cli export-private-key`
+
+Export your private key as a JSON file, to use later with the login command or for Pontus-X portals automation
+
+```
+USAGE
+  $ pontus-x_cli export-private-key [-f <value>] [-p <value>] [-k <value>]
+
+FLAGS
+  -f, --filepath=<value>    File path to save the encrypted private key (default is <address>.json)
+  -k, --privateKey=<value>  Your private key
+  -p, --password=<value>    Password to encrypt the private key file
+
+DESCRIPTION
+  Export your private key as a JSON file, to use later with the login command or for Pontus-X portals automation
+
+EXAMPLES
+  $ pontus-x_cli export-private-key
+```
+
+_See code: [src/commands/export-private-key.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/export-private-key.ts)_
+
+## `pontus-x_cli generate-asset-credentials DID`
+
+Generate the Gaia-X credentials for the input DID asset, including its verifiable presentation
+
+```
+USAGE
+  $ pontus-x_cli generate-asset-credentials DID -c <value> -d <value> -p <value> [-w <value>]
+
+ARGUMENTS
+  DID  DID of the asset
+
+FLAGS
+  -c, --certificate=<value>  (required) Path to the certificate.key file
+  -d, --didjson=<value>      (required) Path to the did.json file
+  -p, --participant=<value>  (required) Path to the JSON file including the required participant data
+  -w, --password=<value>     Password for the private key file (if not provided, it will be asked interactively)
+
+DESCRIPTION
+  Generate the Gaia-X credentials for the input DID asset, including its verifiable presentation
+
+EXAMPLES
+  $ pontus-x_cli generate-asset-credentials -p ./CEP.data.json -d ./did.json -c certificate.key did:op:01f8bc1e797a854dc718bd7a802acb07c5fc39f706b03dd454bceb66be6828c6
+```
+
+_See code: [src/commands/generate-asset-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/generate-asset-credentials.ts)_
+
+## `pontus-x_cli generate-did-web`
+
+Generate a did.json to set up a DID-Web source to publish Gaia-X complaint credentials
+
+```
+USAGE
+  $ pontus-x_cli generate-did-web -c <value> -d <value>
+
+FLAGS
+  -c, --certificate=<value>  (required) Path to the file with the certificate chain for the DID domain URL
+  -d, --domain=<value>       (required) URL where the DID-Web document will be hosted
+
+DESCRIPTION
+  Generate a did.json to set up a DID-Web source to publish Gaia-X complaint credentials
+
+EXAMPLES
+  $ pontus-x_cli generate-did-web -d <https://compliance.agrospai.udl.cat> -c certificate-chain.crt
+```
+
+_See code: [src/commands/generate-did-web.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/generate-did-web.ts)_
+
+## `pontus-x_cli generate-participant-credentials`
+
+Generate the Gaia-X credentials for the participant including their verifiable presentation
+
+```
+USAGE
+  $ pontus-x_cli generate-participant-credentials -c <value> -d <value> -p <value> [-w <value>]
+
+FLAGS
+  -c, --certificate=<value>  (required) Path to the certificate.key file
+  -d, --didjson=<value>      (required) Path to the did.json file
+  -p, --participant=<value>  (required) Path to the JSON file including the required participant data
+  -w, --password=<value>     Password for the private key file (if not provided, it will be asked interactively)
+
+DESCRIPTION
+  Generate the Gaia-X credentials for the participant including their verifiable presentation
+
+EXAMPLES
+  $ pontus-x_cli generate-participant-credentials -p ./CEP.data.json -d ./did.json -c certificate.key
+```
+
+_See code: [src/commands/generate-participant-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/generate-participant-credentials.ts)_
+
+## `pontus-x_cli get DID`
+
+Get the available metadata to the asset with the given DID
+
+```
+USAGE
+  $ pontus-x_cli get DID
+
+ARGUMENTS
+  DID  DID of the asset
+
+DESCRIPTION
+  Get the available metadata to the asset with the given DID
+
+EXAMPLES
+  $ pontus-x_cli get did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a
+```
+
+_See code: [src/commands/get.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/get.ts)_
+
 ## `pontus-x_cli help [COMMAND]`
 
 Display help for pontus-x_cli.
@@ -117,6 +483,143 @@ DESCRIPTION
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.34/src/commands/help.ts)_
+
+## `pontus-x_cli login KEYFILE`
+
+Login to retrieve your private key from a JSON key store and store it in .env
+
+```
+USAGE
+  $ pontus-x_cli login KEYFILE [-p <value>]
+
+ARGUMENTS
+  KEYFILE  Path to the keyFile.json
+
+FLAGS
+  -p, --password=<value>  Password to decrypt the key file
+
+DESCRIPTION
+  Login to retrieve your private key from a JSON key store and store it in .env
+
+EXAMPLES
+  $ pontus-x_cli login d999baae98ac5246568fd726be8832c49626867d.json
+```
+
+_See code: [src/commands/login.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/login.ts)_
+
+## `pontus-x_cli logout`
+
+Logout to remove your private key from .env file
+
+```
+USAGE
+  $ pontus-x_cli logout
+
+DESCRIPTION
+  Logout to remove your private key from .env file
+
+EXAMPLES
+  $ pontus-x_cli logout
+```
+
+_See code: [src/commands/logout.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/logout.ts)_
+
+## `pontus-x_cli publish PATH`
+
+Publish the asset as instructed in the provided script folder.
+
+```
+USAGE
+  $ pontus-x_cli publish PATH [--dry-run] [-m <value>] [-p <value>] [-r]
+
+ARGUMENTS
+  PATH  Path to find a JSON/YAML or TS file describing the asset to publish
+
+FLAGS
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the manifest file
+  -p, --provider=<value>  [default: https://provider.agrospai.udl.cat] The Provider URL
+  -r, --recursive         Recursively publish assets in a directory (only for JSON/YAML files)
+      --dry-run           Dry run the publishing process
+
+DESCRIPTION
+  Publish the asset as instructed in the provided script folder.
+
+EXAMPLES
+  $ pontus-x_cli publish samples/publish/algo/
+
+  $ pontus-x_cli publish samples/publish/algo/spec.json
+
+  $ pontus-x_cli publish samples/publish/algo/spec.yaml
+
+  $ pontus-x_cli publish samples/publish/algo/index.ts
+```
+
+_See code: [src/commands/publish.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/publish.ts)_
+
+## `pontus-x_cli render [DID]`
+
+```
+USAGE
+  $ pontus-x_cli render [DID] [-d <value>] [-t <value>...] [-a]
+
+ARGUMENTS
+  [DID]  Dataset DID
+
+FLAGS
+  -a, --onlyAccess       Only render datasets with an access service
+  -d, --dst=<value>      [default: rendered] Destination folder to save the rendered specs
+  -t, --tags=<value>...  Tags to filter datasets (they must have all the provided tags)
+```
+
+_See code: [src/commands/render.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/render.ts)_
+
+## `pontus-x_cli revoke`
+
+Publisher revocation of one or more owned DIDs
+
+```
+USAGE
+  $ pontus-x_cli revoke [-d <value>...] [-m <value>] [-p <value>...] [-r] [-y]
+
+FLAGS
+  -d, --dids=<value>...   DID to revoke
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the manifest file
+  -p, --paths=<value>...  Path to find a JSON/YAML file describing the assets to revoke
+  -r, --recursive         Recursively revoke assets in a directory (only for JSON/YAML files)
+  -y, --yes               Skip confirmation prompt
+
+DESCRIPTION
+  Publisher revocation of one or more owned DIDs
+
+EXAMPLES
+  $ pontus-x_cli revoke did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a did:op:abcee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7b
+```
+
+_See code: [src/commands/revoke.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/revoke.ts)_
+
+## `pontus-x_cli self-description DID SDURL`
+
+Associate Gaia-X Self-Description to the asset with the given DID
+
+```
+USAGE
+  $ pontus-x_cli self-description DID SDURL [-y]
+
+ARGUMENTS
+  DID    DID of the asset
+  SDURL  URL of the Self-Description
+
+FLAGS
+  -y, --yes  Skip confirmation prompt
+
+DESCRIPTION
+  Associate Gaia-X Self-Description to the asset with the given DID
+
+EXAMPLES
+  $ pontus-x_cli self-description did:op:d22954f2cbf6a85c897ce605c275cc786e099592cc59e3b7dd66b93e784bed8c https://example.com/self-description.json
+```
+
+_See code: [src/commands/self-description.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.1.4/src/commands/self-description.ts)_
 <!-- commandsstop -->
 
 # Useful information

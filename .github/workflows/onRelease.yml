@@ -2,8 +2,9 @@ name: publish
 
 on:
   release:
-    types: [published, released]
+    types: [ published, released ]
   workflow_dispatch:
+
 
 permissions:
   contents: read
@@ -13,12 +14,13 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: latest
-      - run: npm install
-      - run: npm run build
-      - run: npm run prepack
-      - run: npm publish --access public
-      - run: npm run postpack
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: latest
+    - run: npm install
+    - run: npm run build
+    - run: npm run prepack
+    - run: npm publish --access public
+    - run: npm run postpack
+    - run: npm run fix
