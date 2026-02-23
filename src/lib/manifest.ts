@@ -1,7 +1,11 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { parse } from "yaml";
 
 import { type Account, type Manifest, manifestSchema } from "../types/manifest";
+
+export function manifestExists(path: string): boolean {
+  return existsSync(path);
+}
 
 export function readManifest(path: string): Manifest {
   const raw = readFileSync(path, "utf8");

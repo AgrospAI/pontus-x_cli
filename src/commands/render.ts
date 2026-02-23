@@ -3,7 +3,7 @@ import path from "node:path";
 import { Args, Command, Flags } from "@oclif/core";
 import { stringify } from "yaml";
 
-import { GetDatasetsByTags } from "@/lib/aquarius";
+import { searchAssets } from "@/lib/aquarius";
 import { Connection } from "@/utils/connection";
 
 function getSpecFromAsset(asset: any): [any, string] {
@@ -70,7 +70,11 @@ async function getAssets(did?: string, tags?: string[]): Promise<any[]> {
 
   const chainIds = [connection.networkConfig.chainId];
   const { metadataCacheUri } = connection.networkConfig;
-  const datasets = await GetDatasetsByTags(tags, chainIds, metadataCacheUri);
+  const datasets = await searchAssets({
+    tagSets: [tags],
+    chainIds,
+    metadataCacheUri,
+  });
 
   const assets = await Promise.all(
     datasets.map((dataset) =>

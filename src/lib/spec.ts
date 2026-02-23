@@ -12,7 +12,7 @@ import { Wallet } from "ethers";
 import { parse, stringify } from "yaml";
 
 import { getAccountByAddress } from "@/lib/manifest";
-import { getPrivateKey } from "@/lib/wallet";
+import { readPrivateKey } from "@/lib/wallet";
 import type { Manifest } from "@/types/manifest";
 import type PublishConfig from "@/types/publish";
 import schema from "@/types/schema";
@@ -86,7 +86,10 @@ export async function getEnvironmentConfig(
     const account = getAccountByAddress(manifest, owner);
     const password = process.env[account?.passwordEnvKey || ""] || "";
     try {
-      privateKey = await getPrivateKey(account?.privateKeyPath || "", password);
+      privateKey = await readPrivateKey(
+        account?.privateKeyPath || "",
+        password,
+      );
     } catch (error) {
       console.error(
         `Failed to retrieve private key for owner ${owner}:`,

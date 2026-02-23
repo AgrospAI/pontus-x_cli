@@ -15,7 +15,7 @@ import { deleteKeyFromYaml } from "../lib/yaml";
 export default class Revoke extends Command {
   static description = "Publisher revocation of one or more owned DIDs";
   static examples: Command.Example[] = [
-    "<%= config.bin %> <%= command.id %> did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a did:op:abcee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7b",
+    "<%= config.bin %> <%= command.id %> -d did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a did:op:abcee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7b",
   ];
   static flags = {
     dids: Flags.string({

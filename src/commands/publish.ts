@@ -13,59 +13,6 @@ import {
   publishFromFile,
 } from "../lib/spec";
 
-async function invokeFunctionFromFile(
-  filePath: string,
-  functionName: string,
-  ...args: any[]
-) {
-  // Read the TypeScript file content
-  const tsContent = fs.readFileSync(filePath, "utf8");
-
-  // Transpile TypeScript to JavaScript
-  const jsContent = ts.transpileModule(tsContent, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS },
-  }).outputText;
-
-  // Create a new context for the script
-  const script = new vm.Script(jsContent);
-  const context = vm.createContext({ console, exports, module, require });
-
-  // Run the script in the context
-  script.runInContext(context);
-
-  // Invoke the function by name
-  if (typeof context[functionName] === "function") {
-    return context[functionName](...args);
-  }
-
-  throw new Error(`Function ${functionName} not found in ${filePath}`);
-}
-
-async function publish(
-  path: string,
-  provider: string,
-  dryRun: boolean,
-  connection: Connection,
-): Promise<string | undefined> {
-  if (path.endsWith(".ts")) {
-    const dirPath = path.split("/").slice(0, -1).join("/");
-    return invokeFunctionFromFile(
-      path,
-      "publish",
-      dirPath,
-      connection,
-      provider,
-      dryRun,
-    );
-  }
-
-  if (path.endsWith(".json") || path.endsWith(".yaml")) {
-    return publishFromFile(path, provider, connection, dryRun);
-  }
-
-  throw new Error("The provided file must be a .json/.yaml or .ts file");
-}
-
 export default class Publish extends Command {
   static args = {
     path: Args.directory({
@@ -211,4 +158,57 @@ export default class Publish extends Command {
       }
     }
   }
+}
+
+async function invokeFunctionFromFile(
+  filePath: string,
+  functionName: string,
+  ...args: any[]
+) {
+  // Read the TypeScript file content
+  const tsContent = fs.readFileSync(filePath, "utf8");
+
+  // Transpile TypeScript to JavaScript
+  const jsContent = ts.transpileModule(tsContent, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS },
+  }).outputText;
+
+  // Create a new context for the script
+  const script = new vm.Script(jsContent);
+  const context = vm.createContext({ console, exports, module, require });
+
+  // Run the script in the context
+  script.runInContext(context);
+
+  // Invoke the function by name
+  if (typeof context[functionName] === "function") {
+    return context[functionName](...args);
+  }
+
+  throw new Error(`Function ${functionName} not found in ${filePath}`);
+}
+
+async function publish(
+  path: string,
+  provider: string,
+  dryRun: boolean,
+  connection: Connection,
+): Promise<string | undefined> {
+  if (path.endsWith(".ts")) {
+    const dirPath = path.split("/").slice(0, -1).join("/");
+    return invokeFunctionFromFile(
+      path,
+      "publish",
+      dirPath,
+      connection,
+      provider,
+      dryRun,
+    );
+  }
+
+  if (path.endsWith(".json") || path.endsWith(".yaml")) {
+    return publishFromFile(path, provider, connection, dryRun);
+  }
+
+  throw new Error("The provided file must be a .json/.yaml or .ts file");
 }
