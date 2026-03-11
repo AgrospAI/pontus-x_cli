@@ -29,7 +29,7 @@ metadata:
         '@type': 'http://www.opengis.net/ont/geosparql#wktLiteral'
         '@value': 'POLYGON(( -8.8 40.95, -7.60 40.95, -7.60 42.00, -8.8 42.00, -8.8
           40.95 ))'
-  did: did:op:b8f6d6f9c5a63b508fe66233d5185cbd092014345b08402098700288f8217be1
+  did: did:op:587c47e2888282c91d7ba6fcab6aec093b0dbc14cb6eca89c4d45b897927d8b5
 nftData:
   name: Red Wine
   symbol: RED

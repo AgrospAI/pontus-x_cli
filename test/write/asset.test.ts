@@ -64,8 +64,9 @@ describe.sequential("Asset Commands", () => {
 
   test("edit-trusted-algos command updates trusted algorithms", async () => {
     await EditTrustedAlgos.run([
+      "-d",
       assets.dataset2Did,
-      "--algos",
+      "-a",
       assets.algorithm1Did,
       assets.algorithm2Did,
       "-y",

@@ -7,21 +7,34 @@ import type {
   TrustedAlgorithmAsset,
 } from "@deltadao/nautilus";
 import type {
-  ConsumerParameter,
   Metadata,
-  MetadataAlgorithm,
+  MetadataAlgorithm
 } from "@oceanprotocol/ddo-js";
 
-type ExtendedConsumerParameter = Omit<ConsumerParameter, "options"> & {
-  options?: { [value: string]: string }[];
+type Options = {
+  key: string,
+  value: string,
+};
+
+export type ExtendedConsumerParameter = {
+    name: string;
+    type: 'text' | 'number' | 'boolean' | 'select';
+    label: string;
+    required: boolean;
+    description: string;
+    default: string;
+    options?: Options[];
 };
 
 type MetadataConfig = Omit<
   Metadata,
   "algorithm" | "author" | "created" | "updated"
 > & {
-  algorithm?: MetadataAlgorithm & {
+  algorithm?: Omit<MetadataAlgorithm, "consumerParameters" | "container"> & {
     consumerParameters?: ExtendedConsumerParameter[];
+    container: Omit<MetadataAlgorithm["container"], "consumerParameters"> & {
+      consumerParameters?: ExtendedConsumerParameter[];
+    }
   };
   author?: string;
   did?: string;

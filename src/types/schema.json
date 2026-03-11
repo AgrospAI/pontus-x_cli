@@ -2,95 +2,36 @@
   "$ref": "#/definitions/PublishConfig",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
-    "ConsumerParameter": {
-      "additionalProperties": false,
-      "properties": {
-        "default": {
-          "description": "Field default value. For select types, string key of default option.",
-          "type": "string"
-        },
-        "description": {
-          "description": "Field description.",
-          "type": "string"
-        },
-        "label": {
-          "description": "Displayed field label.",
-          "type": "string"
-        },
-        "name": {
-          "description": "Parameter name.",
-          "type": "string"
-        },
-        "options": {
-          "description": "For select types, a list of options.",
-          "type": "string"
-        },
-        "required": {
-          "description": "Defines if customer input for this field is mandatory.",
-          "type": "boolean"
-        },
-        "type": {
-          "description": "Field type.",
-          "enum": ["text", "number", "boolean", "select"],
-          "type": "string"
-        }
-      },
-      "required": [
-        "name",
-        "type",
-        "label",
-        "required",
-        "description",
-        "default"
-      ],
-      "type": "object"
-    },
     "ExtendedConsumerParameter": {
       "additionalProperties": false,
       "properties": {
         "default": {
-          "description": "Field default value. For select types, string key of default option.",
           "type": "string"
         },
         "description": {
-          "description": "Field description.",
           "type": "string"
         },
         "label": {
-          "description": "Displayed field label.",
           "type": "string"
         },
         "name": {
-          "description": "Parameter name.",
           "type": "string"
         },
         "options": {
           "items": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object"
+            "$ref": "#/definitions/Options"
           },
           "type": "array"
         },
         "required": {
-          "description": "Defines if customer input for this field is mandatory.",
           "type": "boolean"
         },
         "type": {
-          "description": "Field type.",
           "enum": ["text", "number", "boolean", "select"],
           "type": "string"
         }
       },
-      "required": [
-        "default",
-        "description",
-        "label",
-        "name",
-        "required",
-        "type"
-      ],
+      "required": ["name", "type", "label", "required", "description", "default"],
       "type": "object"
     },
     "FileTypes": {
@@ -107,24 +48,21 @@
           "additionalProperties": false,
           "properties": {
             "consumerParameters": {
-              "description": "Array of objects describing the consumer parameters",
               "items": {
-                "$ref": "#/definitions/ConsumerParameter"
+                "$ref": "#/definitions/ExtendedConsumerParameter"
               },
               "type": "array"
             },
             "container": {
               "additionalProperties": false,
-              "description": "Object describing the Docker container image.",
               "properties": {
                 "checksum": {
                   "description": "Checksum of the Docker image.",
                   "type": "string"
                 },
                 "consumerParameters": {
-                  "description": "Array of objects describing the consumer parameters",
                   "items": {
-                    "$ref": "#/definitions/ConsumerParameter"
+                    "$ref": "#/definitions/ExtendedConsumerParameter"
                   },
                   "type": "array"
                 },
@@ -141,7 +79,7 @@
                   "type": "string"
                 }
               },
-              "required": ["entrypoint", "image", "tag", "checksum"],
+              "required": ["checksum", "entrypoint", "image", "tag"],
               "type": "object"
             },
             "language": {
@@ -241,13 +179,20 @@
           "type": "boolean"
         }
       },
-      "required": [
-        "name",
-        "symbol",
-        "templateIndex",
-        "tokenURI",
-        "transferable"
-      ],
+      "required": ["name", "symbol", "templateIndex", "tokenURI", "transferable"],
+      "type": "object"
+    },
+    "Options": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": ["key", "value"],
       "type": "object"
     },
     "PublishConfig": {
@@ -318,11 +263,11 @@
                   "type": "number"
                 },
                 "currency": {
-                  "enum": ["OCEAN", "EUROe", "EURAU"],
+                  "enum": ["EURAU", "EUROe", "OCEAN"],
                   "type": "string"
                 },
                 "type": {
-                  "enum": ["free", "fixed"],
+                  "enum": ["fixed", "free"],
                   "type": "string"
                 }
               },
@@ -339,15 +284,7 @@
               "type": "number"
             }
           },
-          "required": [
-            "serviceType",
-            "fileType",
-            "serviceEndpoint",
-            "timeout",
-            "files",
-            "pricing",
-            "datatoken"
-          ],
+          "required": ["datatoken", "files", "fileType", "pricing", "serviceEndpoint", "serviceType", "timeout"],
           "type": "object"
         },
         "trustOwnerAlgorithms": {

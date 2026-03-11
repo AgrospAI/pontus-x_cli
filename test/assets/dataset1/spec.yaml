@@ -15,7 +15,7 @@ metadata:
     - 'https://archive.ics.uci.edu/dataset/186/wine+quality'
   owner: '0xD999bAaE98AC5246568FD726be8832c49626867D'
   network: PONTUSXDEV
-  did: did:op:00ce5f01f380dc650d3475f2dcd806a69e62fbfd21982906173a11e1e0570bb5
+  did: did:op:2a6c7a2d8d16d96268655e370ceb620a852c7b3e4742f9b527e640b68a7a6c66
 nftData:
   name: Red Wine
   symbol: RED

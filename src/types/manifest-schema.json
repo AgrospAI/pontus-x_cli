@@ -7,46 +7,30 @@
       "items": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string"
-          },
           "address": {
             "type": "string"
           },
-          "privateKeyPath": {
+          "name": {
             "type": "string"
           },
           "passwordEnvKey": {
             "type": "string"
           },
-          "assets": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "key": {
-                  "type": "string"
-                },
-                "spec": {
-                  "type": "string"
-                },
-                "did": {
-                  "type": "string"
-                }
-              },
-              "required": ["spec"],
-              "additionalProperties": false
-            }
+          "privateKeyPath": {
+            "type": "string"
           }
         },
-        "required": ["address", "privateKeyPath", "passwordEnvKey", "assets"],
+        "required": [
+          "address",
+          "passwordEnvKey",
+          "privateKeyPath"
+        ],
         "additionalProperties": false
       }
     }
   },
-  "required": ["accounts"],
+  "required": [
+    "accounts"
+  ],
   "additionalProperties": false
 }
