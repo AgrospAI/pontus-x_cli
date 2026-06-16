@@ -31,7 +31,14 @@
           "type": "string"
         }
       },
-      "required": ["name", "type", "label", "required", "description", "default"],
+      "required": [
+        "name",
+        "type",
+        "label",
+        "required",
+        "description",
+        "default"
+      ],
       "type": "object"
     },
     "FileTypes": {
@@ -179,7 +186,13 @@
           "type": "boolean"
         }
       },
-      "required": ["name", "symbol", "templateIndex", "tokenURI", "transferable"],
+      "required": [
+        "name",
+        "symbol",
+        "templateIndex",
+        "tokenURI",
+        "transferable"
+      ],
       "type": "object"
     },
     "Options": {
@@ -284,7 +297,15 @@
               "type": "number"
             }
           },
-          "required": ["datatoken", "files", "fileType", "pricing", "serviceEndpoint", "serviceType", "timeout"],
+          "required": [
+            "datatoken",
+            "files",
+            "fileType",
+            "pricing",
+            "serviceEndpoint",
+            "serviceType",
+            "timeout"
+          ],
           "type": "object"
         },
         "trustOwnerAlgorithms": {

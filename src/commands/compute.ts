@@ -1,201 +1,236 @@
-import { NETWORK_CONFIGS, type Network } from '@/config'
-import { getAssetInfo, getAssetsFromDids, getOwnerName, searchAssets, type AssetInfo } from '@/lib/aquarius'
-import { PromptForAssets } from '@/utils/asset'
-import { Connection } from '@/utils/connection'
-import { askForNetwork, getEnvNetwork, getLoginInfos, type LoginInfo } from '@/utils/login'
-import { search, select } from '@inquirer/prompts'
-import type { ComputeJob } from '@oceanprotocol/lib'
-import { Args, Command, Flags } from '@oclif/core'
-import chalk from 'chalk'
-import fs from 'fs'
-import { setTimeout } from 'node:timers/promises'
-import readlineSync from 'readline-sync'
+import fs from "node:fs";
+import { setTimeout } from "node:timers/promises";
+import { search, select } from "@inquirer/prompts";
+import type { ComputeJob } from "@oceanprotocol/lib";
+import { Args, Command, Flags } from "@oclif/core";
+import chalk from "chalk";
+import readlineSync from "readline-sync";
+import { NETWORK_CONFIGS, type Network } from "@/config";
+import {
+  type AssetInfo,
+  getAssetInfo,
+  getAssetsFromDids,
+  getOwnerName,
+  searchAssets,
+} from "@/lib/aquarius";
+import { PromptForAssets } from "@/utils/asset";
+import { Connection } from "@/utils/connection";
+import {
+  askForNetwork,
+  getEnvNetwork,
+  getLoginInfos,
+  type LoginInfo,
+} from "@/utils/login";
 
 export default class Compute extends Command {
   static args = {
-    algorithm: Args.string({ description: 'Algorithm DID (did:op:...)' }),
-  }
-  static description = 'Compute the algorithm on one or more datasets.'
+    algorithm: Args.string({ description: "Algorithm DID (did:op:...)" }),
+  };
+  static description = "Compute the algorithm on one or more datasets.";
   static examples: Command.Example[] = [
-    '<%= config.bin %> <%= command.id %> <algorithmDid> -d <datasetDid1> <datasetDid2> ...',
-    '<%= config.bin %> <%= command.id %> <algorithmDid> -t <tag1> -t <tag2> ...',
-  ]
+    "<%= config.bin %> <%= command.id %> <algorithmDid> -d <datasetDid1> <datasetDid2> ...",
+    "<%= config.bin %> <%= command.id %> <algorithmDid> -t <tag1> -t <tag2> ...",
+  ];
   static flags = {
     datasets: Flags.string({
-      char: 'd',
-      description: 'Dataset DIDs (did:op:...)',
+      char: "d",
+      description: "Dataset DIDs (did:op:...)",
       multiple: true,
     }),
     yes: Flags.boolean({
-      char: 'y',
+      char: "y",
       default: false,
-      description: 'Automatic yes to prompts',
+      description: "Automatic yes to prompts",
     }),
     manifest: Flags.string({
-      char: 'm',
-      description: 'Path to manifest file with the accounts to use for authentication',
+      char: "m",
+      description:
+        "Path to manifest file with the accounts to use for authentication",
     }),
     algoParams: Flags.string({
-      char: 'a',
-      description: 'Path to algorithm parameters file with the algorithm execution parameters',
+      char: "a",
+      description:
+        "Path to algorithm parameters file with the algorithm execution parameters",
     }),
     network: Flags.string({
-      char: 'n',
-      description: 'Network to use (env: NETWORK)',
+      char: "n",
+      description: "Network to use (env: NETWORK)",
       options: Object.keys(NETWORK_CONFIGS),
     }),
-  }
+  };
 
   async run(): Promise<ComputeJob | ComputeJob[] | undefined> {
-    const { args, flags } = await this.parse(Compute)
+    const { args, flags } = await this.parse(Compute);
 
     // Network selection
-    const network = (flags.network as Network) || getEnvNetwork() || (await askForNetwork())
-    const chainId = NETWORK_CONFIGS[network].chainId
-    console.log(`${chalk.green('Using network:')} ${network}\n`)
+    const network =
+      (flags.network as Network) || getEnvNetwork() || (await askForNetwork());
+    const chainId = NETWORK_CONFIGS[network].chainId;
+    console.log(`${chalk.green("Using network:")} ${network}\n`);
 
-    var algoParams = {}
+    var algoParams = {};
     if (flags.algoParams) {
       try {
-        const jsonString = fs.readFileSync(flags.algoParams, 'utf-8')
-        algoParams = JSON.parse(jsonString)
+        const jsonString = fs.readFileSync(flags.algoParams, "utf-8");
+        algoParams = JSON.parse(jsonString);
       } catch (err) {
-        const message = err instanceof Error ? err.message : String(err)
-        this.error(`Error reading file: ${message}`)
+        const message = err instanceof Error ? err.message : String(err);
+        this.error(`Error reading file: ${message}`);
       }
     }
 
-    this.log('Algorithm parameters:', flags.parameters, Object.keys(algoParams))
+    this.log(
+      "Algorithm parameters:",
+      flags.parameters,
+      Object.keys(algoParams),
+    );
 
     // Authentication selection
-    const loginInfos = await getLoginInfos(flags.manifest)
-    const inputLoginInfo = loginInfos.length === 1 ? loginInfos[0] : null
+    const loginInfos = await getLoginInfos(flags.manifest);
+    const inputLoginInfo = loginInfos.length === 1 ? loginInfos[0] : null;
     if (inputLoginInfo) {
       console.log(
-        `${chalk.green('Using account:')} ${chalk.blue(inputLoginInfo.ownerAddress)} ${chalk.magenta(inputLoginInfo.ownerName)}\n`,
-      )
+        `${chalk.green("Using account:")} ${chalk.blue(inputLoginInfo.ownerAddress)} ${chalk.magenta(inputLoginInfo.ownerName)}\n`,
+      );
     }
-    const loginInfo = inputLoginInfo ?? (await askForAccountSelection(loginInfos))
+    const loginInfo =
+      inputLoginInfo ?? (await askForAccountSelection(loginInfos));
 
     // Algorithm selection
-    const inputAlgorithm = args.algorithm ? await getAssetInfo(args.algorithm) : null
+    const inputAlgorithm = args.algorithm
+      ? await getAssetInfo(args.algorithm)
+      : null;
     if (inputAlgorithm) {
-      console.log(`Algorithm to run: ${chalk.blue(inputAlgorithm.name)} (${chalk.gray(inputAlgorithm.did)})\n`)
+      console.log(
+        `Algorithm to run: ${chalk.blue(inputAlgorithm.name)} (${chalk.gray(inputAlgorithm.did)})\n`,
+      );
     }
-    const algorithm: AssetInfo = inputAlgorithm ?? (await askForAlgorithm(chainId))
+    const algorithm: AssetInfo =
+      inputAlgorithm ?? (await askForAlgorithm(chainId));
 
     // Datasets selection
-    const inputDatasets = flags.datasets ? await getAssetsFromDids(flags.datasets) : null
+    const inputDatasets = flags.datasets
+      ? await getAssetsFromDids(flags.datasets)
+      : null;
     if (inputDatasets) {
-      console.log('\nThe following assets will be used:')
+      console.log("\nThe following assets will be used:");
       for (const asset of inputDatasets) {
-        const ownerName = await getOwnerName(asset.owner)
+        const ownerName = await getOwnerName(asset.owner);
         console.log(
-          `${chalk.blue(asset.did)} | ${chalk.green(asset.created.split('T')[0])} | ${chalk.yellow(
+          `${chalk.blue(asset.did)} | ${chalk.green(asset.created.split("T")[0])} | ${chalk.yellow(
             ownerName,
           )} | ${chalk.magenta(asset.name)}`,
-        )
+        );
       }
     }
-    const datasets: AssetInfo[] = inputDatasets ?? (await askForDatasets(chainId))
+    const datasets: AssetInfo[] =
+      inputDatasets ?? (await askForDatasets(chainId));
 
     // Confirmation prompt
     if (
       !flags.yes &&
-      !readlineSync.keyInYNStrict('\nDo you want to proceed with running the algorithm on the selected datasets?')
+      !readlineSync.keyInYNStrict(
+        "\nDo you want to proceed with running the algorithm on the selected datasets?",
+      )
     ) {
-      console.log('Operation cancelled by the user.')
-      return
+      console.log("Operation cancelled by the user.");
+      return;
     }
 
     // Run compute
     const envOverrides = {
       NETWORK: network,
       PRIVATE_KEY: loginInfo.privateKey,
-    }
-    const connection = await Connection.connect(envOverrides)
+    };
+    const connection = await Connection.connect(envOverrides);
 
     try {
       const computeJob = await connection.nautilus.compute({
         algorithm: { did: algorithm.did, algocustomdata: algoParams },
         dataset: { did: datasets[0].did },
-        additionalDatasets: datasets.filter((_, i) => i > 0).map(dataset => ({ did: dataset.did })),
-      })
+        additionalDatasets: datasets
+          .filter((_, i) => i > 0)
+          .map((dataset) => ({ did: dataset.did })),
+      });
 
-      const firstDatasetAsset = await connection.nautilus.getAquariusAsset(datasets[0].did)
-      const provider = firstDatasetAsset.services[0].serviceEndpoint
+      const firstDatasetAsset = await connection.nautilus.getAquariusAsset(
+        datasets[0].did,
+      );
+      const provider = firstDatasetAsset.services[0].serviceEndpoint;
 
       if (Array.isArray(computeJob)) {
         for (const job of computeJob)
           this.log(
             `Compute started, check status using command:\n pontus-x_cli compute-status ${job.jobId} -p ${provider}\n`,
-          )
+          );
       } else {
         this.log(
           `Compute started, check status using command:\n pontus-x_cli compute-status ${computeJob.jobId} -p ${provider}\n`,
-        )
+        );
       }
 
-      return computeJob
+      return computeJob;
     } catch (error) {
-      this.error(`Error starting compute: ${error}`)
+      this.error(`Error starting compute: ${error}`);
     }
   }
 }
 
 async function askForDatasets(chainId: number): Promise<AssetInfo[]> {
-  console.log('\nSelect the filters to find the datasets you want to use:')
+  console.log("\nSelect the filters to find the datasets you want to use:");
   return PromptForAssets({
-    assetTypes: ['dataset'],
-    accessTypes: ['compute'],
+    assetTypes: ["dataset"],
+    accessTypes: ["compute"],
     chainIds: [chainId],
-  })
+  });
 }
 
 async function askForAlgorithm(chainId: number): Promise<AssetInfo> {
-  console.log('\nSelect an algorithm to run:')
+  console.log("\nSelect an algorithm to run:");
   const answer = await search({
-    message: 'Search for an algorithm by name:',
+    message: "Search for an algorithm by name:",
     pageSize: 10,
     source: async (input, { signal }) => {
       if (!input) {
-        return []
+        return [];
       }
 
-      await setTimeout(300)
-      if (signal.aborted) return []
+      await setTimeout(300);
+      if (signal.aborted) return [];
 
       const assets = await searchAssets({
-        assetTypes: ['algorithm'],
-        accessTypes: ['compute'],
+        assetTypes: ["algorithm"],
+        accessTypes: ["compute"],
         chainIds: [chainId],
         searchText: input,
         signal,
-      })
+      });
 
-      const choices = []
+      const choices = [];
 
       for (const asset of assets) {
-        const ownerName = await getOwnerName(asset.owner)
+        const ownerName = await getOwnerName(asset.owner);
         choices.push({
           name: `${asset.did}: ${asset.name} (${ownerName})`,
           value: asset,
-        })
+        });
       }
 
-      return choices
+      return choices;
     },
-  })
-  return answer
+  });
+  return answer;
 }
 
-async function askForAccountSelection(loginInfos: LoginInfo[]): Promise<LoginInfo> {
+async function askForAccountSelection(
+  loginInfos: LoginInfo[],
+): Promise<LoginInfo> {
   const answer = await select({
-    message: 'Select the account to use:',
-    choices: loginInfos.map(info => ({
+    message: "Select the account to use:",
+    choices: loginInfos.map((info) => ({
       name: `${info.ownerAddress} (${info.ownerName})`,
       value: info,
     })),
-  })
-  return answer
+  });
+  return answer;
 }

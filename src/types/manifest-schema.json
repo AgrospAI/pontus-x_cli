@@ -20,17 +20,11 @@
             "type": "string"
           }
         },
-        "required": [
-          "address",
-          "passwordEnvKey",
-          "privateKeyPath"
-        ],
+        "required": ["address", "passwordEnvKey", "privateKeyPath"],
         "additionalProperties": false
       }
     }
   },
-  "required": [
-    "accounts"
-  ],
+  "required": ["accounts"],
   "additionalProperties": false
 }
