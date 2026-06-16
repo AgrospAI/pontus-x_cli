@@ -108,6 +108,7 @@ export async function PromptForAssets({
     Number(
       await input({
         message: 'Query max. assets:',
+        default: '100',
       }),
     )
 
