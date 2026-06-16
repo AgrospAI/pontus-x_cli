@@ -1,0 +1,6 @@
+{
+  "title": "Auto-Profiling Report",
+  "sensitive": false,
+  "auto_detect_timeseries_column": true,
+  "timeseries_columns_name": []
+}
