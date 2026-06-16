@@ -22,7 +22,7 @@ $ npm install -g pontus-x_cli
 $ pontus-x_cli COMMAND
 running command...
 $ pontus-x_cli (--version)
-pontus-x_cli/1.2.6 darwin-arm64 node-v22.20.0
+pontus-x_cli/1.2.7 linux-x64 node-v22.22.3
 $ pontus-x_cli --help [COMMAND]
 USAGE
   $ pontus-x_cli COMMAND
@@ -106,7 +106,7 @@ EXAMPLES
   $ pontus-x_cli access did:op:af3e93c4f18903f91b108e7204b8a752e7605f4547ed507212bd6aca63af5686
 ```
 
-_See code: [src/commands/access.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/access.ts)_
+_See code: [src/commands/access.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/access.ts)_
 
 ## `pontus-x_cli autocomplete [SHELL]`
 
@@ -161,7 +161,7 @@ EXAMPLES
   $ pontus-x_cli change-price did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a 10
 ```
 
-_See code: [src/commands/change-price.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/change-price.ts)_
+_See code: [src/commands/change-price.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/change-price.ts)_
 
 ## `pontus-x_cli check-participant-compliance`
 
@@ -182,7 +182,7 @@ EXAMPLES
   $ pontus-x_cli check-participant-compliance -p ./CEP.data.json --vp ./CEP.vp.json
 ```
 
-_See code: [src/commands/check-participant-compliance.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/check-participant-compliance.ts)_
+_See code: [src/commands/check-participant-compliance.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/check-participant-compliance.ts)_
 
 ## `pontus-x_cli compute [ALGORITHM]`
 
@@ -190,7 +190,7 @@ Compute the algorithm on one or more datasets.
 
 ```
 USAGE
-  $ pontus-x_cli compute [ALGORITHM] [-d <value>...] [-y] [-m <value>] [-a <value>] [-d <value>] [-n
+  $ pontus-x_cli compute [ALGORITHM] [-d <value>...] [-y] [-m <value>] [-a <value>] [-n
     PONTUSXDEV|PONTUSXTEST]
 
 ARGUMENTS
@@ -213,7 +213,7 @@ EXAMPLES
   $ pontus-x_cli compute <algorithmDid> -t <tag1> -t <tag2> ...
 ```
 
-_See code: [src/commands/compute.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/compute.ts)_
+_See code: [src/commands/compute.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/compute.ts)_
 
 ## `pontus-x_cli compute-results JOBID`
 
@@ -236,7 +236,7 @@ EXAMPLES
   $ pontus-x_cli compute-results 215bae450c8f40f59bfc5d1ccada3931 -p https://provider.agrospai.udl.cat
 ```
 
-_See code: [src/commands/compute-results.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/compute-results.ts)_
+_See code: [src/commands/compute-results.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/compute-results.ts)_
 
 ## `pontus-x_cli compute-status JOBID`
 
@@ -259,7 +259,7 @@ EXAMPLES
   $ pontus-x_cli compute-status 215bae450c8f40f59bfc5d1ccada3931 -p https://provider.agrospai.udl.cat
 ```
 
-_See code: [src/commands/compute-status.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/compute-status.ts)_
+_See code: [src/commands/compute-status.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/compute-status.ts)_
 
 ## `pontus-x_cli edit-additional-metadata DID METADATAFILE`
 
@@ -283,7 +283,7 @@ EXAMPLES
   $ pontus-x_cli edit-additional-metadata did:op:dcdb747f8feff3122c6d6c0f45a339a6e09415e721f98f61cc2c1d62ab35a21f ./metadata.json
 ```
 
-_See code: [src/commands/edit-additional-metadata.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/edit-additional-metadata.ts)_
+_See code: [src/commands/edit-additional-metadata.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/edit-additional-metadata.ts)_
 
 ## `pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT`
 
@@ -310,7 +310,7 @@ EXAMPLES
   $ pontus-x_cli edit-algo did:op:dcdb747f8feff3122c6d6c0f45a339a6e09415e721f98f61cc2c1d62ab35a21f rogargon/pandas-profiling 4.16 sha256:81dca5439f07dff4d56097546a9fce7335be3de8e2622dc105c64e54376f86b5 "python /algorithm/src/main.py"
 ```
 
-_See code: [src/commands/edit-algo.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/edit-algo.ts)_
+_See code: [src/commands/edit-algo.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/edit-algo.ts)_
 
 ## `pontus-x_cli edit-asset-allowed`
 
@@ -338,7 +338,7 @@ EXAMPLES
   $ pontus-x_cli edit-asset-allowed -u 0xAbc123... --public
 ```
 
-_See code: [src/commands/edit-asset-allowed.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/edit-asset-allowed.ts)_
+_See code: [src/commands/edit-asset-allowed.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/edit-asset-allowed.ts)_
 
 ## `pontus-x_cli edit-asset-url DID URL`
 
@@ -362,7 +362,7 @@ EXAMPLES
   $ pontus-x_cli edit-asset-url did:op:af3e93c4f18903f91b108e7204b8a752e7605f4547ed507212bd6aca63af5686 https://raw.githubusercontent.com/plotly/datasets/refs/heads/master/titanic.csv
 ```
 
-_See code: [src/commands/edit-asset-url.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/edit-asset-url.ts)_
+_See code: [src/commands/edit-asset-url.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/edit-asset-url.ts)_
 
 ## `pontus-x_cli edit-trusted-algos`
 
@@ -388,7 +388,7 @@ EXAMPLES
   $ pontus-x_cli edit-trusted-algos -d <datasetDid1> <datasetDid2> ... -a <algorithmDid1> <algorithmDid2> ...
 ```
 
-_See code: [src/commands/edit-trusted-algos.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/edit-trusted-algos.ts)_
+_See code: [src/commands/edit-trusted-algos.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/edit-trusted-algos.ts)_
 
 ## `pontus-x_cli edit-trusted-publishers`
 
@@ -413,7 +413,7 @@ EXAMPLES
   $ pontus-x_cli edit-trusted-publishers -d <datasetDid1> <datasetDid2> ... -p <publisherDid1> <publisherDid2> ...
 ```
 
-_See code: [src/commands/edit-trusted-publishers.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/edit-trusted-publishers.ts)_
+_See code: [src/commands/edit-trusted-publishers.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/edit-trusted-publishers.ts)_
 
 ## `pontus-x_cli export-private-key`
 
@@ -435,7 +435,7 @@ EXAMPLES
   $ pontus-x_cli export-private-key
 ```
 
-_See code: [src/commands/export-private-key.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/export-private-key.ts)_
+_See code: [src/commands/export-private-key.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/export-private-key.ts)_
 
 ## `pontus-x_cli generate-asset-credentials DID`
 
@@ -461,7 +461,7 @@ EXAMPLES
   $ pontus-x_cli generate-asset-credentials -p ./CEP.data.json -d ./did.json -c certificate.key did:op:01f8bc1e797a854dc718bd7a802acb07c5fc39f706b03dd454bceb66be6828c6
 ```
 
-_See code: [src/commands/generate-asset-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/generate-asset-credentials.ts)_
+_See code: [src/commands/generate-asset-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/generate-asset-credentials.ts)_
 
 ## `pontus-x_cli generate-did-web`
 
@@ -482,7 +482,7 @@ EXAMPLES
   $ pontus-x_cli generate-did-web -d <https://compliance.agrospai.udl.cat> -c certificate-chain.crt
 ```
 
-_See code: [src/commands/generate-did-web.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/generate-did-web.ts)_
+_See code: [src/commands/generate-did-web.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/generate-did-web.ts)_
 
 ## `pontus-x_cli generate-manifest`
 
@@ -506,7 +506,7 @@ EXAMPLES
   $ pontus-x_cli generate-manifest --keys-dir ./keys --password-env KEY_PASSWORD --output manifest.yaml
 ```
 
-_See code: [src/commands/generate-manifest.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/generate-manifest.ts)_
+_See code: [src/commands/generate-manifest.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/generate-manifest.ts)_
 
 ## `pontus-x_cli generate-participant-credentials`
 
@@ -529,7 +529,7 @@ EXAMPLES
   $ pontus-x_cli generate-participant-credentials -p ./CEP.data.json -d ./did.json -c certificate.key
 ```
 
-_See code: [src/commands/generate-participant-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/generate-participant-credentials.ts)_
+_See code: [src/commands/generate-participant-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/generate-participant-credentials.ts)_
 
 ## `pontus-x_cli generate-private-keys`
 
@@ -555,7 +555,7 @@ EXAMPLES
   $ pontus-x_cli generate-private-keys --count 5 --output-dir ./keys
 ```
 
-_See code: [src/commands/generate-private-keys.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/generate-private-keys.ts)_
+_See code: [src/commands/generate-private-keys.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/generate-private-keys.ts)_
 
 ## `pontus-x_cli get DID`
 
@@ -575,7 +575,7 @@ EXAMPLES
   $ pontus-x_cli get did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a
 ```
 
-_See code: [src/commands/get.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/get.ts)_
+_See code: [src/commands/get.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/get.ts)_
 
 ## `pontus-x_cli help [COMMAND]`
 
@@ -618,7 +618,7 @@ EXAMPLES
   $ pontus-x_cli login d999baae98ac5246568fd726be8832c49626867d.json
 ```
 
-_See code: [src/commands/login.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/login.ts)_
+_See code: [src/commands/login.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/login.ts)_
 
 ## `pontus-x_cli logout`
 
@@ -635,7 +635,7 @@ EXAMPLES
   $ pontus-x_cli logout
 ```
 
-_See code: [src/commands/logout.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/logout.ts)_
+_See code: [src/commands/logout.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/logout.ts)_
 
 ## `pontus-x_cli publish PATH`
 
@@ -667,7 +667,7 @@ EXAMPLES
   $ pontus-x_cli publish samples/publish/algo/index.ts
 ```
 
-_See code: [src/commands/publish.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/publish.ts)_
+_See code: [src/commands/publish.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/publish.ts)_
 
 ## `pontus-x_cli render [DID]`
 
@@ -684,7 +684,7 @@ FLAGS
   -t, --tags=<value>...  Tags to filter datasets (they must have all the provided tags)
 ```
 
-_See code: [src/commands/render.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/render.ts)_
+_See code: [src/commands/render.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/render.ts)_
 
 ## `pontus-x_cli revoke`
 
@@ -708,7 +708,7 @@ EXAMPLES
   $ pontus-x_cli revoke -d did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a did:op:abcee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7b
 ```
 
-_See code: [src/commands/revoke.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/revoke.ts)_
+_See code: [src/commands/revoke.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/revoke.ts)_
 
 ## `pontus-x_cli self-description DID SDURL`
 
@@ -732,7 +732,7 @@ EXAMPLES
   $ pontus-x_cli self-description did:op:d22954f2cbf6a85c897ce605c275cc786e099592cc59e3b7dd66b93e784bed8c https://example.com/self-description.json
 ```
 
-_See code: [src/commands/self-description.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/self-description.ts)_
+_See code: [src/commands/self-description.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.7/src/commands/self-description.ts)_
 <!-- commandsstop -->
 
 # Useful information
