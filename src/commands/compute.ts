@@ -118,7 +118,7 @@ export default class Compute extends Command {
     try {
       const computeJob = await connection.nautilus.compute({
         algorithm: { did: algorithm.did, algocustomdata: algoParams },
-        dataset: { did: datasets[0].did, userdata: dataParams },
+        dataset: { did: datasets[0].did },
         additionalDatasets: datasets.filter((_, i) => i > 0).map(dataset => ({ did: dataset.did })),
       })
 

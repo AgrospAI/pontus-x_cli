@@ -22,7 +22,7 @@ $ npm install -g pontus-x_cli
 $ pontus-x_cli COMMAND
 running command...
 $ pontus-x_cli (--version)
-pontus-x_cli/1.2.6 linux-x64 node-v20.20.2
+pontus-x_cli/1.2.6 darwin-arm64 node-v22.20.0
 $ pontus-x_cli --help [COMMAND]
 USAGE
   $ pontus-x_cli COMMAND
@@ -69,13 +69,16 @@ accounts:
 * [`pontus-x_cli compute-status JOBID`](#pontus-x_cli-compute-status-jobid)
 * [`pontus-x_cli edit-additional-metadata DID METADATAFILE`](#pontus-x_cli-edit-additional-metadata-did-metadatafile)
 * [`pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT`](#pontus-x_cli-edit-algo-did-image-tag-checksum-entrypoint)
+* [`pontus-x_cli edit-asset-allowed`](#pontus-x_cli-edit-asset-allowed)
 * [`pontus-x_cli edit-asset-url DID URL`](#pontus-x_cli-edit-asset-url-did-url)
 * [`pontus-x_cli edit-trusted-algos`](#pontus-x_cli-edit-trusted-algos)
 * [`pontus-x_cli edit-trusted-publishers`](#pontus-x_cli-edit-trusted-publishers)
 * [`pontus-x_cli export-private-key`](#pontus-x_cli-export-private-key)
 * [`pontus-x_cli generate-asset-credentials DID`](#pontus-x_cli-generate-asset-credentials-did)
 * [`pontus-x_cli generate-did-web`](#pontus-x_cli-generate-did-web)
+* [`pontus-x_cli generate-manifest`](#pontus-x_cli-generate-manifest)
 * [`pontus-x_cli generate-participant-credentials`](#pontus-x_cli-generate-participant-credentials)
+* [`pontus-x_cli generate-private-keys`](#pontus-x_cli-generate-private-keys)
 * [`pontus-x_cli get DID`](#pontus-x_cli-get-did)
 * [`pontus-x_cli help [COMMAND]`](#pontus-x_cli-help-command)
 * [`pontus-x_cli login KEYFILE`](#pontus-x_cli-login-keyfile)
@@ -187,12 +190,14 @@ Compute the algorithm on one or more datasets.
 
 ```
 USAGE
-  $ pontus-x_cli compute [ALGORITHM] [-d <value>...] [-y] [-m <value>] [-n PONTUSXDEV|PONTUSXTEST]
+  $ pontus-x_cli compute [ALGORITHM] [-d <value>...] [-y] [-m <value>] [-a <value>] [-d <value>] [-n
+    PONTUSXDEV|PONTUSXTEST]
 
 ARGUMENTS
   [ALGORITHM]  Algorithm DID (did:op:...)
 
 FLAGS
+  -a, --algoParams=<value>   Path to algorithm parameters file with the algorithm execution parameters
   -d, --datasets=<value>...  Dataset DIDs (did:op:...)
   -m, --manifest=<value>     Path to manifest file with the accounts to use for authentication
   -n, --network=<option>     Network to use (env: NETWORK)
@@ -306,6 +311,34 @@ EXAMPLES
 ```
 
 _See code: [src/commands/edit-algo.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/edit-algo.ts)_
+
+## `pontus-x_cli edit-asset-allowed`
+
+Overwrite the list of allowed users for assets
+
+```
+USAGE
+  $ pontus-x_cli edit-asset-allowed [-u <value>...] [-d <value>...] [-y] [-m <value>] [-p] [-n PONTUSXDEV|PONTUSXTEST]
+
+FLAGS
+  -d, --datasets=<value>...  Asset DIDs to edit (did:op:...)
+  -m, --manifest=<value>     Path to manifest file with the accounts to use for authentication
+  -n, --network=<option>     Network to use (env: NETWORK)
+                             <options: PONTUSXDEV|PONTUSXTEST>
+  -p, --public               Make assets public (remove all address restrictions)
+  -u, --users=<value>...     Ethereum addresses of users to allow (0x...)
+  -y, --yes                  Skip confirmation prompt
+
+DESCRIPTION
+  Overwrite the list of allowed users for assets
+
+EXAMPLES
+  $ pontus-x_cli edit-asset-allowed -u 0xAbc123... 0xDef456... -d <assetDid1> <assetDid2>
+
+  $ pontus-x_cli edit-asset-allowed -u 0xAbc123... --public
+```
+
+_See code: [src/commands/edit-asset-allowed.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/edit-asset-allowed.ts)_
 
 ## `pontus-x_cli edit-asset-url DID URL`
 
@@ -451,6 +484,30 @@ EXAMPLES
 
 _See code: [src/commands/generate-did-web.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/generate-did-web.ts)_
 
+## `pontus-x_cli generate-manifest`
+
+Generate a YAML manifest file from a folder of encrypted key JSON files
+
+```
+USAGE
+  $ pontus-x_cli generate-manifest -k <value> -e <value> [-o <value>]
+
+FLAGS
+  -e, --password-env=<value>  (required) Environment variable name to use as passwordEnvKey for all accounts
+  -k, --keys-dir=<value>      (required) Directory containing the encrypted key JSON files
+  -o, --output=<value>        [default: manifest.yaml] Output YAML file path (default: manifest.yaml)
+
+DESCRIPTION
+  Generate a YAML manifest file from a folder of encrypted key JSON files
+
+EXAMPLES
+  $ pontus-x_cli generate-manifest --keys-dir ./keys --password-env KEY_PASSWORD
+
+  $ pontus-x_cli generate-manifest --keys-dir ./keys --password-env KEY_PASSWORD --output manifest.yaml
+```
+
+_See code: [src/commands/generate-manifest.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/generate-manifest.ts)_
+
 ## `pontus-x_cli generate-participant-credentials`
 
 Generate the Gaia-X credentials for the participant including their verifiable presentation
@@ -473,6 +530,32 @@ EXAMPLES
 ```
 
 _See code: [src/commands/generate-participant-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/generate-participant-credentials.ts)_
+
+## `pontus-x_cli generate-private-keys`
+
+Export accounts derived from a mnemonic phrase as encrypted JSON files, to use later with the login command or for Pontus-X portals automation
+
+```
+USAGE
+  $ pontus-x_cli generate-private-keys [-c <value>] [-o <value>] [-p <value>] [-m <value>]
+
+FLAGS
+  -c, --count=<value>       [default: 1] Number of accounts to generate (default is 1)
+  -m, --mnemonic=<value>    Your BIP39 mnemonic phrase
+  -o, --output-dir=<value>  [default: .] Directory to save the encrypted JSON files (default is current directory)
+  -p, --password=<value>    Password to encrypt the key files
+
+DESCRIPTION
+  Export accounts derived from a mnemonic phrase as encrypted JSON files, to use later with the login command or for
+  Pontus-X portals automation
+
+EXAMPLES
+  $ pontus-x_cli generate-private-keys
+
+  $ pontus-x_cli generate-private-keys --count 5 --output-dir ./keys
+```
+
+_See code: [src/commands/generate-private-keys.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.6/src/commands/generate-private-keys.ts)_
 
 ## `pontus-x_cli get DID`
 
