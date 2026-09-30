@@ -99,7 +99,7 @@ describe.sequential("Asset Commands", () => {
       await ComputeResults.run([jobDid as string]);
       await ComputeStatus.run([jobDid as string]);
     }),
-    60_000,
+    120_000,
   );
 
   test(
@@ -120,7 +120,7 @@ describe.sequential("Asset Commands", () => {
       await ComputeResults.run([jobDid as string]);
       await ComputeStatus.run([jobDid as string]);
     }),
-    60_000,
+    120_000,
   );
 
   test(

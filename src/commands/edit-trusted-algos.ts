@@ -76,11 +76,11 @@ export default class EditTrustedAlgos extends Command {
     printLoginInfos(loginInfos);
 
     // Datasets selection
-    const assets: AssetInfo[] = flags.dids
-      ? await getAssetsFromDids(flags.dids)
+    const assets: AssetInfo[] = flags.datasets
+      ? await getAssetsFromDids(flags.datasets)
       : await askForDatasets(loginInfos, chainId);
 
-    if (flags.dids) {
+    if (flags.datasets) {
       console.log(`\nThe following assets will be edited ${assets.length}:`);
       for (const asset of assets) {
         const ownerName = await getOwnerName(asset.owner);
@@ -109,7 +109,7 @@ export default class EditTrustedAlgos extends Command {
           "\nNo algorithms selected, the dataset will be set as private (no trusted algorithms).",
         );
       } else {
-        if (flags.algos) {
+        if (flags.algorithms) {
           console.log("\nThe following algorithms will be set as trusted:");
           for (const algo of algorithms) {
             const ownerName = await getOwnerName(algo.owner);

@@ -23,7 +23,7 @@ metadata:
     version: '0.2'
   owner: '0xD999bAaE98AC5246568FD726be8832c49626867D'
   network: PONTUSXDEV
-  did: did:op:2d5783ccded4ec99ea06730702a3a31229ee58e181d9773dd00d973b74d95a6e
+  did: did:op:f67b9ebb054682a3f78590d3e5e6b8e1d43ec304c0cdb7ff2c403dbe69455799
 nftData:
   name: UdL EDA Algo
   symbol: UDL-EDA

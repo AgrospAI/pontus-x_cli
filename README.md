@@ -7,16 +7,18 @@ A new CLI generated with oclif
 [![Downloads/week](https://img.shields.io/npm/dw/pontus-x_cli.svg)](https://npmjs.org/package/pontus-x_cli)
 
 <!-- toc -->
-* [pontus-x_cli](#pontus-x_cli)
-* [Usage](#usage)
-* [Commands](#commands)
-* [Useful information](#useful-information)
-* [Development](#development)
+
+- [pontus-x_cli](#pontus-x_cli)
+- [Usage](#usage)
+- [Commands](#commands)
+- [Useful information](#useful-information)
+- [Development](#development)
 <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g pontus-x_cli
 $ pontus-x_cli COMMAND
@@ -28,6 +30,7 @@ USAGE
   $ pontus-x_cli COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 ## Spec declarative format
@@ -60,33 +63,34 @@ accounts:
 # Commands
 
 <!-- commands -->
-* [`pontus-x_cli access DID`](#pontus-x_cli-access-did)
-* [`pontus-x_cli autocomplete [SHELL]`](#pontus-x_cli-autocomplete-shell)
-* [`pontus-x_cli change-price DID NEWPRICE`](#pontus-x_cli-change-price-did-newprice)
-* [`pontus-x_cli check-participant-compliance`](#pontus-x_cli-check-participant-compliance)
-* [`pontus-x_cli compute [ALGORITHM]`](#pontus-x_cli-compute-algorithm)
-* [`pontus-x_cli compute-results JOBID`](#pontus-x_cli-compute-results-jobid)
-* [`pontus-x_cli compute-status JOBID`](#pontus-x_cli-compute-status-jobid)
-* [`pontus-x_cli edit-additional-metadata DID METADATAFILE`](#pontus-x_cli-edit-additional-metadata-did-metadatafile)
-* [`pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT`](#pontus-x_cli-edit-algo-did-image-tag-checksum-entrypoint)
-* [`pontus-x_cli edit-asset-allowed`](#pontus-x_cli-edit-asset-allowed)
-* [`pontus-x_cli edit-asset-url DID URL`](#pontus-x_cli-edit-asset-url-did-url)
-* [`pontus-x_cli edit-trusted-algos`](#pontus-x_cli-edit-trusted-algos)
-* [`pontus-x_cli edit-trusted-publishers`](#pontus-x_cli-edit-trusted-publishers)
-* [`pontus-x_cli export-private-key`](#pontus-x_cli-export-private-key)
-* [`pontus-x_cli generate-asset-credentials DID`](#pontus-x_cli-generate-asset-credentials-did)
-* [`pontus-x_cli generate-did-web`](#pontus-x_cli-generate-did-web)
-* [`pontus-x_cli generate-manifest`](#pontus-x_cli-generate-manifest)
-* [`pontus-x_cli generate-participant-credentials`](#pontus-x_cli-generate-participant-credentials)
-* [`pontus-x_cli generate-private-keys`](#pontus-x_cli-generate-private-keys)
-* [`pontus-x_cli get DID`](#pontus-x_cli-get-did)
-* [`pontus-x_cli help [COMMAND]`](#pontus-x_cli-help-command)
-* [`pontus-x_cli login KEYFILE`](#pontus-x_cli-login-keyfile)
-* [`pontus-x_cli logout`](#pontus-x_cli-logout)
-* [`pontus-x_cli publish PATH`](#pontus-x_cli-publish-path)
-* [`pontus-x_cli render [DID]`](#pontus-x_cli-render-did)
-* [`pontus-x_cli revoke`](#pontus-x_cli-revoke)
-* [`pontus-x_cli self-description DID SDURL`](#pontus-x_cli-self-description-did-sdurl)
+
+- [`pontus-x_cli access DID`](#pontus-x_cli-access-did)
+- [`pontus-x_cli autocomplete [SHELL]`](#pontus-x_cli-autocomplete-shell)
+- [`pontus-x_cli change-price DID NEWPRICE`](#pontus-x_cli-change-price-did-newprice)
+- [`pontus-x_cli check-participant-compliance`](#pontus-x_cli-check-participant-compliance)
+- [`pontus-x_cli compute [ALGORITHM]`](#pontus-x_cli-compute-algorithm)
+- [`pontus-x_cli compute-results JOBID`](#pontus-x_cli-compute-results-jobid)
+- [`pontus-x_cli compute-status JOBID`](#pontus-x_cli-compute-status-jobid)
+- [`pontus-x_cli edit-additional-metadata DID METADATAFILE`](#pontus-x_cli-edit-additional-metadata-did-metadatafile)
+- [`pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT`](#pontus-x_cli-edit-algo-did-image-tag-checksum-entrypoint)
+- [`pontus-x_cli edit-asset-allowed`](#pontus-x_cli-edit-asset-allowed)
+- [`pontus-x_cli edit-asset-url DID URL`](#pontus-x_cli-edit-asset-url-did-url)
+- [`pontus-x_cli edit-trusted-algos`](#pontus-x_cli-edit-trusted-algos)
+- [`pontus-x_cli edit-trusted-publishers`](#pontus-x_cli-edit-trusted-publishers)
+- [`pontus-x_cli export-private-key`](#pontus-x_cli-export-private-key)
+- [`pontus-x_cli generate-asset-credentials DID`](#pontus-x_cli-generate-asset-credentials-did)
+- [`pontus-x_cli generate-did-web`](#pontus-x_cli-generate-did-web)
+- [`pontus-x_cli generate-manifest`](#pontus-x_cli-generate-manifest)
+- [`pontus-x_cli generate-participant-credentials`](#pontus-x_cli-generate-participant-credentials)
+- [`pontus-x_cli generate-private-keys`](#pontus-x_cli-generate-private-keys)
+- [`pontus-x_cli get DID`](#pontus-x_cli-get-did)
+- [`pontus-x_cli help [COMMAND]`](#pontus-x_cli-help-command)
+- [`pontus-x_cli login KEYFILE`](#pontus-x_cli-login-keyfile)
+- [`pontus-x_cli logout`](#pontus-x_cli-logout)
+- [`pontus-x_cli publish PATH`](#pontus-x_cli-publish-path)
+- [`pontus-x_cli render [DID]`](#pontus-x_cli-render-did)
+- [`pontus-x_cli revoke`](#pontus-x_cli-revoke)
+- [`pontus-x_cli self-description DID SDURL`](#pontus-x_cli-self-description-did-sdurl)
 
 ## `pontus-x_cli access DID`
 
@@ -733,6 +737,7 @@ EXAMPLES
 ```
 
 _See code: [src/commands/self-description.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v1.2.8/src/commands/self-description.ts)_
+
 <!-- commandsstop -->
 
 # Useful information
@@ -856,10 +861,16 @@ npm run test:clean
 npm run test
 ```
 
+### Run a specific test
+
+```sh
+npm run test -t TEST_NAME # example: "run login writes PRIVATE_KEY", etc.
+```
+
 ### Run a specific test file once
 
 ```sh
-npm run test TEST_NAME # example: access, login, get, etc.
+npm run test TEST_FILE_NAME # example: access, login, get, etc.
 ```
 
 ### Run a specific test folder
