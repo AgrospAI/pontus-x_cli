@@ -33,6 +33,45 @@ export async function getAssetInfo(
   did: string,
   metadataCacheUri: string = "https://aquarius.pontus-x.eu",
 ): Promise<AssetInfo> {
+  if (did.startsWith("did:ope:")) {
+    try {
+      const { Connection } = await import("@/utils/connection");
+      const connection = await Connection.connect();
+      const asset = await connection.nautilus.getAsset(did);
+      const metadata =
+        (asset as any).credentialSubject?.metadata ||
+        (asset as any).metadata ||
+        {};
+      const owner =
+        (asset as any).credentialSubject?.owner ||
+        (asset as any).indexedMetadata?.nft?.owner ||
+        (asset as any).nft?.owner ||
+        (asset as any).issuer ||
+        "";
+      const created =
+        (asset as any).credentialSubject?.metadata?.created ||
+        metadata?.created ||
+        (asset as any).indexedMetadata?.nft?.created ||
+        new Date().toISOString();
+      const chainId =
+        (asset as any).credentialSubject?.chainId ||
+        (asset as any).chainId ||
+        connection.networkConfig.chainId;
+
+      return {
+        did,
+        name: metadata.name || did,
+        owner,
+        created,
+        chainId,
+      };
+    } catch (error: any) {
+      throw new Error(
+        `Error fetching asset info for DID ${did}: ${error.message}`,
+      );
+    }
+  }
+
   const didWithoutPrefix = did.startsWith("did:op:") ? did.slice(7) : did;
 
   const didWithPrefix = did.startsWith("did:op:") ? did : `did:op:${did}`;

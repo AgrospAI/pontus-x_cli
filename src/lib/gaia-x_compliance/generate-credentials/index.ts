@@ -6,6 +6,13 @@ import {
   type VerifiableCredential,
 } from "@gaia-x/json-web-signature-2020";
 import type { Signer } from "@gaia-x/json-web-signature-2020/dist/src/signer/signer";
+import {
+  getDatatokens,
+  getMetadata,
+  getNftAddress,
+  getOwner,
+  getServices,
+} from "@deltadao/nautilus";
 import axios, { type AxiosError } from "axios";
 import * as Handlebars from "handlebars";
 
@@ -129,37 +136,56 @@ function generateAssetVP(
   writeFileSync(
     resolve(
       dirPath,
-      `${ddo.datatokens[0].symbol}_${assetData.network}.vp.json`,
+      `${assetData.tokenSymbol}_${assetData.network}.vp.json`,
     ),
     JSON.stringify(vp, null, 2),
     "utf8",
   );
   console.log(
-    `Verifiable Presentation of the credentials for ${ddo.metadata.name} ` +
-      `generated and stored in ${data.participant_name}/${ddo.datatokens[0].symbol}_${assetData.network}.vp.json`,
+    `Verifiable Presentation of the credentials for ${assetData.serviceName} ` +
+      `generated and stored in ${data.participant_name}/${assetData.tokenSymbol}_${assetData.network}.vp.json`,
   );
 }
 
 function extractAssetFromDDO(ddo: any) {
+  const metadata = (getMetadata(ddo) as any) || ddo.metadata || {};
+  const services = (getServices(ddo) as any[]) || ddo.services || [];
+  const datatokens = (getDatatokens(ddo) as any[]) || ddo.datatokens || [];
+  const firstService = services[0] || {};
+  const firstDatatoken = datatokens[0] || {};
+  const chainId = ddo.chainId || (ddo as any).chainId;
+  const nftAddress = getNftAddress(ddo) || ddo.nftAddress || ddo.nft?.address;
+  const owner = getOwner(ddo) || ddo.nft?.owner || ddo.event?.from;
+
+  const rawDescription = metadata.description;
+  const descriptionStr =
+    typeof rawDescription === "string"
+      ? rawDescription
+      : rawDescription?.text || JSON.stringify(rawDescription || "");
+
+  const rawLicense = metadata.license;
+  const licenseStr =
+    typeof rawLicense === "string" ? rawLicense : rawLicense?.name || "";
+
   return {
-    chainId: ddo.chainId,
-    containsPII: ddo.metadata.additionalInformation?.containsPII || false,
+    chainId,
+    containsPII: metadata.additionalInformation?.containsPII || false,
     did: ddo.id,
-    license: ddo.metadata.license,
-    network: ddo.chainId === 32_456 ? "devnet" : "testnet",
-    nftAddress: ddo.nftAddress,
-    ownerAccount: ddo.nft.owner,
-    serviceDescription: JSON.stringify(ddo.metadata.description).slice(1, -1),
-    serviceEndpoint: ddo.services[0].serviceEndpoint,
-    serviceName: ddo.metadata.name,
-    servicePrice: ddo.stats.price.value,
+    license: licenseStr,
+    network: chainId === 32_456 ? "devnet" : "testnet",
+    nftAddress,
+    ownerAccount: owner,
+    serviceDescription: descriptionStr,
+    serviceEndpoint: firstService.serviceEndpoint,
+    serviceName: metadata.name,
+    servicePrice: ddo.stats?.price?.value ?? 0,
     serviceTimeout:
-      ddo.services[0].timeout === 0 ? "unlimited" : ddo.services[0].timeout,
-    serviceType: ddo.services[0].type,
-    tokenAddress: ddo.datatokens[0].address,
-    tokenName: ddo.datatokens[0].name,
-    tokenSymbol: ddo.datatokens[0].symbol,
-    type: ddo.metadata.type,
+      firstService.timeout === 0 ? "unlimited" : firstService.timeout,
+    serviceType: firstService.type,
+    tokenAddress: firstDatatoken.address,
+    tokenName: firstDatatoken.name,
+    tokenSymbol: firstDatatoken.symbol || "DATATOKEN",
+    type: metadata.type,
   };
 }
 
