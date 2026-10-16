@@ -5,6 +5,7 @@ import {
   ConsumerParameterBuilder,
   CredentialListTypes,
   type PricingConfigWithoutOwner,
+  PublishIncompleteError,
   ServiceBuilder,
 } from "@deltadao/nautilus";
 import Ajv from "ajv";
@@ -167,7 +168,7 @@ export async function publishFromFile(
   providerUrl: string,
   connection: Connection,
   dryRun: boolean,
-) {
+): Promise<string | undefined> {
   const config: PublishConfig = parseConfig(filePath);
 
   const ajv = new Ajv();
@@ -189,8 +190,14 @@ export async function publishFromFile(
     .setDescription(
       readFileSync(path.resolve(folder, config.metadata.description), "utf8"),
     )
-    .setLicense(config.metadata.license)
+    .setProvidedBy(
+      config.metadata.providedBy || config.metadata.author || "AgrospAI",
+    )
     .setNftData(config.nftData);
+
+  if (config.metadata.license) {
+    assetBuilder.setLicense(config.metadata.license);
+  }
 
   if (config.metadata.author) {
     assetBuilder.setAuthor(config.metadata.author);
@@ -222,7 +229,7 @@ export async function publishFromFile(
 
   if (config.metadata.additionalInformation) {
     assetBuilder.addAdditionalInformation(
-      config.metadata.additionalInformation,
+      config.metadata.additionalInformation as any,
     );
   }
 
@@ -258,7 +265,7 @@ export async function publishFromFile(
       language: config.metadata.algorithm.language,
       version: config.metadata.algorithm.version,
       ...(consumerParameters.length > 0 && { consumerParameters }),
-    });
+    } as any);
   }
 
   const serviceBuilder = new ServiceBuilder({
@@ -266,8 +273,19 @@ export async function publishFromFile(
     serviceType: config.service.serviceType,
   });
 
+  serviceBuilder.setName(
+    config.service.datatoken?.name || config.metadata.name || "Access Service",
+  );
+
   for (const file of config.service.files) {
-    serviceBuilder.addFile(file);
+    const fileObj = {
+      method: "GET",
+      ...file,
+    } as any;
+    if (!fileObj.type) {
+      fileObj.type = config.service.fileType || "url";
+    }
+    serviceBuilder.addFile(fileObj);
   }
 
   for (const param of config.service.consumerParameters || []) {
@@ -337,16 +355,48 @@ export async function publishFromFile(
     return;
   }
 
+  if (!connection.remoteStore) {
+    throw new Error(
+      "Publishing requires a remote store. Please set PINATA_JWT or IPFS_UPLOAD_URL in your environment.",
+    );
+  }
+
   console.log(`🚀 Publishing asset...`);
 
-  const result = await connection.nautilus.publish(asset);
+  let result;
+  try {
+    result = await connection.nautilus.publish(asset, {
+      waitForIndexer: true,
+    });
+  } catch (error) {
+    if (error instanceof PublishIncompleteError) {
+      console.warn(
+        `⚠️  Publishing stopped after NFT ${error.nftAddress} was created. Resuming via completePublish()...`,
+      );
+      result = await connection.nautilus.completePublish(
+        error.nftAddress,
+        asset,
+        {
+          waitForIndexer: true,
+          metadataTxHash: error.stored?.txHash,
+        },
+      );
+    } else {
+      throw error;
+    }
+  }
+
+  const txHash =
+    (result.setMetadataTxReceipt as any).hash ||
+    (result.setMetadataTxReceipt as any).transactionHash;
+
   console.log(
     [
       "✅ Asset published.",
-      `🔗 Transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}`,
+      `🔗 Transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}`,
       `🌐 Asset: https://portal.agrospai.udl.cat/asset/${result.ddo.id}`,
     ].join("\n"),
   );
 
-  return asset.ddo.id;
+  return result.ddo.id as string;
 }

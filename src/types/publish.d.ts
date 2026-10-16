@@ -1,12 +1,14 @@
 import type {
+  AlgorithmV5,
   FileTypes,
+  MetadataV5,
   NftCreateDataWithoutOwner,
   PricingConfig,
   ServiceFileType,
   ServiceTypes,
   TrustedAlgorithmAsset,
+  UrlFileObject,
 } from "@deltadao/nautilus";
-import type { Metadata, MetadataAlgorithm } from "@oceanprotocol/ddo-js";
 
 type Options = {
   key: string;
@@ -24,19 +26,34 @@ export type ExtendedConsumerParameter = {
 };
 
 type MetadataConfig = Omit<
-  Metadata,
-  "algorithm" | "author" | "created" | "updated"
+  MetadataV5,
+  | "algorithm"
+  | "author"
+  | "created"
+  | "updated"
+  | "description"
+  | "copyrightHolder"
+  | "providedBy"
+  | "license"
+  | "links"
+  | "additionalInformation"
 > & {
-  algorithm?: Omit<MetadataAlgorithm, "consumerParameters" | "container"> & {
+  additionalInformation?: Record<string, any>;
+  algorithm?: Omit<NonNullable<AlgorithmV5>, "consumerParameters" | "container"> & {
     consumerParameters?: ExtendedConsumerParameter[];
-    container: Omit<MetadataAlgorithm["container"], "consumerParameters"> & {
+    container: Omit<NonNullable<AlgorithmV5>["container"], "consumerParameters"> & {
       consumerParameters?: ExtendedConsumerParameter[];
     };
   };
   author?: string;
+  copyrightHolder?: string;
+  description: string;
   did?: string;
+  license?: string;
+  links?: string[] | Record<string, string>;
   network?: string;
   owner?: string;
+  providedBy?: string;
 };
 
 export type PricingType = PricingConfig["type"];
@@ -55,7 +72,7 @@ export default interface PublishConfig {
       name: string;
       symbol: string;
     };
-    files: ServiceFileType[];
+    files: (ServiceFileType<FileTypes> | UrlFileObject)[];
     fileType: FileTypes;
     pricing: {
       amount?: number;

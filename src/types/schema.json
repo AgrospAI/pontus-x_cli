@@ -2,6 +2,42 @@
   "$ref": "#/definitions/PublishConfig",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
+    "ArweaveFileObject": {
+      "additionalProperties": false,
+      "properties": {
+        "encryptMethod": {
+          "$ref": "#/definitions/EncryptMethod"
+        },
+        "encryptedBy": {
+          "type": "string"
+        },
+        "transactionId": {
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/FileObjectType"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "transactionId",
+        "type"
+      ],
+      "type": "object"
+    },
+    "EncryptMethod": {
+      "enum": [
+        "AES",
+        "ECIES"
+      ],
+      "type": "string"
+    },
     "ExtendedConsumerParameter": {
       "additionalProperties": false,
       "properties": {
@@ -27,7 +63,12 @@
           "type": "boolean"
         },
         "type": {
-          "enum": ["text", "number", "boolean", "select"],
+          "enum": [
+            "text",
+            "number",
+            "boolean",
+            "select"
+          ],
           "type": "string"
         }
       },
@@ -41,15 +82,118 @@
       ],
       "type": "object"
     },
-    "FileTypes": {
-      "enum": ["url", "graphql", "arweave", "ipfs", "smartcontract"],
+    "FileObjectType": {
+      "enum": [
+        "url",
+        "ipfs",
+        "arweave",
+        "s3",
+        "ftp"
+      ],
       "type": "string"
+    },
+    "FileTypes": {
+      "description": "Storage backends ocean-node can read.\n\nTwo v1 types are gone because ocean-node no longer implements them: `graphql` and `smartcontract`. Three are new: `s3`, `ftp` and the node's own persistent storage.",
+      "enum": [
+        "url",
+        "ipfs",
+        "arweave",
+        "s3",
+        "ftp",
+        "nodePersistentStorage"
+      ],
+      "type": "string"
+    },
+    "FtpFileObject": {
+      "additionalProperties": false,
+      "properties": {
+        "encryptMethod": {
+          "$ref": "#/definitions/EncryptMethod"
+        },
+        "encryptedBy": {
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/FileObjectType"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "url": {
+          "description": "Full FTP or FTPS URL: ftp://[user:password@]host[:port]/path or ftps://...",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "url"
+      ],
+      "type": "object"
+    },
+    "HeadersObject": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "IpfsFileObject": {
+      "additionalProperties": false,
+      "properties": {
+        "encryptMethod": {
+          "$ref": "#/definitions/EncryptMethod"
+        },
+        "encryptedBy": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/FileObjectType"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "hash",
+        "type"
+      ],
+      "type": "object"
+    },
+    "LanguageValueObject": {
+      "additionalProperties": false,
+      "properties": {
+        "@direction": {
+          "type": "string"
+        },
+        "@language": {
+          "type": "string"
+        },
+        "@value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "@value",
+        "@language",
+        "@direction"
+      ],
+      "type": "object"
     },
     "MetadataConfig": {
       "additionalProperties": false,
       "properties": {
         "additionalInformation": {
-          "description": "Stores additional information, this is customizable by publisher"
+          "type": "object"
         },
         "algorithm": {
           "additionalProperties": false,
@@ -64,7 +208,6 @@
               "additionalProperties": false,
               "properties": {
                 "checksum": {
-                  "description": "Checksum of the Docker image.",
                   "type": "string"
                 },
                 "consumerParameters": {
@@ -74,75 +217,82 @@
                   "type": "array"
                 },
                 "entrypoint": {
-                  "description": "The command to execute, or script to run inside the Docker image.",
                   "type": "string"
                 },
                 "image": {
-                  "description": "Name of the Docker image.",
                   "type": "string"
                 },
                 "tag": {
-                  "description": "Tag of the Docker image.",
                   "type": "string"
                 }
               },
-              "required": ["checksum", "entrypoint", "image", "tag"],
+              "required": [
+                "checksum",
+                "entrypoint",
+                "image",
+                "tag"
+              ],
               "type": "object"
             },
             "language": {
-              "description": "Programming language used to implement the software.",
-              "type": "string"
-            },
-            "rawcode": {
-              "description": "Rawcode",
               "type": "string"
             },
             "version": {
-              "description": "Version of the software preferably in SemVer notation.",
               "type": "string"
             }
           },
-          "required": ["container"],
+          "required": [
+            "container"
+          ],
           "type": "object"
+        },
+        "attachments": {
+          "items": {
+            "$ref": "#/definitions/RemoteObject"
+          },
+          "type": "array"
         },
         "author": {
           "type": "string"
         },
         "categories": {
-          "description": "Array of categories associated to the asset. Note: recommended to use tags instead of this.",
           "items": {
             "type": "string"
           },
           "type": "array"
         },
-        "contentLanguage": {
-          "description": "The language of the content. Use one of the language codes from the IETF BCP 47 standard",
-          "type": "string"
-        },
         "copyrightHolder": {
-          "description": "The party holding the legal copyright. Empty by default.",
           "type": "string"
         },
         "description": {
-          "description": "Details of what the resource is.",
           "type": "string"
         },
         "did": {
           "type": "string"
         },
+        "displayTitle": {
+          "$ref": "#/definitions/LanguageValueObject"
+        },
         "license": {
-          "description": "Short name referencing the license of the asset. If it’s not specified, the following value will be added: “No License Specified”.",
           "type": "string"
         },
         "links": {
-          "description": "Mapping of URL strings for data samples, or links to find out more information. Links may be to either a URL or another asset.",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            }
+          ]
         },
         "name": {
-          "description": "Descriptive name or title of the asset.",
           "type": "string"
         },
         "network": {
@@ -151,20 +301,24 @@
         "owner": {
           "type": "string"
         },
+        "providedBy": {
+          "type": "string"
+        },
         "tags": {
-          "description": "Array of keywords or tags used to describe this content. Empty by default.",
           "items": {
             "type": "string"
           },
           "type": "array"
         },
         "type": {
-          "description": "Asset type. Includes \"dataset\" (e.g. csv file), \"algorithm\" (e.g. Python script). Each type needs a different subset of metadata attributes.",
-          "enum": ["dataset", "algorithm"],
           "type": "string"
         }
       },
-      "required": ["description", "license", "name", "type"],
+      "required": [
+        "description",
+        "name",
+        "type"
+      ],
       "type": "object"
     },
     "NftCreateDataWithoutOwner": {
@@ -205,7 +359,37 @@
           "type": "string"
         }
       },
-      "required": ["key", "value"],
+      "required": [
+        "key",
+        "value"
+      ],
+      "type": "object"
+    },
+    "PersistentStorageObject": {
+      "additionalProperties": false,
+      "properties": {
+        "bucketId": {
+          "type": "string"
+        },
+        "encryptMethod": {
+          "$ref": "#/definitions/EncryptMethod"
+        },
+        "encryptedBy": {
+          "type": "string"
+        },
+        "fileName": {
+          "type": "string"
+        },
+        "type": {
+          "const": "nodePersistentStorage",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucketId",
+        "fileName",
+        "type"
+      ],
       "type": "object"
     },
     "PublishConfig": {
@@ -257,7 +441,10 @@
                   "type": "string"
                 }
               },
-              "required": ["name", "symbol"],
+              "required": [
+                "name",
+                "symbol"
+              ],
               "type": "object"
             },
             "fileType": {
@@ -265,7 +452,14 @@
             },
             "files": {
               "items": {
-                "$ref": "#/definitions/ServiceFileType"
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/ServiceFileType%3CFileTypes%3E"
+                  },
+                  {
+                    "$ref": "#/definitions/UrlFileObject"
+                  }
+                ]
               },
               "type": "array"
             },
@@ -276,15 +470,24 @@
                   "type": "number"
                 },
                 "currency": {
-                  "enum": ["EURAU", "EUROe", "OCEAN"],
+                  "enum": [
+                    "EURAU",
+                    "EUROe",
+                    "OCEAN"
+                  ],
                   "type": "string"
                 },
                 "type": {
-                  "enum": ["fixed", "free"],
+                  "enum": [
+                    "fixed",
+                    "free"
+                  ],
                   "type": "string"
                 }
               },
-              "required": ["type"],
+              "required": [
+                "type"
+              ],
               "type": "object"
             },
             "serviceEndpoint": {
@@ -324,18 +527,191 @@
           "type": "array"
         }
       },
-      "required": ["metadata", "nftData", "service"],
+      "required": [
+        "metadata",
+        "nftData",
+        "service"
+      ],
       "type": "object"
     },
-    "ServiceFileType": {
-      "$ref": "#/definitions/UrlFile"
+    "RemoteObject": {
+      "additionalProperties": false,
+      "properties": {
+        "additionalInformation": {
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean"
+            ]
+          },
+          "type": "object"
+        },
+        "description": {
+          "$ref": "#/definitions/LanguageValueObject"
+        },
+        "displayName": {
+          "$ref": "#/definitions/LanguageValueObject"
+        },
+        "fileType": {
+          "type": "string"
+        },
+        "mirrors": {
+          "items": {
+            "$ref": "#/definitions/RemoteSource"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "fileType",
+        "sha256",
+        "mirrors"
+      ],
+      "type": "object"
+    },
+    "RemoteSource": {
+      "additionalProperties": false,
+      "properties": {
+        "headers": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean"
+                ]
+              },
+              "type": "object"
+            }
+          ]
+        },
+        "ipfsCid": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "S3FileObject": {
+      "additionalProperties": false,
+      "properties": {
+        "encryptMethod": {
+          "$ref": "#/definitions/EncryptMethod"
+        },
+        "encryptedBy": {
+          "type": "string"
+        },
+        "s3Access": {
+          "$ref": "#/definitions/S3Object"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/FileObjectType"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "s3Access",
+        "type"
+      ],
+      "type": "object"
+    },
+    "S3Object": {
+      "additionalProperties": false,
+      "properties": {
+        "accessKeyId": {
+          "type": "string"
+        },
+        "bucket": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "forcePathStyle": {
+          "description": "If true, use path-style addressing (e.g. endpoint/bucket/key). Required for some S3-compatible services (e.g. MinIO). Default false (virtual-host style, e.g. bucket.endpoint/key).",
+          "type": "boolean"
+        },
+        "objectKey": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "secretAccessKey": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "endpoint",
+        "objectKey",
+        "bucket",
+        "accessKeyId",
+        "secretAccessKey"
+      ],
+      "type": "object"
+    },
+    "ServiceFileType<FileTypes>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/IpfsFileObject"
+        },
+        {
+          "$ref": "#/definitions/ArweaveFileObject"
+        },
+        {
+          "$ref": "#/definitions/S3FileObject"
+        },
+        {
+          "$ref": "#/definitions/FtpFileObject"
+        },
+        {
+          "$ref": "#/definitions/PersistentStorageObject"
+        },
+        {
+          "$ref": "#/definitions/UrlFileObject"
+        }
+      ],
+      "description": "Maps a `FileTypes` member onto the ocean.js storage object it needs."
     },
     "ServiceTypes": {
-      "enum": ["access", "compute"],
+      "enum": [
+        "access",
+        "compute"
+      ],
       "type": "string"
     },
     "TrustedAlgorithmAsset": {
       "additionalProperties": false,
+      "description": "An algorithm to trust, by DID and (now that v5 requires it) by service.\n\nDDO v5's `PublisherTrustedAlgorithms` carries a required `serviceId`, so nautilus finally resolves one entry per (did, serviceId) pair instead of assuming `services[0]`.",
       "properties": {
         "did": {
           "type": "string"
@@ -347,37 +723,45 @@
           "type": "array"
         }
       },
-      "required": ["did"],
+      "required": [
+        "did"
+      ],
       "type": "object"
     },
-    "UrlFile": {
+    "UrlFileObject": {
       "additionalProperties": false,
       "properties": {
-        "headers": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Headers key value pairs associated with the asset GET request",
-          "type": "object"
+        "encryptMethod": {
+          "$ref": "#/definitions/EncryptMethod"
         },
-        "index": {
-          "description": "File index.",
-          "type": "number"
+        "encryptedBy": {
+          "type": "string"
+        },
+        "headers": {
+          "$ref": "#/definitions/HeadersObject"
         },
         "method": {
-          "description": "HTTP method used",
           "type": "string"
         },
         "type": {
-          "const": "url",
-          "type": "string"
+          "anyOf": [
+            {
+              "$ref": "#/definitions/FileObjectType"
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "url": {
-          "description": "File URL.",
           "type": "string"
         }
       },
-      "required": ["type", "url", "method"],
+      "required": [
+        "method",
+        "type",
+        "url"
+      ],
       "type": "object"
     }
   }
