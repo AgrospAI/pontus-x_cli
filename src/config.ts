@@ -3,7 +3,11 @@ import type { PricingConfigWithoutOwner } from "@deltadao/nautilus";
 export enum Network {
   PONTUSXDEV = "PONTUSXDEV",
   PONTUSXTEST = "PONTUSXTEST",
+  OP_SEPOLIA = "OP_SEPOLIA",
 }
+
+export const DEFAULT_OCEAN_NODE_URI =
+  process.env.OCEAN_NODE_URI || "https://ocean-node.agrospai.udl.cat";
 
 export const NETWORK_CONFIGS: {
   [key in Network]: NetworkConfig;
@@ -17,6 +21,7 @@ export const NETWORK_CONFIGS: {
     network: "pontusxdev",
     nftFactoryAddress: "0xFdC4a5DEaCDfc6D82F66e894539461a269900E13",
     nodeUri: "https://rpc.dev.pontus-x.eu",
+    oceanNodeUri: process.env.OCEAN_NODE_URI || DEFAULT_OCEAN_NODE_URI,
     oceanTokenAddress: "0xdF171F74a8d3f4e2A789A566Dce9Fa4945196112",
     oceanTokenSymbol: "OCEAN",
     providerAddress: "0x68C24FA5b2319C81b34f248d1f928601D2E5246B",
@@ -32,11 +37,20 @@ export const NETWORK_CONFIGS: {
     network: "pontusxtest",
     nftFactoryAddress: "0x2C4d542ff791890D9290Eec89C9348A4891A6Fd2",
     nodeUri: "https://rpc.test.agrospai.udl.cat",
+    oceanNodeUri: process.env.OCEAN_NODE_URI || DEFAULT_OCEAN_NODE_URI,
     oceanTokenAddress: "0x5B190F9E2E721f8c811E4d584383E3d57b865C69",
     oceanTokenSymbol: "OCEAN",
     providerAddress: "0x9546d39CE3E48BC942f0be4AA9652cBe0Aff3592",
     providerUri: "https://provider.agrospai.udl.cat",
     subgraphUri: "https://subgraph.test.agrospai.udl.cat",
+  },
+  [Network.OP_SEPOLIA]: {
+    chainId: 11_155_420,
+    explorerUri: "https://sepolia-optimism.etherscan.io",
+    network: "op-sepolia",
+    nodeUri: process.env.OP_SEPOLIA_NODE_URI || "https://sepolia.optimism.io",
+    oceanNodeUri: process.env.OCEAN_NODE_URI || DEFAULT_OCEAN_NODE_URI,
+    oceanTokenSymbol: "OCEAN",
   },
 };
 
@@ -118,27 +132,42 @@ export const PRICING_CONFIGS: { [key in Network]: PricingConfigGenerators } = {
       };
     },
   },
+  [Network.OP_SEPOLIA]: {
+    fixedRateEURAU(rate: number) {
+      if (rate <= 0) {
+        return { type: "free" };
+      }
+      return { type: "free" };
+    },
+    fixedRateEUROe(rate: number) {
+      if (rate <= 0) {
+        return { type: "free" };
+      }
+      return { type: "free" };
+    },
+  },
 };
 
 export type NetworkConfig = {
   chainId: number;
+  network: string;
+  nodeUri: string;
+  oceanNodeUri?: string;
+  explorerUri?: string;
+  dispenserAddress?: string;
+  fixedRateExchangeAddress?: string;
+  nftFactoryAddress?: string;
+  oceanTokenAddress?: string;
+  oceanTokenSymbol?: string;
+  metadataCacheUri?: string;
+  providerAddress?: string;
+  providerUri?: string;
+  subgraphUri?: string;
   DFRewards?: string;
   DFStrategyV1?: string;
-  dispenserAddress: string;
-  explorerUri?: string;
-  fixedRateExchangeAddress: string;
   gasFeeMultiplier?: number;
-  metadataCacheUri: string;
-  network: string;
-  nftFactoryAddress: string;
-  nodeUri: string;
-  oceanTokenAddress: string;
-  oceanTokenSymbol: string;
   opfCommunityFeeCollector?: string;
-  providerAddress?: string;
-  providerUri: string;
   startBlock?: number;
-  subgraphUri: string;
   transactionBlockTimeout?: number;
   transactionConfirmationBlocks?: number;
   transactionPollingTimeout?: number;
