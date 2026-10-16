@@ -5,7 +5,7 @@ import readlineSync from "readline-sync";
 
 import { Connection } from "@/utils/connection";
 
-export default class EditAlgo extends Command {
+export default class EditAdditionalMetadata extends Command {
   static args = {
     did: Args.string({ description: "Algorithm DID", required: true }),
     metadatafile: Args.string({
@@ -28,7 +28,7 @@ export default class EditAlgo extends Command {
   };
 
   async run(): Promise<void> {
-    const { args, flags } = await this.parse(EditAlgo);
+    const { args, flags } = await this.parse(EditAdditionalMetadata);
     const { did, metadatafile } = args;
     const connection = await Connection.connect();
     if (
@@ -38,8 +38,14 @@ export default class EditAlgo extends Command {
       )
     ) {
       try {
-        const aquariusAsset = await connection.nautilus.getAquariusAsset(did);
-        const assetBuilder = new AssetBuilder(aquariusAsset);
+        if (!connection.remoteStore) {
+          throw new Error(
+            "Editing requires a remote store. Please set PINATA_JWT or IPFS_UPLOAD_URL in your environment.",
+          );
+        }
+
+        const published = await connection.nautilus.getAsset(did);
+        const assetBuilder = new AssetBuilder(published);
         const additionalMetadata = JSON.parse(
           fs.readFileSync(metadatafile, "utf8"),
         );
@@ -50,11 +56,15 @@ export default class EditAlgo extends Command {
           .addAdditionalInformation(additionalMetadata)
           .build();
         const result = await connection.nautilus.edit(asset);
+        const txHash =
+          (result.setMetadataTxReceipt as any).hash ||
+          (result.setMetadataTxReceipt as any).transactionHash;
+
         this.log(
-          `Asset additional metadata updated, transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`,
+          `Asset additional metadata updated, transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}\n`,
         );
       } catch (error) {
-        this.error(`Error editing container metadata: ${error}`);
+        this.error(`Error editing additional metadata: ${error}`);
       }
     }
   }

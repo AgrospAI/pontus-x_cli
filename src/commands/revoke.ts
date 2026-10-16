@@ -110,9 +110,9 @@ export default class Revoke extends Command {
             PRIVATE_KEY: privateKey,
           };
           const connection = await Connection.connect(envOverrides);
-          const aquariusAsset = await connection.nautilus.getAquariusAsset(did);
+          const asset = await connection.nautilus.getAsset(did);
           await connection.nautilus.setAssetLifecycleState(
-            aquariusAsset,
+            asset,
             LifecycleStates.REVOKED_BY_PUBLISHER,
           );
 
@@ -141,15 +141,21 @@ export default class Revoke extends Command {
 
       for (const did of dids) {
         try {
-          const aquariusAsset = await connection.nautilus.getAquariusAsset(did);
+          const asset = await connection.nautilus.getAsset(did);
           this.log("Sending transaction to revoke asset...");
           const tx = await connection.nautilus.setAssetLifecycleState(
-            aquariusAsset,
+            asset,
             LifecycleStates.REVOKED_BY_PUBLISHER,
           );
-          this.log(
-            `Asset revoked, transaction: ${connection.networkConfig.explorerUri}/tx/${tx.transactionHash}\n`,
-          );
+          const txHash =
+            (tx as any)?.hash || (tx as any)?.transactionHash;
+          if (txHash) {
+            this.log(
+              `Asset revoked, transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}\n`,
+            );
+          } else {
+            this.log(`Asset ${did} is already revoked.\n`);
+          }
         } catch (error) {
           this.log(`Error revoking asset: ${error}`);
         }
