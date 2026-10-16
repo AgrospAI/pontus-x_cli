@@ -3,7 +3,6 @@ import {
   AssetBuilder,
   ConsumerParameterBuilder,
   FileTypes,
-  type MetadataConfig,
   ServiceBuilder,
   ServiceTypes,
 } from "@deltadao/nautilus";
@@ -56,25 +55,31 @@ export const publish = async (
   );
 
   // ALGORITHM METADATA
-  const algoMetadata: MetadataConfig["algorithm"] = {
+  const algoMetadata: any = {
     consumerParameters,
     container: {
       checksum:
-        "sha256:b4b24cce742d43329b6cc458770f7be87f13bba4349f5acfc466441f143dc27c",
+        "sha256:739caae03b8e4e73b4ba9e577c2fc9356b468aa09b3017bbd3fc290234ebcb53",
       entrypoint: "python $ALGO",
       // entrypoint: "sleep infinity",
       image: "clopezgarcia/basic-predictor",
-      tag: "0.2.2",
+      tag: "latest",
     },
     language: "python",
-    version: "0.3",
+    version: "0.1",
   };
+
+  const oceanNodeUri =
+    provider ||
+    process.env.OCEAN_NODE_URI ||
+    connection.networkConfig.oceanNodeUri;
 
   const service = new ServiceBuilder({
     fileType: FileTypes.URL,
     serviceType: ServiceTypes.COMPUTE,
   })
-    .setServiceEndpoint(provider) // the access controller to be in control of this asset
+    .setName("UdL scikit-learn model trainer")
+    .setServiceEndpoint(oceanNodeUri) // the access controller to be in control of this asset
     .setTimeout(0) // Timeout in seconds (0 means unlimited access after purchase)
     .addFile({
       method: "GET", // HTTP request method
@@ -94,6 +99,7 @@ export const publish = async (
     .setAuthor("Universitat de Lleida (UdL)")
     .setOwner(connection.wallet.address)
     .setDescription(readFileSync(`${folder}/description.md`, "utf8"))
+    .setProvidedBy("Universitat de Lleida (UdL)")
     .addTags([
       "ml",
       "sklearn",
@@ -123,9 +129,12 @@ export const publish = async (
   } else {
     console.log(`Publishing asset...`);
     const result = await connection.nautilus.publish(asset);
+    const txHash =
+      (result.setMetadataTxReceipt as any).hash ||
+      (result.setMetadataTxReceipt as any).transactionHash;
     console.log(
       `Asset published, ` +
-        `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`,
+        `transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}\n`,
     );
   }
 };
