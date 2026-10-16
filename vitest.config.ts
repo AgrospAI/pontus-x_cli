@@ -5,11 +5,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),
-      // Force nautilus imports to use the CJS build
-      "@deltadao/nautilus": resolve(
-        __dirname,
-        "node_modules/@deltadao/nautilus/_cjs/index.js",
-      ),
       "@test": resolve(__dirname, "test"),
     },
   },
