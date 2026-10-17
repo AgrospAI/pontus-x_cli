@@ -16,6 +16,6 @@ export default defineConfig({
     exclude: ["**/node_modules/**", "**/dist/**"],
     setupFiles: [resolve(__dirname, "test/setup.ts")],
     // Enable test grouping and filtering
-    testTimeout: 30_000, // Default timeout for most tests
+    testTimeout: 60_000, // Default timeout for on-chain tests
   },
 });
