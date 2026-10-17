@@ -21,29 +21,6 @@ if (!("transactionHash" in TransactionReceipt.prototype)) {
   });
 }
 
-try {
-  const dynamicImport = new Function("specifier", "return import(specifier)");
-  dynamicImport("ethers").then((esmEthers: any) => {
-    if (
-      esmEthers?.TransactionReceipt &&
-      !("transactionHash" in esmEthers.TransactionReceipt.prototype)
-    ) {
-      Object.defineProperty(
-        esmEthers.TransactionReceipt.prototype,
-        "transactionHash",
-        {
-          get() {
-            return this.hash;
-          },
-          configurable: true,
-        },
-      );
-    }
-  });
-} catch {
-  // ignore
-}
-
 function createRemoteStore(
   env: Record<string, string | undefined>,
 ): RemoteStore | undefined {

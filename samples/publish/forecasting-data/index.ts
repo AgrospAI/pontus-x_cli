@@ -20,7 +20,7 @@ export const publish = async (
     .setAuthor("sudipmanchare")
     .setOwner(connection.wallet.address)
     .setDescription(readFileSync(`${folder}/description.md`, "utf8"))
-    .setProvidedBy("AgrospAI")
+    .setProvidedBy("sudipmanchare")
     .addTags(["forecasting", "sample", "agrospai", "udl", "tabular-data"])
     .setLicense("CC-BY-4.0")
     .setNftData({
@@ -53,7 +53,7 @@ export const publish = async (
     connection.networkConfig.oceanNodeUri;
 
   const service = serviceBuilder
-    .setName("Timeseries Forecasting Service")
+    .setName("Timeseries Forecasting Dataset")
     .setServiceEndpoint(oceanNodeUri) // the access controller to be in control of this asset
     .setTimeout(0) // Timeout in seconds (0 means unlimited access after purchase)
     .addFile(urlFile)

@@ -20,7 +20,7 @@ export const publish = async (
     .setAuthor("Cortez et al., 2009")
     .setOwner(connection.wallet.address)
     .setDescription(readFileSync(`${folder}/description.md`, "utf8"))
-    .setProvidedBy("AgrospAI")
+    .setProvidedBy("Cortez et al., 2009")
     .addTags(["agriculture", "wine", "agrospai", "udl", "tabular-data"])
     .setLicense("CC-BY-4.0")
     .setNftData({
@@ -51,7 +51,7 @@ export const publish = async (
     connection.networkConfig.oceanNodeUri;
 
   const service = serviceBuilder
-    .setName("Red Wine Service")
+    .setName("Red Wine")
     .setServiceEndpoint(oceanNodeUri) // the access controller to be in control of this asset
     .setTimeout(0) // Timeout in seconds (0 means unlimited access after purchase)
     .addFile(urlFile)

@@ -9,7 +9,7 @@ export const publish = async (folder: string, connection: any, provider: string,
     .setAuthor('Cortez et al., 2009')
     .setOwner(connection.wallet.address)
     .setDescription(readFileSync(`${folder}/description.md`, 'utf8'))
-    .setProvidedBy('AgrospAI')
+    .setProvidedBy('Cortez et al., 2009')
     .addTags(['agriculture', 'wine', 'agrospai', 'udl', 'tabular-data'])
     .setLicense('CC-BY-4.0')
     .setNftData({
@@ -50,7 +50,7 @@ export const publish = async (folder: string, connection: any, provider: string,
     connection.networkConfig.oceanNodeUri;
 
   const service = serviceBuilder
-    .setName("Red Wine Service")
+    .setName("Red Wine")
     .setServiceEndpoint(oceanNodeUri) // the access controller to be in control of this asset
     .setTimeout(3600) // Timeout in seconds, 0 means unlimited access after purchase, while:
     // 1 year = 31536000, 1 month = 2630000, 1 week = 604800, 1 day = 86400, 1 hour = 3600

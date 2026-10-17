@@ -59,14 +59,14 @@ export const publish = async (
     consumerParameters,
     container: {
       checksum:
-        "sha256:739caae03b8e4e73b4ba9e577c2fc9356b468aa09b3017bbd3fc290234ebcb53",
+        "sha256:b4b24cce742d43329b6cc458770f7be87f13bba4349f5acfc466441f143dc27c",
       entrypoint: "python $ALGO",
       // entrypoint: "sleep infinity",
       image: "clopezgarcia/basic-predictor",
-      tag: "latest",
+      tag: "0.2.2",
     },
     language: "python",
-    version: "0.1",
+    version: "0.3",
   };
 
   const oceanNodeUri =
