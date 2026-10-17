@@ -22,8 +22,8 @@ metadata:
     language: python
     version: '0.2'
   owner: '0xD999bAaE98AC5246568FD726be8832c49626867D'
-  network: PONTUSXDEV
-  did: did:op:4667b9d64061c2f8aea9f5d0712184b652176ee5f0e6c5ec62b5bd47308d6359
+  network: OP_SEPOLIA
+  did: did:ope:67b1b9911103cf4187af15e3836744f8f824267b7eaf985ec2fb7df7359ab75f
 nftData:
   name: UdL EDA Algo
   symbol: UDL-EDA
@@ -34,7 +34,7 @@ nftData:
 service:
   serviceType: compute
   fileType: url
-  serviceEndpoint: 'https://provider.pontus-x.eu'
+  serviceEndpoint: 'https://ocean-node.agrospai.udl.cat'
   timeout: 0
   files:
     - method: GET

@@ -14,8 +14,11 @@ metadata:
   links:
     - 'https://archive.ics.uci.edu/dataset/186/wine+quality'
   owner: '0xD999bAaE98AC5246568FD726be8832c49626867D'
-  network: PONTUSXDEV
-  did: did:op:2a6c7a2d8d16d96268655e370ceb620a852c7b3e4742f9b527e640b68a7a6c66
+  network: OP_SEPOLIA
+  did: did:ope:370d9f1a7d20e6077562f8e7ad7441c17e1ffdfe050741504bff2741347393ae
+credentials:
+  allow:
+    - '0xD999bAaE98AC5246568FD726be8832c49626867D'
 nftData:
   name: Red Wine
   symbol: RED
@@ -26,7 +29,7 @@ nftData:
 service:
   serviceType: access
   fileType: url
-  serviceEndpoint: 'https://provider.pontus-x.eu'
+  serviceEndpoint: 'https://ocean-node.agrospai.udl.cat'
   timeout: 0
   files:
     - method: GET

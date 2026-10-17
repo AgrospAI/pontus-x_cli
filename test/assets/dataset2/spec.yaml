@@ -4,7 +4,7 @@ metadata:
   name: Red Wine Dataset
   author: 'Cortez et al., 2009'
   owner: '0xd999baae98ac5246568fd726be8832c49626867d'
-  network: PONTUSXDEV
+  network: OP_SEPOLIA
   description: description.md
   tags:
     - agriculture
@@ -29,7 +29,7 @@ metadata:
         '@type': 'http://www.opengis.net/ont/geosparql#wktLiteral'
         '@value': 'POLYGON(( -8.8 40.95, -7.60 40.95, -7.60 42.00, -8.8 42.00, -8.8
           40.95 ))'
-  did: did:op:615d7a9196055b76809fb23f0e82406c3bb071178b63a064a7fd716695ca6820
+  did: did:ope:37d12a459bed3461cb4553aeac7e8484a7ff144e618fd5a604fb01d73b965d40
 nftData:
   name: Red Wine
   symbol: RED
@@ -40,7 +40,7 @@ nftData:
 service:
   serviceType: compute
   fileType: url
-  serviceEndpoint: 'https://provider.pontus-x.eu'
+  serviceEndpoint: 'https://ocean-node.agrospai.udl.cat'
   timeout: 3600
   files:
     - method: GET
