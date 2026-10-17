@@ -50,7 +50,8 @@ export default class EditAlgo extends Command {
         const published = await connection.nautilus.getAsset(did);
         const assetBuilder = new AssetBuilder(published);
         assetBuilder.setIssuer(connection.wallet.address);
-        const metadata = (getMetadata(published) as any) || (published as any).metadata;
+        const metadata =
+          (getMetadata(published) as any) || (published as any).metadata;
         const existingAlgo = metadata?.algorithm ?? {};
 
         const asset = assetBuilder

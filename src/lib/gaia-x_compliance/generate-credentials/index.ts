@@ -2,17 +2,17 @@ import { createPrivateKey } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import {
-  GaiaXSignatureSigner,
-  type VerifiableCredential,
-} from "@gaia-x/json-web-signature-2020";
-import type { Signer } from "@gaia-x/json-web-signature-2020/dist/src/signer/signer";
-import {
   getDatatokens,
   getMetadata,
   getNftAddress,
   getOwner,
   getServices,
 } from "@deltadao/nautilus";
+import {
+  GaiaXSignatureSigner,
+  type VerifiableCredential,
+} from "@gaia-x/json-web-signature-2020";
+import type { Signer } from "@gaia-x/json-web-signature-2020/dist/src/signer/signer";
 import axios, { type AxiosError } from "axios";
 import * as Handlebars from "handlebars";
 
@@ -134,10 +134,7 @@ function generateAssetVP(
   }
 
   writeFileSync(
-    resolve(
-      dirPath,
-      `${assetData.tokenSymbol}_${assetData.network}.vp.json`,
-    ),
+    resolve(dirPath, `${assetData.tokenSymbol}_${assetData.network}.vp.json`),
     JSON.stringify(vp, null, 2),
     "utf8",
   );

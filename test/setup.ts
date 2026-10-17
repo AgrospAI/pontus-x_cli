@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+
 dotenv.config();
 
 import { resetEnvContent, setupEnvFsMock } from "@test/helpers/env-mock";

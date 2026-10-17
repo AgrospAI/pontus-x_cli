@@ -40,7 +40,8 @@ export default class ChangePrice extends Command {
     ) {
       try {
         const asset = await connection.nautilus.getAsset(did);
-        const serviceId = getServices(asset)?.[0]?.id || (asset as any).services?.[0]?.id;
+        const serviceId =
+          getServices(asset)?.[0]?.id || (asset as any).services?.[0]?.id;
         const tx = await connection.nautilus.setServicePrice(
           asset,
           serviceId,

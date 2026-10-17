@@ -39,9 +39,15 @@ type MetadataConfig = Omit<
   | "additionalInformation"
 > & {
   additionalInformation?: Record<string, any>;
-  algorithm?: Omit<NonNullable<AlgorithmV5>, "consumerParameters" | "container"> & {
+  algorithm?: Omit<
+    NonNullable<AlgorithmV5>,
+    "consumerParameters" | "container"
+  > & {
     consumerParameters?: ExtendedConsumerParameter[];
-    container: Omit<NonNullable<AlgorithmV5>["container"], "consumerParameters"> & {
+    container: Omit<
+      NonNullable<AlgorithmV5>["container"],
+      "consumerParameters"
+    > & {
       consumerParameters?: ExtendedConsumerParameter[];
     };
   };

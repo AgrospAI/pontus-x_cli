@@ -157,8 +157,7 @@ export default class EditTrustedAlgos extends Command {
         const assetBuilder = new AssetBuilder(published);
         assetBuilder.setIssuer(connection.wallet.address);
         const serviceId =
-          getServices(published)[0]?.id ||
-          (published as any).services[0]?.id;
+          getServices(published)[0]?.id || (published as any).services[0]?.id;
         const serviceBuilder = new ServiceBuilder({
           asset: published,
           serviceId,

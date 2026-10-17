@@ -147,8 +147,7 @@ export default class Revoke extends Command {
             asset,
             LifecycleStates.REVOKED_BY_PUBLISHER,
           );
-          const txHash =
-            (tx as any)?.hash || (tx as any)?.transactionHash;
+          const txHash = (tx as any)?.hash || (tx as any)?.transactionHash;
           if (txHash) {
             this.log(
               `Asset revoked, transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}\n`,

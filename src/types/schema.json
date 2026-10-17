@@ -25,17 +25,11 @@
           ]
         }
       },
-      "required": [
-        "transactionId",
-        "type"
-      ],
+      "required": ["transactionId", "type"],
       "type": "object"
     },
     "EncryptMethod": {
-      "enum": [
-        "AES",
-        "ECIES"
-      ],
+      "enum": ["AES", "ECIES"],
       "type": "string"
     },
     "ExtendedConsumerParameter": {
@@ -63,12 +57,7 @@
           "type": "boolean"
         },
         "type": {
-          "enum": [
-            "text",
-            "number",
-            "boolean",
-            "select"
-          ],
+          "enum": ["text", "number", "boolean", "select"],
           "type": "string"
         }
       },
@@ -83,25 +72,12 @@
       "type": "object"
     },
     "FileObjectType": {
-      "enum": [
-        "url",
-        "ipfs",
-        "arweave",
-        "s3",
-        "ftp"
-      ],
+      "enum": ["url", "ipfs", "arweave", "s3", "ftp"],
       "type": "string"
     },
     "FileTypes": {
       "description": "Storage backends ocean-node can read.\n\nTwo v1 types are gone because ocean-node no longer implements them: `graphql` and `smartcontract`. Three are new: `s3`, `ftp` and the node's own persistent storage.",
-      "enum": [
-        "url",
-        "ipfs",
-        "arweave",
-        "s3",
-        "ftp",
-        "nodePersistentStorage"
-      ],
+      "enum": ["url", "ipfs", "arweave", "s3", "ftp", "nodePersistentStorage"],
       "type": "string"
     },
     "FtpFileObject": {
@@ -128,10 +104,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "type",
-        "url"
-      ],
+      "required": ["type", "url"],
       "type": "object"
     },
     "HeadersObject": {
@@ -163,10 +136,7 @@
           ]
         }
       },
-      "required": [
-        "hash",
-        "type"
-      ],
+      "required": ["hash", "type"],
       "type": "object"
     },
     "LanguageValueObject": {
@@ -182,11 +152,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "@value",
-        "@language",
-        "@direction"
-      ],
+      "required": ["@value", "@language", "@direction"],
       "type": "object"
     },
     "MetadataConfig": {
@@ -226,12 +192,7 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "checksum",
-                "entrypoint",
-                "image",
-                "tag"
-              ],
+              "required": ["checksum", "entrypoint", "image", "tag"],
               "type": "object"
             },
             "language": {
@@ -241,9 +202,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "container"
-          ],
+          "required": ["container"],
           "type": "object"
         },
         "attachments": {
@@ -314,11 +273,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "description",
-        "name",
-        "type"
-      ],
+      "required": ["description", "name", "type"],
       "type": "object"
     },
     "NftCreateDataWithoutOwner": {
@@ -359,10 +314,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "key",
-        "value"
-      ],
+      "required": ["key", "value"],
       "type": "object"
     },
     "PersistentStorageObject": {
@@ -385,11 +337,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "bucketId",
-        "fileName",
-        "type"
-      ],
+      "required": ["bucketId", "fileName", "type"],
       "type": "object"
     },
     "PublishConfig": {
@@ -441,10 +389,7 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "name",
-                "symbol"
-              ],
+              "required": ["name", "symbol"],
               "type": "object"
             },
             "fileType": {
@@ -470,24 +415,15 @@
                   "type": "number"
                 },
                 "currency": {
-                  "enum": [
-                    "EURAU",
-                    "EUROe",
-                    "OCEAN"
-                  ],
+                  "enum": ["EURAU", "EUROe", "OCEAN"],
                   "type": "string"
                 },
                 "type": {
-                  "enum": [
-                    "fixed",
-                    "free"
-                  ],
+                  "enum": ["fixed", "free"],
                   "type": "string"
                 }
               },
-              "required": [
-                "type"
-              ],
+              "required": ["type"],
               "type": "object"
             },
             "serviceEndpoint": {
@@ -527,11 +463,7 @@
           "type": "array"
         }
       },
-      "required": [
-        "metadata",
-        "nftData",
-        "service"
-      ],
+      "required": ["metadata", "nftData", "service"],
       "type": "object"
     },
     "RemoteObject": {
@@ -539,11 +471,7 @@
       "properties": {
         "additionalInformation": {
           "additionalProperties": {
-            "type": [
-              "string",
-              "number",
-              "boolean"
-            ]
+            "type": ["string", "number", "boolean"]
           },
           "type": "object"
         },
@@ -569,12 +497,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "name",
-        "fileType",
-        "sha256",
-        "mirrors"
-      ],
+      "required": ["name", "fileType", "sha256", "mirrors"],
       "type": "object"
     },
     "RemoteSource": {
@@ -587,11 +510,7 @@
             },
             {
               "additionalProperties": {
-                "type": [
-                  "string",
-                  "number",
-                  "boolean"
-                ]
+                "type": ["string", "number", "boolean"]
               },
               "type": "object"
             }
@@ -610,9 +529,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "type"
-      ],
+      "required": ["type"],
       "type": "object"
     },
     "S3FileObject": {
@@ -638,10 +555,7 @@
           ]
         }
       },
-      "required": [
-        "s3Access",
-        "type"
-      ],
+      "required": ["s3Access", "type"],
       "type": "object"
     },
     "S3Object": {
@@ -703,10 +617,7 @@
       "description": "Maps a `FileTypes` member onto the ocean.js storage object it needs."
     },
     "ServiceTypes": {
-      "enum": [
-        "access",
-        "compute"
-      ],
+      "enum": ["access", "compute"],
       "type": "string"
     },
     "TrustedAlgorithmAsset": {
@@ -723,9 +634,7 @@
           "type": "array"
         }
       },
-      "required": [
-        "did"
-      ],
+      "required": ["did"],
       "type": "object"
     },
     "UrlFileObject": {
@@ -757,11 +666,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "method",
-        "type",
-        "url"
-      ],
+      "required": ["method", "type", "url"],
       "type": "object"
     }
   }

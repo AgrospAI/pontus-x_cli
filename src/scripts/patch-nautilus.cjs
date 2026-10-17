@@ -15,6 +15,8 @@ if (fs.existsSync(filePath)) {
   if (content.includes(unpatched)) {
     content = content.replace(unpatched, patched);
     fs.writeFileSync(filePath, content, "utf8");
-    console.log("✅ Patched Nautilus waitForMetadataPermission for RPC lag tolerance.");
+    console.log(
+      "✅ Patched Nautilus waitForMetadataPermission for RPC lag tolerance.",
+    );
   }
 }

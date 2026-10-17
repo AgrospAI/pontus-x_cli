@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { setTimeout } from "node:timers/promises";
-import { search, select } from "@inquirer/prompts";
 import type { NodeComputeJob } from "@deltadao/nautilus";
+import { search, select } from "@inquirer/prompts";
 import { Args, Command, Flags } from "@oclif/core";
 import chalk from "chalk";
 import readlineSync from "readline-sync";
@@ -145,7 +145,7 @@ export default class Compute extends Command {
     const connection = await Connection.connect(envOverrides);
 
     try {
-      let computeResult;
+      let computeResult: { jobs: NodeComputeJob[] };
       try {
         computeResult = await connection.nautilus.freeCompute({
           algorithm: { did: algorithm.did, algocustomdata: algoParams },
@@ -154,7 +154,7 @@ export default class Compute extends Command {
             .filter((_, i) => i > 0)
             .map((dataset) => ({ did: dataset.did })),
         });
-      } catch (freeError: any) {
+      } catch (_freeError: any) {
         computeResult = await connection.nautilus.compute({
           algorithm: { did: algorithm.did, algocustomdata: algoParams },
           dataset: { did: datasets[0].did },

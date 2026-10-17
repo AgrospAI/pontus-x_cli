@@ -132,8 +132,7 @@ export default class EditTrustedPublishers extends Command {
         const published = await connection.nautilus.getAsset(asset.did);
         const assetBuilder = new AssetBuilder(published);
         const serviceId =
-          getServices(published)[0]?.id ||
-          (published as any).services[0]?.id;
+          getServices(published)[0]?.id || (published as any).services[0]?.id;
         const serviceBuilder = new ServiceBuilder({
           asset: published,
           serviceId,

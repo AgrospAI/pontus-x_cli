@@ -1,4 +1,8 @@
-import { IpfsRemoteStore, Nautilus, type RemoteStore } from "@deltadao/nautilus";
+import {
+  IpfsRemoteStore,
+  Nautilus,
+  type RemoteStore,
+} from "@deltadao/nautilus";
 import { JsonRpcProvider, TransactionReceipt, Wallet } from "ethers";
 
 import {
@@ -147,8 +151,7 @@ export class Connection {
       return patchResponse(res);
     }) as any;
 
-    const originalSetLifecycle =
-      nautilus.setAssetLifecycleState.bind(nautilus);
+    const originalSetLifecycle = nautilus.setAssetLifecycleState.bind(nautilus);
     nautilus.setAssetLifecycleState = (async (asset: any, state: any) => {
       const tx = await originalSetLifecycle(asset, state);
       return patchReceipt(tx);

@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path, { join } from "node:path";
+import type { PublishResponse } from "@deltadao/nautilus";
 import {
   AssetBuilder,
   ConsumerParameterBuilder,
@@ -363,7 +364,7 @@ export async function publishFromFile(
 
   console.log(`🚀 Publishing asset...`);
 
-  let result;
+  let result: PublishResponse;
   try {
     result = await connection.nautilus.publish(asset, {
       waitForIndexer: true,

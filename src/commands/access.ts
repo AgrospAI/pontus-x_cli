@@ -21,7 +21,9 @@ export default class Access extends Command {
       this.log(`Download URL: ${url}\n`);
     } catch (error) {
       if (error instanceof OrderCheckError) {
-        const costs = error.costs.map((c) => `${c.amount} ${c.symbol}`).join(" + ");
+        const costs = error.costs
+          .map((c) => `${c.amount} ${c.symbol}`)
+          .join(" + ");
         this.error(
           `Previous order check failed: ${error.message}\n` +
             (costs ? `Potential duplicate cost: ${costs}\n` : "") +

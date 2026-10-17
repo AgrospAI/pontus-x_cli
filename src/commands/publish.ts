@@ -104,12 +104,11 @@ export default class Publish extends Command {
         };
 
         if (flags.resume) {
+          const resumeNft = flags.resume;
           connection.nautilus.publish = (async (asset: any, options: any) => {
-            console.log(
-              `Resuming publish on existing NFT ${flags.resume}...`,
-            );
+            console.log(`Resuming publish on existing NFT ${resumeNft}...`);
             const res = await connection.nautilus.completePublish(
-              flags.resume!,
+              resumeNft,
               asset,
               {
                 ...options,
@@ -147,9 +146,7 @@ export default class Publish extends Command {
         await publish(path, oceanNodeUri, flags["dry-run"], connection);
       } catch (error) {
         console.error(error as string);
-        this.error(
-          error instanceof Error ? error.message : String(error),
-        );
+        this.error(error instanceof Error ? error.message : String(error));
       }
 
       return;
