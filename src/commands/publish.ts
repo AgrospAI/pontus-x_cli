@@ -1,8 +1,10 @@
 import * as fs from "node:fs";
 import * as vm from "node:vm";
+import { PublishIncompleteError } from "@deltadao/nautilus";
 import { Args, Command, Flags } from "@oclif/core";
 import chalk from "chalk";
 import * as ts from "typescript";
+import { DEFAULT_OCEAN_NODE_URI } from "@/config";
 import { setKeyInYaml } from "@/lib/yaml";
 import { Connection } from "@/utils/connection";
 import { readManifest } from "../lib/manifest";
@@ -41,8 +43,10 @@ export default class Publish extends Command {
     }),
     provider: Flags.string({
       char: "p",
-      default: "https://provider.agrospai.udl.cat",
-      description: "The Provider URL",
+      description: "The Ocean Node URL (defaults to OCEAN_NODE_URI from .env)",
+    }),
+    resume: Flags.string({
+      description: "Resume an incomplete publish on an existing NFT address",
     }),
     recursive: Flags.boolean({
       char: "r",
@@ -77,11 +81,74 @@ export default class Publish extends Command {
 
       try {
         const connection = await Connection.connect();
-        await publish(path, flags.provider, flags["dry-run"], connection);
+        const oceanNodeUri =
+          flags.provider ||
+          process.env.OCEAN_NODE_URI ||
+          connection.networkConfig.oceanNodeUri ||
+          DEFAULT_OCEAN_NODE_URI;
+
+        const originalPublish = connection.nautilus.publish.bind(
+          connection.nautilus,
+        );
+
+        const normalizePublishResult = (res: any) => {
+          if (res?.setMetadataTxReceipt) {
+            const hash =
+              res.setMetadataTxReceipt.hash ||
+              res.setMetadataTxReceipt.transactionHash;
+            if (hash && !res.setMetadataTxReceipt.transactionHash) {
+              res.setMetadataTxReceipt.transactionHash = hash;
+            }
+          }
+          return res;
+        };
+
+        if (flags.resume) {
+          connection.nautilus.publish = (async (asset: any, options: any) => {
+            console.log(
+              `Resuming publish on existing NFT ${flags.resume}...`,
+            );
+            const res = await connection.nautilus.completePublish(
+              flags.resume!,
+              asset,
+              {
+                ...options,
+                waitForIndexer: true,
+              },
+            );
+            return normalizePublishResult(res);
+          }) as any;
+        } else {
+          connection.nautilus.publish = (async (asset: any, options: any) => {
+            try {
+              const res = await originalPublish(asset, options);
+              return normalizePublishResult(res);
+            } catch (error) {
+              if (error instanceof PublishIncompleteError) {
+                console.warn(
+                  `⚠️  Publishing stopped after NFT ${error.nftAddress} was created. Resuming via completePublish()...`,
+                );
+                const res = await connection.nautilus.completePublish(
+                  error.nftAddress,
+                  asset,
+                  {
+                    ...options,
+                    waitForIndexer: true,
+                    metadataTxHash: error.stored?.txHash,
+                  },
+                );
+                return normalizePublishResult(res);
+              }
+              throw error;
+            }
+          }) as any;
+        }
+
+        await publish(path, oceanNodeUri, flags["dry-run"], connection);
       } catch (error) {
         console.error(error as string);
         this.error(
-          "Please, login before running this command with a TypeScript file",
+          error instanceof Error ? error.message : String(error),
         );
       }
 
@@ -138,9 +205,14 @@ export default class Publish extends Command {
           PRIVATE_KEY: privateKey,
         };
         const connection = await Connection.connect(envOverrides);
+        const oceanNodeUri =
+          flags.provider ||
+          process.env.OCEAN_NODE_URI ||
+          connection.networkConfig.oceanNodeUri ||
+          DEFAULT_OCEAN_NODE_URI;
         const publishedDid = await publish(
           file,
-          flags.provider,
+          oceanNodeUri,
           flags["dry-run"],
           connection,
         );
@@ -196,18 +268,18 @@ async function publish(
 ): Promise<string | undefined> {
   if (path.endsWith(".ts")) {
     const dirPath = path.split("/").slice(0, -1).join("/");
-    return invokeFunctionFromFile(
+    return (await invokeFunctionFromFile(
       path,
       "publish",
       dirPath,
       connection,
       provider,
       dryRun,
-    );
+    )) as string | undefined;
   }
 
   if (path.endsWith(".json") || path.endsWith(".yaml")) {
-    return publishFromFile(path, provider, connection, dryRun);
+    return await publishFromFile(path, provider, connection, dryRun);
   }
 
   throw new Error("The provided file must be a .json/.yaml or .ts file");

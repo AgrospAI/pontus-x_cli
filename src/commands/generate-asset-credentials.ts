@@ -42,7 +42,7 @@ export default class GenerateAssetCredentials extends Command {
     const { args, flags } = await this.parse(GenerateAssetCredentials);
     this.log(`Retrieving asset metadata for DID: ${args.did}`);
     const { nautilus } = await Connection.connect();
-    const ddo = await nautilus.getAquariusAsset(args.did);
+    const ddo = await nautilus.getAsset(args.did);
     this.log(
       `Asset ${args.did} metadata: \n\n ${JSON.stringify(ddo, null, 2)} \n`,
     );

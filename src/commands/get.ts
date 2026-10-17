@@ -17,9 +17,9 @@ export default class Get extends Command {
     const { did } = args;
     this.log(`Retrieving asset metadata for DID: ${did}`);
     const { nautilus } = await Connection.connect();
-    const aquariusAsset = await nautilus.getAquariusAsset(did);
+    const asset = await nautilus.getAsset(did);
     this.log(
-      `Asset ${did} metadata: \n\n ${JSON.stringify(aquariusAsset, null, 2)} \n`,
+      `Asset ${did} metadata: \n\n ${JSON.stringify(asset, null, 2)} \n`,
     );
   }
 }

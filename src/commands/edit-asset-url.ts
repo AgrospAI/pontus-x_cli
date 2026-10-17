@@ -1,4 +1,4 @@
-import { AssetBuilder, ServiceBuilder } from "@deltadao/nautilus";
+import { AssetBuilder, getServices, ServiceBuilder } from "@deltadao/nautilus";
 import { Args, Command, Flags } from "@oclif/core";
 import readlineSync from "readline-sync";
 
@@ -34,18 +34,31 @@ export default class EditAssetUrl extends Command {
       readlineSync.keyInYNStrict(`Changing the URL for ${did} to ${url}? `)
     ) {
       try {
-        const aquariusAsset = await connection.nautilus.getAquariusAsset(did);
-        const assetBuilder = new AssetBuilder(aquariusAsset);
+        if (!connection.remoteStore) {
+          throw new Error(
+            "Editing requires a remote store. Please set PINATA_JWT or IPFS_UPLOAD_URL in your environment.",
+          );
+        }
+
+        const published = await connection.nautilus.getAsset(did);
+        const assetBuilder = new AssetBuilder(published);
+        const serviceId =
+          getServices(published)[0]?.id ||
+          (published as any).services[0]?.id;
         const serviceBuilder = new ServiceBuilder({
-          aquariusAsset,
-          serviceId: aquariusAsset.services[0].id,
+          asset: published,
+          serviceId,
         });
         serviceBuilder.addFile({ method: "GET", type: "url", url });
         const service = serviceBuilder.build();
         const asset = assetBuilder.addService(service).build();
         const result = await connection.nautilus.edit(asset);
+        const txHash =
+          (result.setMetadataTxReceipt as any).hash ||
+          (result.setMetadataTxReceipt as any).transactionHash;
+
         this.log(
-          `Changed asset URL, transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`,
+          `Changed asset URL, transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}\n`,
         );
       } catch (error) {
         this.error(`Error changing dataset URL: ${error}`);

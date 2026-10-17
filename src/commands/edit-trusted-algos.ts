@@ -1,4 +1,4 @@
-import { AssetBuilder, ServiceBuilder } from "@deltadao/nautilus";
+import { AssetBuilder, getServices, ServiceBuilder } from "@deltadao/nautilus";
 import { Command, Flags } from "@oclif/core";
 import chalk from "chalk";
 import readlineSync from "readline-sync";
@@ -59,7 +59,7 @@ export default class EditTrustedAlgos extends Command {
     const { flags } = await this.parse(EditTrustedAlgos);
 
     // Validation
-    if (flags.public && flags.algos?.length) {
+    if (flags.public && flags.algorithms?.length) {
       this.error(
         "You cannot specify algorithm DIDs and set the dataset as public at the same time.",
       );
@@ -147,13 +147,21 @@ export default class EditTrustedAlgos extends Command {
           PRIVATE_KEY: getPrivateKeyForOwner(loginInfos, asset.owner),
         };
         const connection = await Connection.connect(envOverrides);
-        const aquariusAsset = await connection.nautilus.getAquariusAsset(
-          asset.did,
-        );
-        const assetBuilder = new AssetBuilder(aquariusAsset);
+        if (!connection.remoteStore) {
+          throw new Error(
+            "Editing requires a remote store. Please set PINATA_JWT or IPFS_UPLOAD_URL in your environment.",
+          );
+        }
+
+        const published = await connection.nautilus.getAsset(asset.did);
+        const assetBuilder = new AssetBuilder(published);
+        assetBuilder.setIssuer(connection.wallet.address);
+        const serviceId =
+          getServices(published)[0]?.id ||
+          (published as any).services[0]?.id;
         const serviceBuilder = new ServiceBuilder({
-          aquariusAsset,
-          serviceId: aquariusAsset.services[0].id,
+          asset: published,
+          serviceId,
         });
 
         if (flags.public) {
@@ -174,9 +182,12 @@ export default class EditTrustedAlgos extends Command {
         const service = serviceBuilder.build();
         const nautilusAsset = assetBuilder.addService(service).build();
         const result = await connection.nautilus.edit(nautilusAsset);
+        const txHash =
+          (result.setMetadataTxReceipt as any).hash ||
+          (result.setMetadataTxReceipt as any).transactionHash;
 
         this.log(
-          `Edited the trusted algorithms, transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`,
+          `Edited the trusted algorithms, transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}\n`,
         );
       } catch (error) {
         this.error(`Error editing trusted algorithms: ${error}`);

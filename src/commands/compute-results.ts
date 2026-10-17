@@ -7,14 +7,13 @@ export default class ComputeResults extends Command {
   };
   static description = "Get the compute job results.";
   static examples: Command.Example[] = [
-    "<%= config.bin %> <%= command.id %> 215bae450c8f40f59bfc5d1ccada3931 -p https://provider.agrospai.udl.cat",
+    "<%= config.bin %> <%= command.id %> 0x1234...-215bae450c8f40f59bfc5d1ccada3931",
   ];
   static flags = {
     provider: Flags.string({
       char: "p",
-      default: "https://provider.agrospai.udl.cat",
-      description: "The Provider URL",
-      required: true,
+      description: "Ocean Node URL (defaults to configured oceanNodeUri)",
+      required: false,
     }),
   };
 
@@ -24,13 +23,13 @@ export default class ComputeResults extends Command {
     try {
       const computeResultUrl = await connection.nautilus.getComputeResult({
         jobId: args.jobId,
-        providerUri: flags.provider,
+        nodeUri: flags.provider,
       });
       if (computeResultUrl)
         this.log(`Compute results available from: ${computeResultUrl}\n`);
       else this.log("No results available yet\n");
     } catch (error) {
-      this.error(`Error starting compute: ${error}`);
+      this.error(`Error getting compute results: ${error}`);
     }
   }
 }

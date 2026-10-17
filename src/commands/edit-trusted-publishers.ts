@@ -1,4 +1,4 @@
-import { AssetBuilder, ServiceBuilder } from "@deltadao/nautilus";
+import { AssetBuilder, getServices, ServiceBuilder } from "@deltadao/nautilus";
 import { Command, Flags } from "@oclif/core";
 import chalk from "chalk";
 import readlineSync from "readline-sync";
@@ -123,13 +123,20 @@ export default class EditTrustedPublishers extends Command {
           PRIVATE_KEY: getPrivateKeyForOwner(loginInfos, asset.owner),
         };
         const connection = await Connection.connect(envOverrides);
-        const aquariusAsset = await connection.nautilus.getAquariusAsset(
-          asset.did,
-        );
-        const assetBuilder = new AssetBuilder(aquariusAsset);
+        if (!connection.remoteStore) {
+          throw new Error(
+            "Editing requires a remote store. Please set PINATA_JWT or IPFS_UPLOAD_URL in your environment.",
+          );
+        }
+
+        const published = await connection.nautilus.getAsset(asset.did);
+        const assetBuilder = new AssetBuilder(published);
+        const serviceId =
+          getServices(published)[0]?.id ||
+          (published as any).services[0]?.id;
         const serviceBuilder = new ServiceBuilder({
-          aquariusAsset,
-          serviceId: aquariusAsset.services[0].id,
+          asset: published,
+          serviceId,
         });
 
         for (const publisher of publishers) {
@@ -140,9 +147,12 @@ export default class EditTrustedPublishers extends Command {
         const service = serviceBuilder.build();
         const nautilusAsset = assetBuilder.addService(service).build();
         const result = await connection.nautilus.edit(nautilusAsset);
+        const txHash =
+          (result.setMetadataTxReceipt as any).hash ||
+          (result.setMetadataTxReceipt as any).transactionHash;
 
         this.log(
-          `Edited the trusted publishers, transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`,
+          `Edited the trusted publishers, transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}\n`,
         );
       } catch (error) {
         this.error(`Error editing trusted publishers: ${error}`);

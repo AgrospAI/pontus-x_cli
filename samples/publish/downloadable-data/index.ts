@@ -20,6 +20,7 @@ export const publish = async (
     .setAuthor("Cortez et al., 2009")
     .setOwner(connection.wallet.address)
     .setDescription(readFileSync(`${folder}/description.md`, "utf8"))
+    .setProvidedBy("Cortez et al., 2009")
     .addTags(["agriculture", "wine", "agrospai", "udl", "tabular-data"])
     .setLicense("CC-BY-4.0")
     .setNftData({
@@ -44,8 +45,14 @@ export const publish = async (
     //     Authorization: 'Basic XXX' // optional headers field e.g. for basic access control
     // }
   };
+  const oceanNodeUri =
+    provider ||
+    process.env.OCEAN_NODE_URI ||
+    connection.networkConfig.oceanNodeUri;
+
   const service = serviceBuilder
-    .setServiceEndpoint(provider) // the access controller to be in control of this asset
+    .setName("Red Wine")
+    .setServiceEndpoint(oceanNodeUri) // the access controller to be in control of this asset
     .setTimeout(0) // Timeout in seconds (0 means unlimited access after purchase)
     .addFile(urlFile)
     .setPricing({ type: "free" })
@@ -60,9 +67,12 @@ export const publish = async (
   } else {
     console.log(`Publishing asset...`);
     const result = await connection.nautilus.publish(asset);
+    const txHash =
+      (result.setMetadataTxReceipt as any).hash ||
+      (result.setMetadataTxReceipt as any).transactionHash;
     console.log(
       `Asset published, ` +
-        `transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`,
+        `transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}\n`,
     );
   }
 };

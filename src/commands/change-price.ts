@@ -1,3 +1,4 @@
+import { getServices } from "@deltadao/nautilus";
 import { Args, Command, Flags } from "@oclif/core";
 import readlineSync from "readline-sync";
 import { Connection } from "@/utils/connection";
@@ -38,15 +39,16 @@ export default class ChangePrice extends Command {
       )
     ) {
       try {
-        const aquariusAsset = await connection.nautilus.getAquariusAsset(did);
-        const serviceId = aquariusAsset.services?.[0]?.id;
+        const asset = await connection.nautilus.getAsset(did);
+        const serviceId = getServices(asset)?.[0]?.id || (asset as any).services?.[0]?.id;
         const tx = await connection.nautilus.setServicePrice(
-          aquariusAsset,
+          asset,
           serviceId,
           newPriceNumber.toString(),
         );
+        const txHash = (tx as any).hash || (tx as any).transactionHash;
         this.log(
-          `Price updated for asset, transaction: ${connection.networkConfig.explorerUri}/tx/${tx.transactionHash}\n`,
+          `Price updated for asset, transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}\n`,
         );
       } catch (error) {
         this.error(`Error changing the price: ${error}`);

@@ -7,14 +7,13 @@ export default class ComputeStatus extends Command {
   };
   static description = "Check compute job status.";
   static examples: Command.Example[] = [
-    "<%= config.bin %> <%= command.id %> 215bae450c8f40f59bfc5d1ccada3931 -p https://provider.agrospai.udl.cat",
+    "<%= config.bin %> <%= command.id %> 0x1234...-215bae450c8f40f59bfc5d1ccada3931",
   ];
   static flags = {
     provider: Flags.string({
       char: "p",
-      default: "https://provider.agrospai.udl.cat",
-      description: "The Provider URL",
-      required: true,
+      description: "Ocean Node URL (defaults to configured oceanNodeUri)",
+      required: false,
     }),
   };
 
@@ -24,16 +23,25 @@ export default class ComputeStatus extends Command {
     try {
       const computeJobStatus = await connection.nautilus.getComputeStatus({
         jobId: args.jobId,
-        providerUri: flags.provider,
+        nodeUri: flags.provider,
       });
+
+      if (!computeJobStatus) {
+        this.log(`No status found for job ${args.jobId}\n`);
+        return;
+      }
+
       this.log(`Compute status: ${computeJobStatus.statusText}\n`);
-      if (computeJobStatus.statusText === "Job finished") {
+      if (
+        computeJobStatus.dateFinished ||
+        computeJobStatus.statusText === "Job finished"
+      ) {
         this.log(
-          `Get results using command:\n ${this.config.bin} ${this.id} ${args.jobId} -p ${flags.provider}\n`,
+          `Get results using command:\n ${this.config.bin} compute-results ${args.jobId}\n`,
         );
       }
     } catch (error) {
-      this.error(`Error starting compute: ${error}`);
+      this.error(`Error checking compute status: ${error}`);
     }
   }
 }

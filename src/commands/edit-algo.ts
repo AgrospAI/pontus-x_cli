@@ -1,4 +1,4 @@
-import { AssetBuilder } from "@deltadao/nautilus";
+import { AssetBuilder, getMetadata } from "@deltadao/nautilus";
 import { Args, Command, Flags } from "@oclif/core";
 import readlineSync from "readline-sync";
 
@@ -41,13 +41,23 @@ export default class EditAlgo extends Command {
       )
     ) {
       try {
-        const aquariusAsset = await connection.nautilus.getAquariusAsset(did);
-        const assetBuilder = new AssetBuilder(aquariusAsset);
+        if (!connection.remoteStore) {
+          throw new Error(
+            "Editing requires a remote store. Please set PINATA_JWT or IPFS_UPLOAD_URL in your environment.",
+          );
+        }
+
+        const published = await connection.nautilus.getAsset(did);
+        const assetBuilder = new AssetBuilder(published);
+        assetBuilder.setIssuer(connection.wallet.address);
+        const metadata = (getMetadata(published) as any) || (published as any).metadata;
+        const existingAlgo = metadata?.algorithm ?? {};
+
         const asset = assetBuilder
           .setAlgorithm({
-            ...aquariusAsset.metadata.algorithm,
+            ...existingAlgo,
             container: {
-              ...(aquariusAsset.metadata.algorithm?.container ?? {}),
+              ...(existingAlgo.container ?? {}),
               checksum,
               entrypoint,
               image,
@@ -56,8 +66,12 @@ export default class EditAlgo extends Command {
           })
           .build();
         const result = await connection.nautilus.edit(asset);
+        const txHash =
+          (result.setMetadataTxReceipt as any).hash ||
+          (result.setMetadataTxReceipt as any).transactionHash;
+
         this.log(
-          `Container metadata updated for the algorithm, transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`,
+          `Container metadata updated for the algorithm, transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}\n`,
         );
       } catch (error) {
         this.error(`Error editing container metadata: ${error}`);

@@ -1,5 +1,12 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import {
+  getDatatokens,
+  getMetadata,
+  getNft,
+  getOwner,
+  getServices,
+} from "@deltadao/nautilus";
 import { Args, Command, Flags } from "@oclif/core";
 import { stringify } from "yaml";
 
@@ -7,39 +14,65 @@ import { searchAssets } from "@/lib/aquarius";
 import { Connection } from "@/utils/connection";
 
 function getSpecFromAsset(asset: any): [any, string] {
-  let priceSpec = {};
-  priceSpec =
-    asset.stats.price.value > 0
+  const metadata = (getMetadata(asset) as any) || asset?.metadata;
+  const services = (getServices(asset) as any[]) || asset?.services || [];
+  const owner =
+    getOwner(asset) ||
+    asset?.nft?.owner ||
+    asset?.event?.from ||
+    "0x0000000000000000000000000000000000000000";
+  const nft = (getNft(asset) as any) || asset?.nft;
+  const datatokens = (getDatatokens(asset) as any[]) || asset?.datatokens || [];
+
+  const firstService = services[0] || {};
+  const firstDatatoken = datatokens[0] || {};
+
+  const priceValue = asset?.stats?.price?.value ?? 0;
+  const tokenSymbol = asset?.stats?.price?.tokenSymbol ?? "OCEAN";
+
+  const priceSpec =
+    priceValue > 0
       ? {
-          amount: asset.stats.price.value,
-          currency: asset.stats.price.tokenSymbol,
+          amount: priceValue,
+          currency: tokenSymbol,
           type: "fixed",
         }
       : { type: "free" };
 
+  const rawDescription = metadata?.description;
+  const descriptionStr =
+    typeof rawDescription === "string"
+      ? rawDescription
+      : rawDescription?.text || JSON.stringify(rawDescription || "");
+
+  const rawLicense = metadata?.license;
+  const licenseStr =
+    typeof rawLicense === "string" ? rawLicense : rawLicense?.name || "";
+
   return [
     {
       metadata: {
-        author: asset.metadata.author,
+        author: metadata?.author,
         description: "description.md",
-        license: asset.metadata.license,
-        links: asset.metadata.links,
-        name: asset.metadata.name,
-        owner: asset.event.from,
-        tags: asset.metadata.tags,
-        type: asset.metadata.type,
+        license: licenseStr,
+        links: metadata?.links,
+        name: metadata?.name,
+        owner,
+        providedBy: metadata?.providedBy,
+        tags: metadata?.tags,
+        type: metadata?.type,
       },
       nftData: {
-        name: asset.nft.name,
-        symbol: asset.nft.symbol,
+        name: nft?.name,
+        symbol: nft?.symbol,
         templateIndex: 1, // default - could be enhanced
-        tokenURI: asset.nft.tokenURI,
+        tokenURI: nft?.tokenURI,
         transferable: false, // default - could be enhanced
       },
       service: {
         datatoken: {
-          name: asset.datatokens[0].name,
-          symbol: asset.datatokens[0].symbol,
+          name: firstDatatoken?.name,
+          symbol: firstDatatoken?.symbol,
         },
         files: [
           {
@@ -50,12 +83,12 @@ function getSpecFromAsset(asset: any): [any, string] {
         ], // ⚠️ Cannot recover - encrypted in blockchain
         fileType: "url", // default - infer if possible
         pricing: priceSpec,
-        serviceEndpoint: asset.services[0].serviceEndpoint,
-        serviceType: asset.services[0].type,
-        timeout: asset.services[0].timeout,
+        serviceEndpoint: firstService?.serviceEndpoint,
+        serviceType: firstService?.type,
+        timeout: firstService?.timeout,
       },
     },
-    asset.metadata.description,
+    descriptionStr,
   ];
 }
 
@@ -63,7 +96,7 @@ async function getAssets(did?: string, tags?: string[]): Promise<any[]> {
   const connection = await Connection.connect();
 
   if (did) {
-    return [await connection.nautilus.getAquariusAsset(did)];
+    return [await connection.nautilus.getAsset(did)];
   }
 
   if (!tags) return [];
@@ -77,9 +110,7 @@ async function getAssets(did?: string, tags?: string[]): Promise<any[]> {
   });
 
   const assets = await Promise.all(
-    datasets.map((dataset) =>
-      connection.nautilus.getAquariusAsset(dataset.did),
-    ),
+    datasets.map((dataset) => connection.nautilus.getAsset(dataset.did)),
   );
   return assets;
 }

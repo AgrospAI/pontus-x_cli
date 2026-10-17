@@ -1,4 +1,9 @@
-import { AssetBuilder, CredentialListTypes } from "@deltadao/nautilus";
+import {
+  AssetBuilder,
+  CredentialListTypes,
+  getServices,
+  ServiceBuilder,
+} from "@deltadao/nautilus";
 import { Command, Flags } from "@oclif/core";
 import chalk from "chalk";
 import readlineSync from "readline-sync";
@@ -133,21 +138,30 @@ export default class EditAssetAllowed extends Command {
           PRIVATE_KEY: getPrivateKeyForOwner(loginInfos, asset.owner),
         };
         const connection = await Connection.connect(envOverrides);
-        const aquariusAsset = await connection.nautilus.getAquariusAsset(
-          asset.did,
-        );
-        const assetBuilder = new AssetBuilder(aquariusAsset);
+        if (!connection.remoteStore) {
+          throw new Error(
+            "Editing requires a remote store. Please set PINATA_JWT or IPFS_UPLOAD_URL in your environment.",
+          );
+        }
+
+        const published = await connection.nautilus.getAsset(asset.did);
+        const assetBuilder = new AssetBuilder(published);
+        assetBuilder.setIssuer(connection.wallet.address);
 
         if (flags.public) {
           [CredentialListTypes.ALLOW, CredentialListTypes.DENY].forEach(
             (type) => {
               // Delete current allowed addresses
-              const existing =
-                aquariusAsset.credentials?.[type]?.find(
+              const rawExisting =
+                (published as any).credentials?.[type]?.find(
                   (c: any) => c.type === "address",
                 )?.values ?? [];
-
-              assetBuilder.removeCredentialAddresses(type, existing);
+              const existing = rawExisting.map((v: any) =>
+                typeof v === "string" ? v : v.address,
+              );
+              if (existing.length > 0) {
+                assetBuilder.removeCredentialAddresses(type, existing);
+              }
             },
           );
         } else {
@@ -159,11 +173,32 @@ export default class EditAssetAllowed extends Command {
           });
         }
 
+        const services = getServices(published);
+        for (const s of services) {
+          const serviceBuilder = new ServiceBuilder({
+            asset: published,
+            serviceId: s.id,
+          });
+          if (flags.public) {
+            (serviceBuilder as any).service.credentials = {};
+          } else {
+            serviceBuilder.addCredentialAddresses(CredentialListTypes.ALLOW, [
+              asset.owner,
+              ...(flags.users ?? []),
+            ]);
+          }
+          assetBuilder.addService(serviceBuilder.build());
+        }
+
         const nautilusAsset = assetBuilder.build();
         const result = await connection.nautilus.edit(nautilusAsset);
 
+        const txHash =
+          (result.setMetadataTxReceipt as any).hash ||
+          (result.setMetadataTxReceipt as any).transactionHash;
+
         this.log(
-          `Allowed users updated for asset, transaction: ${connection.networkConfig.explorerUri}/tx/${result.setMetadataTxReceipt.transactionHash}\n`,
+          `Allowed users updated for asset, transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}\n`,
         );
       } catch (error) {
         this.warn(

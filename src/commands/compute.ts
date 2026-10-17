@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { setTimeout } from "node:timers/promises";
 import { search, select } from "@inquirer/prompts";
-import type { ComputeJob } from "@oceanprotocol/lib";
+import type { NodeComputeJob } from "@deltadao/nautilus";
 import { Args, Command, Flags } from "@oclif/core";
 import chalk from "chalk";
 import readlineSync from "readline-sync";
@@ -59,7 +59,7 @@ export default class Compute extends Command {
     }),
   };
 
-  async run(): Promise<ComputeJob | ComputeJob[] | undefined> {
+  async run(): Promise<NodeComputeJob[] | undefined> {
     const { args, flags } = await this.parse(Compute);
 
     // Network selection
@@ -145,31 +145,41 @@ export default class Compute extends Command {
     const connection = await Connection.connect(envOverrides);
 
     try {
-      const computeJob = await connection.nautilus.compute({
-        algorithm: { did: algorithm.did, algocustomdata: algoParams },
-        dataset: { did: datasets[0].did },
-        additionalDatasets: datasets
-          .filter((_, i) => i > 0)
-          .map((dataset) => ({ did: dataset.did })),
-      });
+      let computeResult;
+      try {
+        computeResult = await connection.nautilus.freeCompute({
+          algorithm: { did: algorithm.did, algocustomdata: algoParams },
+          dataset: { did: datasets[0].did },
+          additionalDatasets: datasets
+            .filter((_, i) => i > 0)
+            .map((dataset) => ({ did: dataset.did })),
+        });
+      } catch (freeError: any) {
+        computeResult = await connection.nautilus.compute({
+          algorithm: { did: algorithm.did, algocustomdata: algoParams },
+          dataset: { did: datasets[0].did },
+          additionalDatasets: datasets
+            .filter((_, i) => i > 0)
+            .map((dataset) => ({ did: dataset.did })),
+          confirmEscrowPayment: async (quote) => {
+            console.log(
+              `Compute escrow quote: ${quote.amount} base units of token ${quote.token}`,
+            );
+            return true;
+          },
+          confirmProviderFees: async () => true,
+        });
+      }
 
-      const firstDatasetAsset = await connection.nautilus.getAquariusAsset(
-        datasets[0].did,
-      );
-      const provider = firstDatasetAsset.services[0].serviceEndpoint;
+      const jobs = computeResult.jobs;
 
-      if (Array.isArray(computeJob)) {
-        for (const job of computeJob)
-          this.log(
-            `Compute started, check status using command:\n pontus-x_cli compute-status ${job.jobId} -p ${provider}\n`,
-          );
-      } else {
+      for (const job of jobs) {
         this.log(
-          `Compute started, check status using command:\n pontus-x_cli compute-status ${computeJob.jobId} -p ${provider}\n`,
+          `Compute started, check status using command:\n pontus-x_cli compute-status ${job.jobId}\n`,
         );
       }
 
-      return computeJob;
+      return jobs;
     } catch (error) {
       this.error(`Error starting compute: ${error}`);
     }
