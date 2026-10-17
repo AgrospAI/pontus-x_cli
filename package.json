@@ -1,7 +1,7 @@
 {
   "name": "pontus-x_cli",
   "description": "Command Line Interface for the Pontus-X Data Space Ecosystem",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "author": "AgrospAI",
   "bin": {
     "pontus-x_cli": "bin/run.js"
@@ -76,7 +76,6 @@
     "url": "git+https://github.com/AgrospAI/pontus-x_cli.git"
   },
   "scripts": {
-    "postinstall": "node src/scripts/patch-nautilus.cjs",
     "dev": "npm run build && ts-node -r tsconfig-paths/register ./bin/dev.js",
     "build": "shx rm -rf dist tsconfig.tsbuildinfo && tsc -b && tsc-alias -p tsconfig.json && shx cp -r src/lib/gaia-x_compliance/generate-credentials/templates dist/lib/gaia-x_compliance/generate-credentials/",
     "format": "npx @biomejs/biome format --write",
