@@ -82,7 +82,7 @@ export default interface PublishConfig {
     fileType: FileTypes;
     pricing: {
       amount?: number;
-      currency?: "EURAU" | "EUROe" | "OCEAN";
+      currency?: "EURAU" | "EUROe" | "OCEAN" | "devEURAU";
       type: "fixed" | "free";
     };
     serviceEndpoint: string;

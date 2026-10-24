@@ -156,6 +156,7 @@ function getPricing(
     EURAU: connection.pricingConfig.fixedRateEURAU,
     EUROe: connection.pricingConfig.fixedRateEUROe,
     OCEAN: connection.pricingConfig.fixedRateOCEAN,
+    devEURAU: connection.pricingConfig.fixedRateDevEURAU,
   } as const;
 
   const pricingFn =

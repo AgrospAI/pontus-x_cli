@@ -415,7 +415,7 @@
                   "type": "number"
                 },
                 "currency": {
-                  "enum": ["EURAU", "EUROe", "OCEAN"],
+                  "enum": ["EURAU", "EUROe", "OCEAN", "devEURAU"],
                   "type": "string"
                 },
                 "type": {

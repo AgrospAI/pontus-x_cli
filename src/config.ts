@@ -145,6 +145,23 @@ export const PRICING_CONFIGS: { [key in Network]: PricingConfigGenerators } = {
       }
       return { type: "free" };
     },
+    fixedRateDevEURAU(rate: number) {
+      if (rate <= 0) {
+        return { type: "free" };
+      }
+      return {
+        freCreationParams: {
+          baseTokenAddress: "0xD35141583f374d401fee1BFdDc35910E1D33a588",
+          baseTokenDecimals: 6, // devEURAU decimals
+          datatokenDecimals: 18,
+          fixedRate: `${rate}`,
+          fixedRateAddress: "0x69B6E54Ad2b3c2801d11d8Ad56ea1d892555b776",
+          marketFee: "0.05",
+          marketFeeCollector: "0x94549951623dd6c3265dbbb1b032d6cf48ba7811",
+        },
+        type: "fixed",
+      };
+    },
   },
 };
 
@@ -186,4 +203,5 @@ export type FixedRatePricingConfigGenerator = (
 export type PricingConfigGenerators = {
   fixedRateEURAU: FixedRatePricingConfigGenerator;
   fixedRateEUROe: FixedRatePricingConfigGenerator;
+  fixedRateDevEURAU?: FixedRatePricingConfigGenerator;
 };
