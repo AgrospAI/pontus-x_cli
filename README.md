@@ -22,7 +22,7 @@ $ npm install -g pontus-x_cli
 $ pontus-x_cli COMMAND
 running command...
 $ pontus-x_cli (--version)
-pontus-x_cli/2.0.2 linux-x64 node-v22.23.3
+pontus-x_cli/2.0.3 linux-x64 node-v22.23.3
 $ pontus-x_cli --help [COMMAND]
 USAGE
   $ pontus-x_cli COMMAND
