@@ -303,10 +303,15 @@ export async function publishFromFile(
       .setLabel(param.label)
       .setDescription(param.description)
       .setRequired(param.required)
-      .setDefault(defaultValue)
-      .build();
+      .setDefault(defaultValue);
 
-    serviceBuilder.addConsumerParameter(consumerParam);
+    if (Array.isArray(param.options)) {
+      for (const { key, value } of param.options) {
+        consumerParam.addOption({ [key]: value });
+      }
+    }
+
+    serviceBuilder.addConsumerParameter(consumerParam.build());
   }
 
   if (config.trustedAlgorithms) {
