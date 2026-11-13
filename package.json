@@ -84,7 +84,7 @@
     "fix": "npx @biomejs/biome check --write",
     "check": "tsc --noEmit",
     "postpack": "shx rm -f oclif.manifest.json",
-    "prepack": "oclif manifest && oclif readme",
+    "prepack": "npm run build && oclif manifest && oclif readme",
     "version": "oclif readme && git add README.md",
     "test": "vitest --run",
     "test:init": "ts-node -r tsconfig-paths/register test/helpers/assets.ts initializeAssets",
@@ -93,7 +93,7 @@
     "test:watch": "vitest --watch",
     "schema:publish": "ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'src/types/schema.json'",
     "schema:manifest": "ts-node src/scripts/json-schema.ts generateManifestJsonSchema",
-    "local-install": "npm install -g ."
+    "local-install": "npm run build && npm install -g ."
   },
   "types": "dist/index.d.ts"
 }

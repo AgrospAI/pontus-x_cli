@@ -89,7 +89,7 @@ accounts:
 * [`pontus-x_cli logout`](#pontus-x_cli-logout)
 * [`pontus-x_cli publish PATH`](#pontus-x_cli-publish-path)
 * [`pontus-x_cli render [DID]`](#pontus-x_cli-render-did)
-* [`pontus-x_cli revoke`](#pontus-x_cli-revoke)
+* [`pontus-x_cli revoke [PATH]`](#pontus-x_cli-revoke-path)
 * [`pontus-x_cli self-description DID SDURL`](#pontus-x_cli-self-description-did-sdurl)
 
 ## `pontus-x_cli access DID`
@@ -760,7 +760,7 @@ ARGUMENTS
 FLAGS
   -m, --manifest=<value>  [default: ./manifest.yaml] Path to the manifest file
   -p, --provider=<value>  The Ocean Node URL (defaults to OCEAN_NODE_URI from .env)
-  -r, --recursive         Recursively publish assets in a directory (only for JSON/YAML files)
+  -r, --recursive         Recursively publish assets in a directory
       --dry-run           Dry run the publishing process
       --resume=<value>    Resume an incomplete publish on an existing NFT address
 
@@ -796,26 +796,55 @@ FLAGS
 
 _See code: [src/commands/render.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/render.ts)_
 
-## `pontus-x_cli revoke`
+## `pontus-x_cli revoke [PATH]`
 
-Publisher revocation of one or more owned DIDs
+Publisher revocation of one or more owned assets
+
+Use the same path and common flags as `publish`, replacing the command name:
+
+```sh
+pontus-x_cli publish samples/publish/ --recursive --manifest ./manifest.yaml
+pontus-x_cli revoke samples/publish/ --recursive --manifest ./manifest.yaml
+```
+
+Both commands select `spec.yaml`, `spec.json`, then `index.ts` in that order
+(one asset per directory). Subdirectories are included only with `--recursive`.
+Publishing stores the DID in JSON/YAML metadata or, for a TypeScript script, in
+`<script>.published.json`. Revoking skips files without a recorded DID and removes
+the DID only after successful revocation. Previously published assets without a
+local DID record can still be revoked with `--dids`.
+
+`--dry-run` previews revocation without sending transactions or editing files.
+The `-p` shorthand now means `--provider` for both commands; use a positional path
+or the long `--paths` flag for revoke paths. `--resume` remains specific to publish.
 
 ```
 USAGE
-  $ pontus-x_cli revoke [-d <value>...] [-m <value>] [-p <value>...] [-r] [-y]
+  $ pontus-x_cli revoke [PATH] [-d <value>...] [--dry-run] [-m <value>] [--paths <value>...] [-p <value>] [-r] [-y]
+
+ARGUMENTS
+  [PATH]  Path to a JSON/YAML or TS file or asset directory to revoke
 
 FLAGS
   -d, --dids=<value>...   DID to revoke
   -m, --manifest=<value>  [default: ./manifest.yaml] Path to the manifest file
-  -p, --paths=<value>...  Path to find a JSON/YAML file describing the assets to revoke
-  -r, --recursive         Recursively revoke assets in a directory (only for JSON/YAML files)
+  -p, --provider=<value>  The Ocean Node URL (defaults to OCEAN_NODE_URI from .env)
+  -r, --recursive         Recursively revoke assets in a directory
   -y, --yes               Skip confirmation prompt
+      --dry-run           Preview revocation without changing assets or files
+      --paths=<value>...  Paths to assets to revoke (alias for the positional path)
 
 DESCRIPTION
-  Publisher revocation of one or more owned DIDs
+  Publisher revocation of one or more owned assets
 
 EXAMPLES
-  $ pontus-x_cli revoke -d did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a did:op:abcee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7b
+  $ pontus-x_cli revoke samples/publish/algo/
+
+  $ pontus-x_cli revoke samples/publish/algo/spec.yaml
+
+  $ pontus-x_cli revoke samples/publish/ --recursive
+
+  $ pontus-x_cli revoke -d did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a
 ```
 
 _See code: [src/commands/revoke.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/revoke.ts)_
