@@ -1,3 +1,4 @@
+import { manifestFlag } from "@/utils/manifest-flag";
 import { AssetBuilder, getServices, ServiceBuilder } from "@deltadao/nautilus";
 import { Args, Command, Flags } from "@oclif/core";
 import readlineSync from "readline-sync";
@@ -14,6 +15,7 @@ export default class ChangeCurrency extends Command {
     }),
   };
   static flags = {
+    manifest: manifestFlag,
     yes: Flags.boolean({
       char: "y",
       description: "Automatic yes to prompts",
@@ -30,7 +32,7 @@ export default class ChangeCurrency extends Command {
   async run(): Promise<void> {
     const { args, flags } = await this.parse(ChangeCurrency);
     const { did, newCurrency } = args;
-    const connection = await Connection.connect();
+    const connection = await Connection.connect(undefined, flags.manifest);
 
     if (
       flags.yes ||

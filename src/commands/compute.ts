@@ -15,6 +15,7 @@ import {
 } from "@/lib/aquarius";
 import { PromptForAssets } from "@/utils/asset";
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 import {
   askForNetwork,
   getEnvNetwork,
@@ -42,11 +43,7 @@ export default class Compute extends Command {
       default: false,
       description: "Automatic yes to prompts",
     }),
-    manifest: Flags.string({
-      char: "m",
-      description:
-        "Path to manifest file with the accounts to use for authentication",
-    }),
+    manifest: manifestFlag,
     algoParams: Flags.string({
       char: "a",
       description:
@@ -61,6 +58,8 @@ export default class Compute extends Command {
 
   async run(): Promise<NodeComputeJob[] | undefined> {
     const { args, flags } = await this.parse(Compute);
+
+    const loginInfos = await getLoginInfos(flags.manifest);
 
     // Network selection
     const network =
@@ -86,7 +85,6 @@ export default class Compute extends Command {
     );
 
     // Authentication selection
-    const loginInfos = await getLoginInfos(flags.manifest);
     const inputLoginInfo = loginInfos.length === 1 ? loginInfos[0] : null;
     if (inputLoginInfo) {
       console.log(
@@ -98,7 +96,7 @@ export default class Compute extends Command {
 
     // Algorithm selection
     const inputAlgorithm = args.algorithm
-      ? await getAssetInfo(args.algorithm)
+      ? await getAssetInfo(args.algorithm, undefined, flags.manifest)
       : null;
     if (inputAlgorithm) {
       console.log(
@@ -110,7 +108,7 @@ export default class Compute extends Command {
 
     // Datasets selection
     const inputDatasets = flags.datasets
-      ? await getAssetsFromDids(flags.datasets)
+      ? await getAssetsFromDids(flags.datasets, flags.manifest)
       : null;
     if (inputDatasets) {
       console.log("\nThe following assets will be used:");

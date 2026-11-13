@@ -10,6 +10,7 @@ import {
 } from "@/lib/aquarius";
 import { PromptForAssets } from "@/utils/asset";
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 import {
   askForNetwork,
   getEnvNetwork,
@@ -39,11 +40,7 @@ export default class EditTrustedAlgos extends Command {
       char: "y",
       description: "Skip confirmation prompt",
     }),
-    manifest: Flags.string({
-      char: "m",
-      description:
-        "Path to manifest file with the accounts to use for authentication",
-    }),
+    manifest: manifestFlag,
     public: Flags.boolean({
       char: "p",
       description: "Make dataset public (set all algorithms as trusted)",
@@ -65,6 +62,8 @@ export default class EditTrustedAlgos extends Command {
       );
     }
 
+    const loginInfos = await getLoginInfos(flags.manifest);
+
     // Network selection
     const network =
       (flags.network as Network) || getEnvNetwork() || (await askForNetwork());
@@ -72,12 +71,11 @@ export default class EditTrustedAlgos extends Command {
     const chainId = NETWORK_CONFIGS[network].chainId;
 
     // Authentication selection
-    const loginInfos = await getLoginInfos(flags.manifest);
     printLoginInfos(loginInfos);
 
     // Datasets selection
     const assets: AssetInfo[] = flags.datasets
-      ? await getAssetsFromDids(flags.datasets)
+      ? await getAssetsFromDids(flags.datasets, flags.manifest)
       : await askForDatasets(loginInfos, chainId);
 
     if (flags.datasets) {
@@ -94,7 +92,7 @@ export default class EditTrustedAlgos extends Command {
 
     // Trusted Algorithms selection
     const algorithms: AssetInfo[] = flags.algorithms
-      ? await getAssetsFromDids(flags.algorithms || [])
+      ? await getAssetsFromDids(flags.algorithms || [], flags.manifest)
       : !flags.public
         ? await askForAlgorithms(loginInfos, chainId)
         : [];

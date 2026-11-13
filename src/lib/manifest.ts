@@ -3,6 +3,14 @@ import { parse } from "yaml";
 
 import { type Account, type Manifest, manifestSchema } from "../types/manifest";
 
+export const DEFAULT_MANIFEST_PATH = "./manifest.yaml";
+
+export function readOptionalManifest(
+  path = DEFAULT_MANIFEST_PATH,
+): Manifest | undefined {
+  return manifestExists(path) ? readManifest(path) : undefined;
+}
+
 export function manifestExists(path: string): boolean {
   return existsSync(path);
 }

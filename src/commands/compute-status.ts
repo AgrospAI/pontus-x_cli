@@ -1,5 +1,6 @@
 import { Args, Command, Flags } from "@oclif/core";
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 export default class ComputeStatus extends Command {
   static args = {
@@ -10,6 +11,7 @@ export default class ComputeStatus extends Command {
     "<%= config.bin %> <%= command.id %> 0x1234...-215bae450c8f40f59bfc5d1ccada3931",
   ];
   static flags = {
+    manifest: manifestFlag,
     provider: Flags.string({
       char: "p",
       description: "Ocean Node URL (defaults to configured oceanNodeUri)",
@@ -19,7 +21,7 @@ export default class ComputeStatus extends Command {
 
   async run(): Promise<void> {
     const { args, flags } = await this.parse(ComputeStatus);
-    const connection = await Connection.connect();
+    const connection = await Connection.connect(undefined, flags.manifest);
     try {
       const computeJobStatus = await connection.nautilus.getComputeStatus({
         jobId: args.jobId,

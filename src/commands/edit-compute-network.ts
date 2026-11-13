@@ -3,6 +3,7 @@ import { Args, Command, Flags } from "@oclif/core";
 import readlineSync from "readline-sync";
 
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 export default class EditComputeNetwork extends Command {
   static args = {
@@ -15,6 +16,7 @@ export default class EditComputeNetwork extends Command {
     "<%= config.bin %> <%= command.id %> did:ope:37d12a459bed3461cb4553aeac7e8484a7ff144e618fd5a604fb01d73b965d40 --disable",
   ];
   static flags = {
+    manifest: manifestFlag,
     enable: Flags.boolean({
       char: "e",
       default: true,
@@ -40,7 +42,7 @@ export default class EditComputeNetwork extends Command {
     const enable = flags.disable ? false : flags.enable;
     const action = enable ? "enable" : "disable";
 
-    const connection = await Connection.connect();
+    const connection = await Connection.connect(undefined, flags.manifest);
     if (
       flags.yes ||
       readlineSync.keyInYNStrict(

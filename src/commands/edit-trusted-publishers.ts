@@ -13,6 +13,7 @@ import {
 import { PromptForPublishers } from "@/utils/account";
 import { PromptForAssets } from "@/utils/asset";
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 import {
   askForNetwork,
   getEnvNetwork,
@@ -42,11 +43,7 @@ export default class EditTrustedPublishers extends Command {
       char: "y",
       description: "Skip confirmation prompt",
     }),
-    manifest: Flags.string({
-      char: "m",
-      description:
-        "Path to manifest file with the accounts to use for authentication",
-    }),
+    manifest: manifestFlag,
     network: Flags.string({
       char: "n",
       description: "Network to use (env: NETWORK)",
@@ -57,6 +54,8 @@ export default class EditTrustedPublishers extends Command {
   async run(): Promise<void> {
     const { flags } = await this.parse(EditTrustedPublishers);
 
+    const loginInfos = await getLoginInfos(flags.manifest);
+
     // Network selection
     const network =
       (flags.network as Network) || getEnvNetwork() || (await askForNetwork());
@@ -64,12 +63,11 @@ export default class EditTrustedPublishers extends Command {
     const chainId = NETWORK_CONFIGS[network].chainId;
 
     // Authentication selection
-    const loginInfos = await getLoginInfos(flags.manifest);
     printLoginInfos(loginInfos);
 
     // Datasets selection
     const assets: AssetInfo[] = flags.dids
-      ? await getAssetsFromDids(flags.dids)
+      ? await getAssetsFromDids(flags.dids, flags.manifest)
       : await askForDatasets(loginInfos, chainId);
 
     if (flags.dids) {

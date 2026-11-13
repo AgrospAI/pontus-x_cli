@@ -3,6 +3,7 @@ import { Args, Command, Flags } from "@oclif/core";
 import readlineSync from "readline-sync";
 
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 export default class EditAssetUrl extends Command {
   static args = {
@@ -17,6 +18,7 @@ export default class EditAssetUrl extends Command {
     "<%= config.bin %> <%= command.id %> did:op:af3e93c4f18903f91b108e7204b8a752e7605f4547ed507212bd6aca63af5686 https://raw.githubusercontent.com/plotly/datasets/refs/heads/master/titanic.csv",
   ];
   static flags = {
+    manifest: manifestFlag,
     yes: Flags.boolean({
       char: "y",
       default: false,
@@ -28,7 +30,7 @@ export default class EditAssetUrl extends Command {
   async run(): Promise<void> {
     const { args, flags } = await this.parse(EditAssetUrl);
     const { did, url } = args;
-    const connection = await Connection.connect();
+    const connection = await Connection.connect(undefined, flags.manifest);
     if (
       flags.yes ||
       readlineSync.keyInYNStrict(`Changing the URL for ${did} to ${url}? `)

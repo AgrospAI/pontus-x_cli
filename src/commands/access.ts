@@ -1,8 +1,10 @@
 import { OrderCheckError, PolicyDeniedError } from "@deltadao/nautilus";
 import { Args, Command } from "@oclif/core";
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 export default class Access extends Command {
+  static flags = { manifest: manifestFlag };
   static args = {
     did: Args.string({ description: "DID of the asset", required: true }),
   };
@@ -12,10 +14,10 @@ export default class Access extends Command {
   ];
 
   async run(): Promise<void> {
-    const { args } = await this.parse(Access);
+    const { args, flags } = await this.parse(Access);
     const { did } = args;
     this.log(`Getting access to downloadable asset: ${did}`);
-    const { nautilus } = await Connection.connect();
+    const { nautilus } = await Connection.connect(undefined, flags.manifest);
     try {
       const { url } = await nautilus.access({ assetDid: did });
       this.log(`Download URL: ${url}\n`);

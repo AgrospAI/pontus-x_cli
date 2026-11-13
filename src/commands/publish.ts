@@ -11,7 +11,8 @@ import {
   updatePublication,
 } from "@/lib/asset-files";
 import { Connection } from "@/utils/connection";
-import { readManifest } from "../lib/manifest";
+import { manifestFlag } from "@/utils/manifest-flag";
+import { readOptionalManifest } from "../lib/manifest";
 import { getEnvironmentConfig, publishFromFile } from "../lib/spec";
 
 export default class Publish extends Command {
@@ -35,11 +36,7 @@ export default class Publish extends Command {
       default: false,
       description: "Dry run the publishing process",
     }),
-    manifest: Flags.string({
-      char: "m",
-      default: "./manifest.yaml",
-      description: "Path to the manifest file",
-    }),
+    manifest: manifestFlag,
     provider: Flags.string({
       char: "p",
       description: "The Ocean Node URL (defaults to OCEAN_NODE_URI from .env)",
@@ -59,11 +56,26 @@ export default class Publish extends Command {
 
     const files = resolveAssetFiles(args.path, flags.recursive);
 
+    const manifest = readOptionalManifest(flags.manifest);
+
     if (!flags.recursive) {
       const [path] = files;
 
       try {
-        const connection = await Connection.connect();
+        const environment = await getEnvironmentConfig(
+          path,
+          readAssetConfig(path),
+          manifest,
+        );
+        if (!environment)
+          this.error(`Missing environment configuration for file ${path}`);
+        const connection = await Connection.connect(
+          {
+            NETWORK: environment.network,
+            PRIVATE_KEY: environment.privateKey,
+          },
+          flags.manifest,
+        );
         const oceanNodeUri =
           flags.provider ||
           process.env.OCEAN_NODE_URI ||
@@ -136,18 +148,15 @@ export default class Publish extends Command {
           updatePublication(path, {
             did,
             owner: connection.wallet.address,
-            network: process.env.NETWORK,
+            network: environment.network,
           });
         }
       } catch (error) {
-        console.error(error as string);
         this.error(error instanceof Error ? error.message : String(error));
       }
 
       return;
     }
-
-    const manifest = readManifest(flags.manifest);
 
     for (const file of files) {
       const config = readAssetConfig(file);
@@ -212,7 +221,6 @@ export default class Publish extends Command {
           chalk.green(`Published file ${file} with DID: ${publishedDid}`),
         );
       } catch (error) {
-        console.error(error as string);
         this.error(`Error publishing file ${file}`);
       }
     }

@@ -13,8 +13,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 // These tests use real temporary files rather than the login suite's .env mock.
 vi.mock("node:fs", async () => vi.importActual("node:fs"));
 vi.mock("@/utils/connection", () => ({ Connection: { connect: vi.fn() } }));
-vi.mock("@/lib/manifest", () => ({
-  readManifest: vi.fn(() => ({ accounts: [] })),
+vi.mock("@/lib/manifest", async () => ({
+  ...(await vi.importActual<typeof import("@/lib/manifest")>("@/lib/manifest")),
+  readOptionalManifest: vi.fn(() => ({ accounts: [] })),
 }));
 vi.mock("@/lib/spec", async () => ({
   ...(await vi.importActual<typeof import("@/lib/spec")>("@/lib/spec")),
@@ -29,7 +30,8 @@ vi.mock("@/lib/spec", async () => ({
 import Publish from "@/commands/publish";
 import Revoke from "@/commands/revoke";
 import { readAssetConfig, resolveAssetFiles } from "@/lib/asset-files";
-import { publishFromFile } from "@/lib/spec";
+import { readOptionalManifest } from "@/lib/manifest";
+import { getEnvironmentConfig, publishFromFile } from "@/lib/spec";
 import { Connection } from "@/utils/connection";
 
 let folder: string;
@@ -191,10 +193,52 @@ describe("matching publish and revoke paths", () => {
 
   it("uses publish's provider flag and retains direct DID revocation", async () => {
     await Revoke.run(["-d", did, "-y", "-p", "http://custom-provider"]);
-    expect(Connection.connect).toHaveBeenCalledWith({
-      OCEAN_NODE_URI: "http://custom-provider",
-    });
+    expect(Connection.connect).toHaveBeenCalledWith(
+      {
+        OCEAN_NODE_URI: "http://custom-provider",
+      },
+      "./manifest.yaml",
+    );
     expect(nautilus.getAsset).toHaveBeenCalledWith(did);
+  });
+
+  for (const recursive of [false, true]) {
+    it(`resolves manifest credentials for ${recursive ? "recursive" : "single"} publish and revoke`, async () => {
+      const file = spec();
+      const manifestPath = join(folder, "custom-manifest.yaml");
+      const options = ["-m", manifestPath, ...(recursive ? ["-r"] : [])];
+      await Publish.run([file, ...options]);
+      expect(readOptionalManifest).toHaveBeenCalledWith(manifestPath);
+      expect(getEnvironmentConfig).toHaveBeenCalledWith(
+        file,
+        expect.objectContaining({
+          metadata: expect.objectContaining({ name: "asset" }),
+        }),
+        { accounts: [] },
+      );
+      expect(Connection.connect).toHaveBeenCalledWith(
+        { NETWORK: "PONTUSXTEST", PRIVATE_KEY: "key" },
+        ...(recursive ? [] : [manifestPath]),
+      );
+      vi.mocked(Connection.connect).mockClear();
+      await Revoke.run([file, ...options]);
+      expect(Connection.connect).toHaveBeenCalledWith(
+        { NETWORK: "PONTUSXTEST", PRIVATE_KEY: "key" },
+        manifestPath,
+      );
+    });
+  }
+
+  it("fails recursive publishing when no login is available", async () => {
+    const file = spec();
+    vi.mocked(getEnvironmentConfig).mockRejectedValueOnce(
+      new Error("You are not logged in."),
+    );
+    await expect(Publish.run([file, "-r"])).rejects.toThrow(
+      "You are not logged in",
+    );
+    expect(Connection.connect).not.toHaveBeenCalled();
+    expect(publishFromFile).not.toHaveBeenCalled();
   });
 
   it("reports missing paths before connecting", async () => {

@@ -15,6 +15,7 @@ import {
 } from "@/lib/aquarius";
 import { PromptForAssets } from "@/utils/asset";
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 import {
   askForNetwork,
   getEnvNetwork,
@@ -46,11 +47,7 @@ export default class EditAssetAllowed extends Command {
       char: "y",
       description: "Skip confirmation prompt",
     }),
-    manifest: Flags.string({
-      char: "m",
-      description:
-        "Path to manifest file with the accounts to use for authentication",
-    }),
+    manifest: manifestFlag,
     public: Flags.boolean({
       char: "p",
       description: "Make assets public (remove all address restrictions)",
@@ -77,6 +74,8 @@ export default class EditAssetAllowed extends Command {
       );
     }
 
+    const loginInfos = await getLoginInfos(flags.manifest);
+
     // Network selection
     const network =
       (flags.network as Network) || getEnvNetwork() || (await askForNetwork());
@@ -84,12 +83,11 @@ export default class EditAssetAllowed extends Command {
     const chainId = NETWORK_CONFIGS[network].chainId;
 
     // Authentication selection
-    const loginInfos = await getLoginInfos(flags.manifest);
     printLoginInfos(loginInfos);
 
     // Asset selection
     const assets: AssetInfo[] = flags.datasets
-      ? await getAssetsFromDids(flags.datasets)
+      ? await getAssetsFromDids(flags.datasets, flags.manifest)
       : await askForAssets(loginInfos, chainId);
 
     console.log("\nThe following assets will be edited:");

@@ -14,6 +14,8 @@ import {
   PRICING_CONFIGS,
 } from "../config";
 
+import { getLoginInfo, NOT_LOGGED_IN_MESSAGE } from "./login";
+
 // Backward compatibility: ethers v6 renamed `transactionHash` to `hash` on TransactionReceipt.
 // Provide a getter on both CommonJS and ESM TransactionReceipt so legacy scripts accessing `receipt.transactionHash` continue to work.
 if (!("transactionHash" in TransactionReceipt.prototype)) {
@@ -62,8 +64,13 @@ export class Connection {
 
   public static async connect(
     envOverrides?: Record<string, string>,
+    manifestPath?: string,
   ): Promise<Connection> {
     const env = { ...process.env, ...envOverrides };
+
+    if (!envOverrides?.PRIVATE_KEY) {
+      env.PRIVATE_KEY = (await getLoginInfo(manifestPath)).privateKey;
+    }
 
     if (!env.NETWORK) {
       throw new Error(
@@ -86,10 +93,7 @@ export class Connection {
     const networkConfig = NETWORK_CONFIGS[selectedEnvNetwork as Network];
     const pricingConfig = PRICING_CONFIGS[selectedEnvNetwork as Network];
     if (!env.PRIVATE_KEY) {
-      throw new Error(
-        `Login to retrieve your private key using "pontusx-cli login keyFile.json"` +
-          ` and do not forget to logout when finished.`,
-      );
+      throw new Error(NOT_LOGGED_IN_MESSAGE);
     }
 
     const provider = new JsonRpcProvider(networkConfig.nodeUri);

@@ -8,10 +8,13 @@ export type AssetInfo = {
   chainId: number;
 };
 
-export async function getAssetsFromDids(dids: string[]): Promise<AssetInfo[]> {
+export async function getAssetsFromDids(
+  dids: string[],
+  manifestPath?: string,
+): Promise<AssetInfo[]> {
   const assets = await Promise.all(
     dids.map(async (did) => {
-      const asset = await getAssetInfo(did);
+      const asset = await getAssetInfo(did, undefined, manifestPath);
 
       if (!asset) {
         console.error(`Asset with DID ${did} not found.`);
@@ -32,11 +35,12 @@ export async function getAssetsFromDids(dids: string[]): Promise<AssetInfo[]> {
 export async function getAssetInfo(
   did: string,
   metadataCacheUri: string = "https://aquarius.pontus-x.eu",
+  manifestPath?: string,
 ): Promise<AssetInfo> {
   if (did.startsWith("did:ope:")) {
     try {
       const { Connection } = await import("@/utils/connection");
-      const connection = await Connection.connect();
+      const connection = await Connection.connect(undefined, manifestPath);
       const asset = await connection.nautilus.getAsset(did);
       const metadata =
         (asset as any).credentialSubject?.metadata ||

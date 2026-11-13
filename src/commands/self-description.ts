@@ -3,6 +3,7 @@ import { Args, Command, Flags } from "@oclif/core";
 import readlineSync from "readline-sync";
 
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 export default class SelfDescription extends Command {
   static args = {
@@ -18,6 +19,7 @@ export default class SelfDescription extends Command {
     "<%= config.bin %> <%= command.id %> did:op:d22954f2cbf6a85c897ce605c275cc786e099592cc59e3b7dd66b93e784bed8c https://example.com/self-description.json",
   ];
   static flags = {
+    manifest: manifestFlag,
     yes: Flags.boolean({
       char: "y",
       default: false,
@@ -28,7 +30,7 @@ export default class SelfDescription extends Command {
   async run(): Promise<void> {
     const { args, flags } = await this.parse(SelfDescription);
     const { did, sdurl } = args;
-    const connection = await Connection.connect();
+    const connection = await Connection.connect(undefined, flags.manifest);
     if (
       flags.yes ||
       readlineSync.keyInYNStrict(

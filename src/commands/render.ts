@@ -12,6 +12,7 @@ import { stringify } from "yaml";
 
 import { searchAssets } from "@/lib/aquarius";
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 function getSpecFromAsset(asset: any): [any, string] {
   const metadata = (getMetadata(asset) as any) || asset?.metadata;
@@ -92,8 +93,12 @@ function getSpecFromAsset(asset: any): [any, string] {
   ];
 }
 
-async function getAssets(did?: string, tags?: string[]): Promise<any[]> {
-  const connection = await Connection.connect();
+async function getAssets(
+  did?: string,
+  tags?: string[],
+  manifestPath?: string,
+): Promise<any[]> {
+  const connection = await Connection.connect(undefined, manifestPath);
 
   if (did) {
     return [await connection.nautilus.getAsset(did)];
@@ -120,6 +125,7 @@ export default class Render extends Command {
     did: Args.string({ description: "Dataset DID", required: false }),
   };
   static flags = {
+    manifest: manifestFlag,
     dst: Flags.string({
       char: "d",
       default: "rendered",
@@ -146,7 +152,7 @@ export default class Render extends Command {
     const { did } = args;
     const { tags, onlyAccess } = flags;
 
-    const assets = await getAssets(did, tags);
+    const assets = await getAssets(did, tags, flags.manifest);
 
     for (const asset of assets) {
       const [spec, description] = getSpecFromAsset(asset);

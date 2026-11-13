@@ -1,8 +1,10 @@
 import { Args, Command } from "@oclif/core";
 
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 export default class Get extends Command {
+  static flags = { manifest: manifestFlag };
   static args = {
     did: Args.string({ description: "DID of the asset", required: true }),
   };
@@ -13,10 +15,10 @@ export default class Get extends Command {
   ];
 
   async run(): Promise<void> {
-    const { args } = await this.parse(Get);
+    const { args, flags } = await this.parse(Get);
     const { did } = args;
     this.log(`Retrieving asset metadata for DID: ${did}`);
-    const { nautilus } = await Connection.connect();
+    const { nautilus } = await Connection.connect(undefined, flags.manifest);
     const asset = await nautilus.getAsset(did);
     this.log(
       `Asset ${did} metadata: \n\n ${JSON.stringify(asset, null, 2)} \n`,

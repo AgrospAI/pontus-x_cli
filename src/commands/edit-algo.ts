@@ -3,6 +3,7 @@ import { Args, Command, Flags } from "@oclif/core";
 import readlineSync from "readline-sync";
 
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 export default class EditAlgo extends Command {
   static args = {
@@ -21,6 +22,7 @@ export default class EditAlgo extends Command {
     '<%= config.bin %> <%= command.id %> did:op:dcdb747f8feff3122c6d6c0f45a339a6e09415e721f98f61cc2c1d62ab35a21f rogargon/pandas-profiling 4.16 sha256:81dca5439f07dff4d56097546a9fce7335be3de8e2622dc105c64e54376f86b5 "python /algorithm/src/main.py"',
   ];
   static flags = {
+    manifest: manifestFlag,
     yes: Flags.boolean({
       char: "y",
       default: false,
@@ -32,7 +34,7 @@ export default class EditAlgo extends Command {
   async run(): Promise<void> {
     const { args, flags } = await this.parse(EditAlgo);
     const { checksum, did, entrypoint, image, tag } = args;
-    const connection = await Connection.connect();
+    const connection = await Connection.connect(undefined, flags.manifest);
     if (
       flags.yes ||
       readlineSync.keyInYNStrict(

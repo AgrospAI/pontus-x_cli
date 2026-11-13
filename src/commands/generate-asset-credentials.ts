@@ -3,6 +3,7 @@ import readlineSync from "readline-sync";
 
 import { generateCredentials } from "@/lib/gaia-x_compliance/generate-credentials";
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 export default class GenerateAssetCredentials extends Command {
   static args = {
@@ -14,6 +15,7 @@ export default class GenerateAssetCredentials extends Command {
     "<%= config.bin %> <%= command.id %> -p ./CEP.data.json -d ./did.json -c certificate.key did:op:01f8bc1e797a854dc718bd7a802acb07c5fc39f706b03dd454bceb66be6828c6",
   ];
   static flags = {
+    manifest: manifestFlag,
     certificate: Flags.string({
       char: "c",
       description: "Path to the certificate.key file",
@@ -41,7 +43,7 @@ export default class GenerateAssetCredentials extends Command {
   async run(): Promise<void> {
     const { args, flags } = await this.parse(GenerateAssetCredentials);
     this.log(`Retrieving asset metadata for DID: ${args.did}`);
-    const { nautilus } = await Connection.connect();
+    const { nautilus } = await Connection.connect(undefined, flags.manifest);
     const ddo = await nautilus.getAsset(args.did);
     this.log(
       `Asset ${args.did} metadata: \n\n ${JSON.stringify(ddo, null, 2)} \n`,

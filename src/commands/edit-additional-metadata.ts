@@ -4,6 +4,7 @@ import { Args, Command, Flags } from "@oclif/core";
 import readlineSync from "readline-sync";
 
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 export default class EditAdditionalMetadata extends Command {
   static args = {
@@ -19,6 +20,7 @@ export default class EditAdditionalMetadata extends Command {
     "<%= config.bin %> <%= command.id %> did:op:dcdb747f8feff3122c6d6c0f45a339a6e09415e721f98f61cc2c1d62ab35a21f ./metadata.json",
   ];
   static flags = {
+    manifest: manifestFlag,
     yes: Flags.boolean({
       char: "y",
       default: false,
@@ -30,7 +32,7 @@ export default class EditAdditionalMetadata extends Command {
   async run(): Promise<void> {
     const { args, flags } = await this.parse(EditAdditionalMetadata);
     const { did, metadatafile } = args;
-    const connection = await Connection.connect();
+    const connection = await Connection.connect(undefined, flags.manifest);
     if (
       flags.yes ||
       readlineSync.keyInYNStrict(

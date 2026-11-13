@@ -3,6 +3,7 @@ import { Args, Command, Flags } from "@oclif/core";
 import readlineSync from "readline-sync";
 
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 export default class EditKeywords extends Command {
   static args = {
@@ -17,6 +18,7 @@ export default class EditKeywords extends Command {
     "<%= config.bin %> <%= command.id %> did:op:dcdb747f8feff3122c6d6c0f45a339a6e09415e721f98f61cc2c1d62ab35a21f agrospai,agriculture,data",
   ];
   static flags = {
+    manifest: manifestFlag,
     yes: Flags.boolean({
       char: "y",
       default: false,
@@ -28,7 +30,7 @@ export default class EditKeywords extends Command {
   async run(): Promise<void> {
     const { args, flags } = await this.parse(EditKeywords);
     const { did, keywords } = args;
-    const connection = await Connection.connect();
+    const connection = await Connection.connect(undefined, flags.manifest);
     if (
       flags.yes ||
       readlineSync.keyInYNStrict(

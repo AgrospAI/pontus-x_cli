@@ -2,9 +2,12 @@ import { select } from "@inquirer/prompts";
 import chalk from "chalk";
 import { NETWORK_CONFIGS, type Network } from "@/config";
 import { getOwnerName } from "@/lib/aquarius";
-import { readManifest } from "@/lib/manifest";
+import { DEFAULT_MANIFEST_PATH, readOptionalManifest } from "@/lib/manifest";
 import { getOwnerAddress, readPrivateKey } from "@/lib/wallet";
 import type { Manifest } from "@/types/manifest";
+
+export const NOT_LOGGED_IN_MESSAGE =
+  'You are not logged in. Provide an account in manifest.yaml (or use -m), run "pontus-x_cli login", or set the PRIVATE_KEY environment variable.';
 
 export interface LoginInfo {
   privateKey: string;
@@ -62,9 +65,7 @@ export async function getEnvLoginInfo(): Promise<LoginInfo> {
   const privateKey = process.env.PRIVATE_KEY || "";
 
   if (privateKey === "") {
-    throw new Error(
-      `You are not logged in. Please login using "pontus-x_cli login" or set the PRIVATE_KEY environment variable.`,
-    );
+    throw new Error(NOT_LOGGED_IN_MESSAGE);
   }
 
   const ownerAddress = await getOwnerAddress(privateKey);
@@ -89,19 +90,19 @@ export function printLoginInfos(loginInfos: LoginInfo[]): void {
 }
 
 export async function getLoginInfos(
-  manifestPath?: string,
+  manifestPath = DEFAULT_MANIFEST_PATH,
 ): Promise<LoginInfo[]> {
   let loginInfos: LoginInfo[] = [];
-  if (manifestPath) {
+  const manifest = readOptionalManifest(manifestPath);
+  if (manifest) {
     console.log(
       chalk.green(
         `Using manifest file for authentication ${chalk.gray(`(path: ${manifestPath})\n`)}`,
       ),
     );
-    const manifest = readManifest(manifestPath);
-    loginInfos = (await manifestToLoginInfos(manifest))
-      .filter((info) => info.ownerName !== "-")
-      .sort((a, b) => a.ownerName.localeCompare(b.ownerName));
+    loginInfos = (await manifestToLoginInfos(manifest)).sort((a, b) =>
+      a.ownerName.localeCompare(b.ownerName),
+    );
   } else {
     console.log(
       chalk.green(
@@ -109,6 +110,11 @@ export async function getLoginInfos(
       ),
     );
     loginInfos = [await getEnvLoginInfo()];
+  }
+  if (!loginInfos.length) {
+    throw new Error(
+      `No login accounts found in manifest ${manifestPath}. Add an account to the manifest.`,
+    );
   }
   return loginInfos;
 }
@@ -145,4 +151,28 @@ export function getEnvNetwork(): Network | null {
   }
 
   return network as Network;
+}
+
+export async function getLoginInfo(
+  manifestPath = DEFAULT_MANIFEST_PATH,
+): Promise<LoginInfo> {
+  const loginInfos = await getLoginInfos(manifestPath);
+  return selectLoginInfo(loginInfos);
+}
+
+export async function selectLoginInfo(
+  loginInfos: LoginInfo[],
+): Promise<LoginInfo> {
+  if (!loginInfos.length)
+    throw new Error(
+      "No login accounts found in the manifest. Add an account or login using PRIVATE_KEY.",
+    );
+  if (loginInfos.length === 1) return loginInfos[0];
+  return select({
+    message: "Select account:",
+    choices: loginInfos.map((info) => ({
+      name: `${info.ownerAddress} (${info.ownerName})`,
+      value: info,
+    })),
+  });
 }

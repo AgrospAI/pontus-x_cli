@@ -2,6 +2,7 @@ import { getServices } from "@deltadao/nautilus";
 import { Args, Command, Flags } from "@oclif/core";
 import readlineSync from "readline-sync";
 import { Connection } from "@/utils/connection";
+import { manifestFlag } from "@/utils/manifest-flag";
 
 export default class ChangePrice extends Command {
   static args = {
@@ -17,6 +18,7 @@ export default class ChangePrice extends Command {
     "<%= config.bin %> <%= command.id %> did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a 10",
   ];
   static flags = {
+    manifest: manifestFlag,
     yes: Flags.boolean({
       char: "y",
       default: false,
@@ -28,7 +30,7 @@ export default class ChangePrice extends Command {
   async run(): Promise<void> {
     const { args, flags } = await this.parse(ChangePrice);
     const { did, newPrice } = args;
-    const connection = await Connection.connect();
+    const connection = await Connection.connect(undefined, flags.manifest);
     const newPriceNumber: number = Number.parseFloat(
       newPrice.replace(",", "."),
     );

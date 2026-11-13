@@ -13,11 +13,16 @@ import Ajv from "ajv";
 import { Wallet } from "ethers";
 import { parse, stringify } from "yaml";
 
-import { getAccountByAddress } from "@/lib/manifest";
+import { getAccountByAddress, normalizeAddress } from "@/lib/manifest";
 import { readPrivateKey } from "@/lib/wallet";
 import type { Manifest } from "@/types/manifest";
 import type PublishConfig from "@/types/publish";
 import schema from "@/types/schema";
+import {
+  manifestToLoginInfos,
+  selectLoginInfo,
+  NOT_LOGGED_IN_MESSAGE,
+} from "@/utils/login";
 import type { Connection } from "@/utils/connection";
 
 function getFiles(
@@ -60,8 +65,12 @@ export function getFilesFromPaths(
 export async function getEnvironmentConfig(
   file: string,
   config: PublishConfig,
-  manifest: Manifest,
+  manifest?: Manifest,
 ) {
+  if (!manifest && !process.env.PRIVATE_KEY) {
+    throw new Error(NOT_LOGGED_IN_MESSAGE);
+  }
+
   const network = config.metadata.network || process.env.NETWORK;
   if (!network) {
     console.error(
@@ -70,44 +79,42 @@ export async function getEnvironmentConfig(
     return null;
   }
 
-  let privateKey = process.env.PRIVATE_KEY;
-  let { owner } = config.metadata;
+  let privateKey: string;
+  const requestedOwner = config.metadata.owner;
 
-  if (!privateKey && !owner) {
-    console.error(
-      `No owner or private key specified for file ${file}. Please add owner to the metadata or set the PRIVATE_KEY environment variable.`,
-    );
-    return null;
-  }
-
-  if (privateKey && !owner) {
-    owner = new Wallet(privateKey).address;
-  }
-
-  if (owner && !privateKey) {
-    const account = getAccountByAddress(manifest, owner);
-    const password = process.env[account?.passwordEnvKey || ""] || "";
+  if (manifest && requestedOwner) {
+    const account = getAccountByAddress(manifest, requestedOwner);
+    if (!account) {
+      throw new Error(
+        `No login account found in the manifest for owner ${requestedOwner} (file ${file}).`,
+      );
+    }
     try {
       privateKey = await readPrivateKey(
-        account?.privateKeyPath || "",
-        password,
+        account.privateKeyPath,
+        process.env[account.passwordEnvKey] || "",
       );
-    } catch (error) {
-      console.error(
-        `Failed to retrieve private key for owner ${owner}:`,
-        error,
+    } catch {
+      throw new Error(
+        `Failed to retrieve private key for owner ${requestedOwner}. Check the manifest key path and password environment variable.`,
       );
-      console.error("Password used:", password);
-      return null;
     }
+    if (
+      normalizeAddress(new Wallet(privateKey).address) !==
+      normalizeAddress(requestedOwner)
+    ) {
+      throw new Error(
+        `The manifest key does not match owner ${requestedOwner} (file ${file}).`,
+      );
+    }
+  } else if (manifest) {
+    privateKey = (await selectLoginInfo(await manifestToLoginInfos(manifest)))
+      .privateKey;
+  } else {
+    privateKey = process.env.PRIVATE_KEY || "";
   }
 
-  if (!privateKey) {
-    console.error(
-      `Unable to retrieve private key for file ${file}. Please check the manifest and environment variables.`,
-    );
-    return null;
-  }
+  const owner = new Wallet(privateKey).address;
 
   return { network, owner, privateKey };
 }

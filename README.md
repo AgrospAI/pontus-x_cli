@@ -57,6 +57,18 @@ accounts:
     passwordEnvKey: UDL_KEY_PASSWORD
 ```
 
+Commands that authenticate automatically read `./manifest.yaml`. Use `-m <path>`
+(or `--manifest <path>`) to select another manifest. If that file does not exist,
+the CLI uses `PRIVATE_KEY` from the environment (also set by `login`). If neither
+source provides a login, the command exits with instructions for signing in.
+
+For publish and revoke with asset files, `metadata.owner` selects the matching
+account in the manifest, taking precedence over `PRIVATE_KEY`. This applies to
+single assets and recursive batches. Without an owner, the CLI uses the sole
+manifest account or prompts you to choose one. If a manifest exists but its
+credentials are invalid or the requested owner is missing, the command reports
+an error. When the manifest is missing, the environment wallet becomes the owner.
+
 # Commands
 
 <!-- commands -->
