@@ -28,6 +28,7 @@
     "handlebars": "^4.7.8",
     "oclif": "^4.22.14",
     "readline-sync": "^1.4.10",
+    "semver": "^7.8.6",
     "ts-json-schema-generator": "^2.4.0",
     "yaml": "^2.8.2",
     "zod": "^4.3.6"
@@ -38,6 +39,7 @@
     "@types/figlet": "^1.7.0",
     "@types/node": "^22",
     "@types/readline-sync": "^1.4.8",
+    "@types/semver": "^7.8.0",
     "@vitest/ui": "^3.2.4",
     "copyfiles": "^2.4.1",
     "jest-diff": "^30.2.0",
@@ -70,7 +72,10 @@
       "@oclif/plugin-help",
       "@oclif/plugin-autocomplete"
     ],
-    "topicSeparator": " "
+    "topicSeparator": " ",
+    "hooks": {
+      "init": "./dist/hooks/init/update"
+    }
   },
   "repository": {
     "type": "git",

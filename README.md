@@ -30,6 +30,18 @@ USAGE
 ```
 <!-- usagestop -->
 
+The CLI checks npm for updates before running commands, caching the result for
+24 hours. When a newer version is available, it asks whether to install it with
+`npm install --global`. Declining continues the requested command. After a
+successful update, rerun your command to use the new version. Noninteractive
+runs display an update notice without prompting or installing.
+
+Run `pontus-x_cli update` to check immediately, bypassing the cache, and install
+the latest version after confirmation. Installation requires write access to
+your npm global installation directory. Failed automatic network checks do not
+block commands and are also cached for 24 hours; explicit checks report failures.
+
+
 ## Spec declarative format
 
 Example:
