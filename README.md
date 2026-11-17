@@ -7,30 +7,27 @@ A new CLI generated with oclif
 [![Downloads/week](https://img.shields.io/npm/dw/pontus-x_cli.svg)](https://npmjs.org/package/pontus-x_cli)
 
 <!-- toc -->
-
-- [pontus-x_cli](#pontus-x_cli)
-- [Usage](#usage)
-- [Commands](#commands)
-- [Useful information](#useful-information)
-- [Development](#development)
+* [pontus-x_cli](#pontus-x_cli)
+* [Usage](#usage)
+* [Commands](#commands)
+* [Useful information](#useful-information)
+* [Development](#development)
 <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
-
 ```sh-session
 $ npm install -g pontus-x_cli
 $ pontus-x_cli COMMAND
 running command...
 $ pontus-x_cli (--version)
-pontus-x_cli/2.0.5 linux-x64 node-v24.22.1
+pontus-x_cli/2.1.0 linux-x64 node-v24.22.2
 $ pontus-x_cli --help [COMMAND]
 USAGE
   $ pontus-x_cli COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 ## Spec declarative format
@@ -75,38 +72,37 @@ an error. When the manifest is missing, the environment wallet becomes the owner
 # Commands
 
 <!-- commands -->
-
-- [`pontus-x_cli access DID`](#pontus-x_cli-access-did)
-- [`pontus-x_cli autocomplete [SHELL]`](#pontus-x_cli-autocomplete-shell)
-- [`pontus-x_cli change-currency DID NEWCURRENCY`](#pontus-x_cli-change-currency-did-newcurrency)
-- [`pontus-x_cli change-price DID NEWPRICE`](#pontus-x_cli-change-price-did-newprice)
-- [`pontus-x_cli check-participant-compliance`](#pontus-x_cli-check-participant-compliance)
-- [`pontus-x_cli compute [ALGORITHM]`](#pontus-x_cli-compute-algorithm)
-- [`pontus-x_cli compute-results JOBID`](#pontus-x_cli-compute-results-jobid)
-- [`pontus-x_cli compute-status JOBID`](#pontus-x_cli-compute-status-jobid)
-- [`pontus-x_cli edit-additional-metadata DID METADATAFILE`](#pontus-x_cli-edit-additional-metadata-did-metadatafile)
-- [`pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT`](#pontus-x_cli-edit-algo-did-image-tag-checksum-entrypoint)
-- [`pontus-x_cli edit-asset-allowed`](#pontus-x_cli-edit-asset-allowed)
-- [`pontus-x_cli edit-asset-url DID URL`](#pontus-x_cli-edit-asset-url-did-url)
-- [`pontus-x_cli edit-compute-network DID`](#pontus-x_cli-edit-compute-network-did)
-- [`pontus-x_cli edit-keywords DID KEYWORDS`](#pontus-x_cli-edit-keywords-did-keywords)
-- [`pontus-x_cli edit-trusted-algos`](#pontus-x_cli-edit-trusted-algos)
-- [`pontus-x_cli edit-trusted-publishers`](#pontus-x_cli-edit-trusted-publishers)
-- [`pontus-x_cli export-private-key`](#pontus-x_cli-export-private-key)
-- [`pontus-x_cli export-spec DID`](#pontus-x_cli-export-spec-did)
-- [`pontus-x_cli generate-asset-credentials DID`](#pontus-x_cli-generate-asset-credentials-did)
-- [`pontus-x_cli generate-did-web`](#pontus-x_cli-generate-did-web)
-- [`pontus-x_cli generate-manifest`](#pontus-x_cli-generate-manifest)
-- [`pontus-x_cli generate-participant-credentials`](#pontus-x_cli-generate-participant-credentials)
-- [`pontus-x_cli generate-private-keys`](#pontus-x_cli-generate-private-keys)
-- [`pontus-x_cli get DID`](#pontus-x_cli-get-did)
-- [`pontus-x_cli help [COMMAND]`](#pontus-x_cli-help-command)
-- [`pontus-x_cli login KEYFILE`](#pontus-x_cli-login-keyfile)
-- [`pontus-x_cli logout`](#pontus-x_cli-logout)
-- [`pontus-x_cli publish PATH`](#pontus-x_cli-publish-path)
-- [`pontus-x_cli render [DID]`](#pontus-x_cli-render-did)
-- [`pontus-x_cli revoke [PATH]`](#pontus-x_cli-revoke-path)
-- [`pontus-x_cli self-description DID SDURL`](#pontus-x_cli-self-description-did-sdurl)
+* [`pontus-x_cli access DID`](#pontus-x_cli-access-did)
+* [`pontus-x_cli autocomplete [SHELL]`](#pontus-x_cli-autocomplete-shell)
+* [`pontus-x_cli change-currency DID NEWCURRENCY`](#pontus-x_cli-change-currency-did-newcurrency)
+* [`pontus-x_cli change-price DID NEWPRICE`](#pontus-x_cli-change-price-did-newprice)
+* [`pontus-x_cli check-participant-compliance`](#pontus-x_cli-check-participant-compliance)
+* [`pontus-x_cli compute [ALGORITHM]`](#pontus-x_cli-compute-algorithm)
+* [`pontus-x_cli compute-results JOBID`](#pontus-x_cli-compute-results-jobid)
+* [`pontus-x_cli compute-status JOBID`](#pontus-x_cli-compute-status-jobid)
+* [`pontus-x_cli edit-additional-metadata DID METADATAFILE`](#pontus-x_cli-edit-additional-metadata-did-metadatafile)
+* [`pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT`](#pontus-x_cli-edit-algo-did-image-tag-checksum-entrypoint)
+* [`pontus-x_cli edit-asset-allowed`](#pontus-x_cli-edit-asset-allowed)
+* [`pontus-x_cli edit-asset-url DID URL`](#pontus-x_cli-edit-asset-url-did-url)
+* [`pontus-x_cli edit-compute-network DID`](#pontus-x_cli-edit-compute-network-did)
+* [`pontus-x_cli edit-keywords DID KEYWORDS`](#pontus-x_cli-edit-keywords-did-keywords)
+* [`pontus-x_cli edit-trusted-algos`](#pontus-x_cli-edit-trusted-algos)
+* [`pontus-x_cli edit-trusted-publishers`](#pontus-x_cli-edit-trusted-publishers)
+* [`pontus-x_cli export-private-key`](#pontus-x_cli-export-private-key)
+* [`pontus-x_cli export-spec DID`](#pontus-x_cli-export-spec-did)
+* [`pontus-x_cli generate-asset-credentials DID`](#pontus-x_cli-generate-asset-credentials-did)
+* [`pontus-x_cli generate-did-web`](#pontus-x_cli-generate-did-web)
+* [`pontus-x_cli generate-manifest`](#pontus-x_cli-generate-manifest)
+* [`pontus-x_cli generate-participant-credentials`](#pontus-x_cli-generate-participant-credentials)
+* [`pontus-x_cli generate-private-keys`](#pontus-x_cli-generate-private-keys)
+* [`pontus-x_cli get DID`](#pontus-x_cli-get-did)
+* [`pontus-x_cli help [COMMAND]`](#pontus-x_cli-help-command)
+* [`pontus-x_cli login KEYFILE`](#pontus-x_cli-login-keyfile)
+* [`pontus-x_cli logout`](#pontus-x_cli-logout)
+* [`pontus-x_cli publish PATH`](#pontus-x_cli-publish-path)
+* [`pontus-x_cli render [DID]`](#pontus-x_cli-render-did)
+* [`pontus-x_cli revoke [PATH]`](#pontus-x_cli-revoke-path)
+* [`pontus-x_cli self-description DID SDURL`](#pontus-x_cli-self-description-did-sdurl)
 
 ## `pontus-x_cli access DID`
 
@@ -114,10 +110,14 @@ Access an asset that can be downloaded given its DID
 
 ```
 USAGE
-  $ pontus-x_cli access DID
+  $ pontus-x_cli access DID [-m <value>]
 
 ARGUMENTS
   DID  DID of the asset
+
+FLAGS
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
 
 DESCRIPTION
   Access an asset that can be downloaded given its DID
@@ -126,7 +126,7 @@ EXAMPLES
   $ pontus-x_cli access did:op:af3e93c4f18903f91b108e7204b8a752e7605f4547ed507212bd6aca63af5686
 ```
 
-_See code: [src/commands/access.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/access.ts)_
+_See code: [src/commands/access.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/access.ts)_
 
 ## `pontus-x_cli autocomplete [SHELL]`
 
@@ -165,14 +165,16 @@ Change the currency keeping the existing price for an asset with the given DID
 
 ```
 USAGE
-  $ pontus-x_cli change-currency DID NEWCURRENCY [-y]
+  $ pontus-x_cli change-currency DID NEWCURRENCY [-m <value>] [-y]
 
 ARGUMENTS
   DID          DID of the asset
   NEWCURRENCY  (EURAU|EUROe) New currency for the asset
 
 FLAGS
-  -y, --yes  Automatic yes to prompts
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
+  -y, --yes               Automatic yes to prompts
 
 DESCRIPTION
   Change the currency keeping the existing price for an asset with the given DID
@@ -181,7 +183,7 @@ EXAMPLES
   $ pontus-x_cli change-currency did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a EURAU
 ```
 
-_See code: [src/commands/change-currency.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/change-currency.ts)_
+_See code: [src/commands/change-currency.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/change-currency.ts)_
 
 ## `pontus-x_cli change-price DID NEWPRICE`
 
@@ -189,14 +191,16 @@ Change the price keeping the existing currency for an asset with the given DID
 
 ```
 USAGE
-  $ pontus-x_cli change-price DID NEWPRICE [-y]
+  $ pontus-x_cli change-price DID NEWPRICE [-m <value>] [-y]
 
 ARGUMENTS
   DID       DID of the asset
   NEWPRICE  New price for the asset
 
 FLAGS
-  -y, --yes  Automatic yes to prompts
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
+  -y, --yes               Automatic yes to prompts
 
 DESCRIPTION
   Change the price keeping the existing currency for an asset with the given DID
@@ -205,7 +209,7 @@ EXAMPLES
   $ pontus-x_cli change-price did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a 10
 ```
 
-_See code: [src/commands/change-price.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/change-price.ts)_
+_See code: [src/commands/change-price.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/change-price.ts)_
 
 ## `pontus-x_cli check-participant-compliance`
 
@@ -226,7 +230,7 @@ EXAMPLES
   $ pontus-x_cli check-participant-compliance -p ./CEP.data.json --vp ./CEP.vp.json
 ```
 
-_See code: [src/commands/check-participant-compliance.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/check-participant-compliance.ts)_
+_See code: [src/commands/check-participant-compliance.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/check-participant-compliance.ts)_
 
 ## `pontus-x_cli compute [ALGORITHM]`
 
@@ -243,7 +247,8 @@ ARGUMENTS
 FLAGS
   -a, --algoParams=<value>   Path to algorithm parameters file with the algorithm execution parameters
   -d, --datasets=<value>...  Dataset DIDs (did:op:...)
-  -m, --manifest=<value>     Path to manifest file with the accounts to use for authentication
+  -m, --manifest=<value>     [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY
+                             if missing)
   -n, --network=<option>     Network to use (env: NETWORK)
                              <options: PONTUSXDEV|PONTUSXTEST|OP_SEPOLIA>
   -y, --yes                  Automatic yes to prompts
@@ -257,7 +262,7 @@ EXAMPLES
   $ pontus-x_cli compute <algorithmDid> -t <tag1> -t <tag2> ...
 ```
 
-_See code: [src/commands/compute.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/compute.ts)_
+_See code: [src/commands/compute.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/compute.ts)_
 
 ## `pontus-x_cli compute-results JOBID`
 
@@ -265,12 +270,14 @@ Get the compute job results.
 
 ```
 USAGE
-  $ pontus-x_cli compute-results JOBID [-p <value>]
+  $ pontus-x_cli compute-results JOBID [-m <value>] [-p <value>]
 
 ARGUMENTS
   JOBID  Compute job ID
 
 FLAGS
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
   -p, --provider=<value>  Ocean Node URL (defaults to configured oceanNodeUri)
 
 DESCRIPTION
@@ -280,7 +287,7 @@ EXAMPLES
   $ pontus-x_cli compute-results 0x1234...-215bae450c8f40f59bfc5d1ccada3931
 ```
 
-_See code: [src/commands/compute-results.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/compute-results.ts)_
+_See code: [src/commands/compute-results.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/compute-results.ts)_
 
 ## `pontus-x_cli compute-status JOBID`
 
@@ -288,12 +295,14 @@ Check compute job status.
 
 ```
 USAGE
-  $ pontus-x_cli compute-status JOBID [-p <value>]
+  $ pontus-x_cli compute-status JOBID [-m <value>] [-p <value>]
 
 ARGUMENTS
   JOBID  Compute job ID
 
 FLAGS
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
   -p, --provider=<value>  Ocean Node URL (defaults to configured oceanNodeUri)
 
 DESCRIPTION
@@ -303,7 +312,7 @@ EXAMPLES
   $ pontus-x_cli compute-status 0x1234...-215bae450c8f40f59bfc5d1ccada3931
 ```
 
-_See code: [src/commands/compute-status.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/compute-status.ts)_
+_See code: [src/commands/compute-status.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/compute-status.ts)_
 
 ## `pontus-x_cli edit-additional-metadata DID METADATAFILE`
 
@@ -311,14 +320,16 @@ Change the container additional metadata for a given DID
 
 ```
 USAGE
-  $ pontus-x_cli edit-additional-metadata DID METADATAFILE [-y]
+  $ pontus-x_cli edit-additional-metadata DID METADATAFILE [-m <value>] [-y]
 
 ARGUMENTS
   DID           Algorithm DID
   METADATAFILE  JSON metadata file path
 
 FLAGS
-  -y, --yes  Skip confirmation prompt
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
+  -y, --yes               Skip confirmation prompt
 
 DESCRIPTION
   Change the container additional metadata for a given DID
@@ -327,7 +338,7 @@ EXAMPLES
   $ pontus-x_cli edit-additional-metadata did:op:dcdb747f8feff3122c6d6c0f45a339a6e09415e721f98f61cc2c1d62ab35a21f ./metadata.json
 ```
 
-_See code: [src/commands/edit-additional-metadata.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/edit-additional-metadata.ts)_
+_See code: [src/commands/edit-additional-metadata.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/edit-additional-metadata.ts)_
 
 ## `pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT`
 
@@ -335,7 +346,7 @@ Change the container metadata for a given algorithm DID
 
 ```
 USAGE
-  $ pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT [-y]
+  $ pontus-x_cli edit-algo DID IMAGE TAG CHECKSUM ENTRYPOINT [-m <value>] [-y]
 
 ARGUMENTS
   DID         Algorithm DID
@@ -345,7 +356,9 @@ ARGUMENTS
   ENTRYPOINT  Algorithm entrypoint
 
 FLAGS
-  -y, --yes  Skip confirmation prompt
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
+  -y, --yes               Skip confirmation prompt
 
 DESCRIPTION
   Change the container metadata for a given algorithm DID
@@ -354,7 +367,7 @@ EXAMPLES
   $ pontus-x_cli edit-algo did:op:dcdb747f8feff3122c6d6c0f45a339a6e09415e721f98f61cc2c1d62ab35a21f rogargon/pandas-profiling 4.16 sha256:81dca5439f07dff4d56097546a9fce7335be3de8e2622dc105c64e54376f86b5 "python /algorithm/src/main.py"
 ```
 
-_See code: [src/commands/edit-algo.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/edit-algo.ts)_
+_See code: [src/commands/edit-algo.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/edit-algo.ts)_
 
 ## `pontus-x_cli edit-asset-allowed`
 
@@ -367,7 +380,8 @@ USAGE
 
 FLAGS
   -d, --datasets=<value>...  Asset DIDs to edit (did:op:...)
-  -m, --manifest=<value>     Path to manifest file with the accounts to use for authentication
+  -m, --manifest=<value>     [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY
+                             if missing)
   -n, --network=<option>     Network to use (env: NETWORK)
                              <options: PONTUSXDEV|PONTUSXTEST|OP_SEPOLIA>
   -p, --public               Make assets public (remove all address restrictions)
@@ -383,7 +397,7 @@ EXAMPLES
   $ pontus-x_cli edit-asset-allowed -u 0xAbc123... --public
 ```
 
-_See code: [src/commands/edit-asset-allowed.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/edit-asset-allowed.ts)_
+_See code: [src/commands/edit-asset-allowed.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/edit-asset-allowed.ts)_
 
 ## `pontus-x_cli edit-asset-url DID URL`
 
@@ -391,14 +405,16 @@ Change the URL of an asset DID
 
 ```
 USAGE
-  $ pontus-x_cli edit-asset-url DID URL [-y]
+  $ pontus-x_cli edit-asset-url DID URL [-m <value>] [-y]
 
 ARGUMENTS
   DID  DID of the asset
   URL  New URL for the asset
 
 FLAGS
-  -y, --yes  Automatic yes to prompts
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
+  -y, --yes               Automatic yes to prompts
 
 DESCRIPTION
   Change the URL of an asset DID
@@ -407,7 +423,7 @@ EXAMPLES
   $ pontus-x_cli edit-asset-url did:op:af3e93c4f18903f91b108e7204b8a752e7605f4547ed507212bd6aca63af5686 https://raw.githubusercontent.com/plotly/datasets/refs/heads/master/titanic.csv
 ```
 
-_See code: [src/commands/edit-asset-url.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/edit-asset-url.ts)_
+_See code: [src/commands/edit-asset-url.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/edit-asset-url.ts)_
 
 ## `pontus-x_cli edit-compute-network DID`
 
@@ -415,15 +431,17 @@ Enable or disable algorithm network access for an asset's compute service
 
 ```
 USAGE
-  $ pontus-x_cli edit-compute-network DID [-d | -e] [-y]
+  $ pontus-x_cli edit-compute-network DID [-m <value>] [-d | -e] [-y]
 
 ARGUMENTS
   DID  DID of the asset
 
 FLAGS
-  -d, --disable      Disable algorithm network access
-  -e, --[no-]enable  Enable algorithm network access
-  -y, --yes          Skip confirmation prompt
+  -d, --disable           Disable algorithm network access
+  -e, --[no-]enable       Enable algorithm network access
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
+  -y, --yes               Skip confirmation prompt
 
 DESCRIPTION
   Enable or disable algorithm network access for an asset's compute service
@@ -434,7 +452,7 @@ EXAMPLES
   $ pontus-x_cli edit-compute-network did:ope:37d12a459bed3461cb4553aeac7e8484a7ff144e618fd5a604fb01d73b965d40 --disable
 ```
 
-_See code: [src/commands/edit-compute-network.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/edit-compute-network.ts)_
+_See code: [src/commands/edit-compute-network.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/edit-compute-network.ts)_
 
 ## `pontus-x_cli edit-keywords DID KEYWORDS`
 
@@ -442,14 +460,16 @@ Change the list of keywords of the indicated DID
 
 ```
 USAGE
-  $ pontus-x_cli edit-keywords DID KEYWORDS [-y]
+  $ pontus-x_cli edit-keywords DID KEYWORDS [-m <value>] [-y]
 
 ARGUMENTS
   DID       Algorithm DID
   KEYWORDS  Comma separated list of keywords
 
 FLAGS
-  -y, --yes  Skip confirmation prompt
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
+  -y, --yes               Skip confirmation prompt
 
 DESCRIPTION
   Change the list of keywords of the indicated DID
@@ -458,7 +478,7 @@ EXAMPLES
   $ pontus-x_cli edit-keywords did:op:dcdb747f8feff3122c6d6c0f45a339a6e09415e721f98f61cc2c1d62ab35a21f agrospai,agriculture,data
 ```
 
-_See code: [src/commands/edit-keywords.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/edit-keywords.ts)_
+_See code: [src/commands/edit-keywords.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/edit-keywords.ts)_
 
 ## `pontus-x_cli edit-trusted-algos`
 
@@ -472,7 +492,8 @@ USAGE
 FLAGS
   -a, --algorithms=<value>...  Trusted algorithm DIDs (did:op:...)
   -d, --datasets=<value>...    Dataset DIDs (did:op:...)
-  -m, --manifest=<value>       Path to manifest file with the accounts to use for authentication
+  -m, --manifest=<value>       [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY
+                               if missing)
   -n, --network=<option>       Network to use (env: NETWORK)
                                <options: PONTUSXDEV|PONTUSXTEST|OP_SEPOLIA>
   -p, --public                 Make dataset public (set all algorithms as trusted)
@@ -485,7 +506,7 @@ EXAMPLES
   $ pontus-x_cli edit-trusted-algos -d <datasetDid1> <datasetDid2> ... -a <algorithmDid1> <algorithmDid2> ...
 ```
 
-_See code: [src/commands/edit-trusted-algos.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/edit-trusted-algos.ts)_
+_See code: [src/commands/edit-trusted-algos.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/edit-trusted-algos.ts)_
 
 ## `pontus-x_cli edit-trusted-publishers`
 
@@ -498,7 +519,8 @@ USAGE
 
 FLAGS
   -d, --datasets=<value>...    Dataset DIDs (did:op:...)
-  -m, --manifest=<value>       Path to manifest file with the accounts to use for authentication
+  -m, --manifest=<value>       [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY
+                               if missing)
   -n, --network=<option>       Network to use (env: NETWORK)
                                <options: PONTUSXDEV|PONTUSXTEST|OP_SEPOLIA>
   -p, --publishers=<value>...  Trusted publisher DIDs (did:op:...)
@@ -511,7 +533,7 @@ EXAMPLES
   $ pontus-x_cli edit-trusted-publishers -d <datasetDid1> <datasetDid2> ... -p <publisherDid1> <publisherDid2> ...
 ```
 
-_See code: [src/commands/edit-trusted-publishers.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/edit-trusted-publishers.ts)_
+_See code: [src/commands/edit-trusted-publishers.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/edit-trusted-publishers.ts)_
 
 ## `pontus-x_cli export-private-key`
 
@@ -533,7 +555,7 @@ EXAMPLES
   $ pontus-x_cli export-private-key
 ```
 
-_See code: [src/commands/export-private-key.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/export-private-key.ts)_
+_See code: [src/commands/export-private-key.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/export-private-key.ts)_
 
 ## `pontus-x_cli export-spec DID`
 
@@ -560,7 +582,7 @@ EXAMPLES
   $ pontus-x_cli export-spec did:op:1d73aa2b0d5bc9b0c624dcd01e319d868f7bb75815e48e292d44308370508591 -o ./specs
 ```
 
-_See code: [src/commands/export-spec.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/export-spec.ts)_
+_See code: [src/commands/export-spec.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/export-spec.ts)_
 
 ## `pontus-x_cli generate-asset-credentials DID`
 
@@ -568,7 +590,7 @@ Generate the Gaia-X credentials for the input DID asset, including its verifiabl
 
 ```
 USAGE
-  $ pontus-x_cli generate-asset-credentials DID -c <value> -d <value> -p <value> [-w <value>]
+  $ pontus-x_cli generate-asset-credentials DID -c <value> -d <value> -p <value> [-m <value>] [-w <value>]
 
 ARGUMENTS
   DID  DID of the asset
@@ -576,6 +598,8 @@ ARGUMENTS
 FLAGS
   -c, --certificate=<value>  (required) Path to the certificate.key file
   -d, --didjson=<value>      (required) Path to the did.json file
+  -m, --manifest=<value>     [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY
+                             if missing)
   -p, --participant=<value>  (required) Path to the JSON file including the required participant data
   -w, --password=<value>     Password for the private key file (if not provided, it will be asked interactively)
 
@@ -586,7 +610,7 @@ EXAMPLES
   $ pontus-x_cli generate-asset-credentials -p ./CEP.data.json -d ./did.json -c certificate.key did:op:01f8bc1e797a854dc718bd7a802acb07c5fc39f706b03dd454bceb66be6828c6
 ```
 
-_See code: [src/commands/generate-asset-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/generate-asset-credentials.ts)_
+_See code: [src/commands/generate-asset-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/generate-asset-credentials.ts)_
 
 ## `pontus-x_cli generate-did-web`
 
@@ -607,7 +631,7 @@ EXAMPLES
   $ pontus-x_cli generate-did-web -d <https://compliance.agrospai.udl.cat> -c certificate-chain.crt
 ```
 
-_See code: [src/commands/generate-did-web.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/generate-did-web.ts)_
+_See code: [src/commands/generate-did-web.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/generate-did-web.ts)_
 
 ## `pontus-x_cli generate-manifest`
 
@@ -631,7 +655,7 @@ EXAMPLES
   $ pontus-x_cli generate-manifest --keys-dir ./keys --password-env KEY_PASSWORD --output manifest.yaml
 ```
 
-_See code: [src/commands/generate-manifest.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/generate-manifest.ts)_
+_See code: [src/commands/generate-manifest.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/generate-manifest.ts)_
 
 ## `pontus-x_cli generate-participant-credentials`
 
@@ -654,7 +678,7 @@ EXAMPLES
   $ pontus-x_cli generate-participant-credentials -p ./CEP.data.json -d ./did.json -c certificate.key
 ```
 
-_See code: [src/commands/generate-participant-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/generate-participant-credentials.ts)_
+_See code: [src/commands/generate-participant-credentials.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/generate-participant-credentials.ts)_
 
 ## `pontus-x_cli generate-private-keys`
 
@@ -680,7 +704,7 @@ EXAMPLES
   $ pontus-x_cli generate-private-keys --count 5 --output-dir ./keys
 ```
 
-_See code: [src/commands/generate-private-keys.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/generate-private-keys.ts)_
+_See code: [src/commands/generate-private-keys.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/generate-private-keys.ts)_
 
 ## `pontus-x_cli get DID`
 
@@ -688,10 +712,14 @@ Get the available metadata to the asset with the given DID
 
 ```
 USAGE
-  $ pontus-x_cli get DID
+  $ pontus-x_cli get DID [-m <value>]
 
 ARGUMENTS
   DID  DID of the asset
+
+FLAGS
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
 
 DESCRIPTION
   Get the available metadata to the asset with the given DID
@@ -700,7 +728,7 @@ EXAMPLES
   $ pontus-x_cli get did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a
 ```
 
-_See code: [src/commands/get.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/get.ts)_
+_See code: [src/commands/get.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/get.ts)_
 
 ## `pontus-x_cli help [COMMAND]`
 
@@ -743,7 +771,7 @@ EXAMPLES
   $ pontus-x_cli login d999baae98ac5246568fd726be8832c49626867d.json
 ```
 
-_See code: [src/commands/login.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/login.ts)_
+_See code: [src/commands/login.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/login.ts)_
 
 ## `pontus-x_cli logout`
 
@@ -760,7 +788,7 @@ EXAMPLES
   $ pontus-x_cli logout
 ```
 
-_See code: [src/commands/logout.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/logout.ts)_
+_See code: [src/commands/logout.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/logout.ts)_
 
 ## `pontus-x_cli publish PATH`
 
@@ -774,7 +802,8 @@ ARGUMENTS
   PATH  Path to find a JSON/YAML or TS file describing the asset to publish
 
 FLAGS
-  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the manifest file
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
   -p, --provider=<value>  The Ocean Node URL (defaults to OCEAN_NODE_URI from .env)
   -r, --recursive         Recursively publish assets in a directory
       --dry-run           Dry run the publishing process
@@ -793,57 +822,43 @@ EXAMPLES
   $ pontus-x_cli publish samples/publish/algo/index.ts
 ```
 
-_See code: [src/commands/publish.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/publish.ts)_
+_See code: [src/commands/publish.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/publish.ts)_
 
 ## `pontus-x_cli render [DID]`
 
 ```
 USAGE
-  $ pontus-x_cli render [DID] [-d <value>] [-t <value>...] [-a]
+  $ pontus-x_cli render [DID] [-m <value>] [-d <value>] [-t <value>...] [-a]
 
 ARGUMENTS
   [DID]  Dataset DID
 
 FLAGS
-  -a, --onlyAccess       Only render datasets with an access service
-  -d, --dst=<value>      [default: rendered] Destination folder to save the rendered specs
-  -t, --tags=<value>...  Tags to filter datasets (they must have all the provided tags)
+  -a, --onlyAccess        Only render datasets with an access service
+  -d, --dst=<value>       [default: rendered] Destination folder to save the rendered specs
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
+  -t, --tags=<value>...   Tags to filter datasets (they must have all the provided tags)
 ```
 
-_See code: [src/commands/render.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/render.ts)_
+_See code: [src/commands/render.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/render.ts)_
 
 ## `pontus-x_cli revoke [PATH]`
 
 Publisher revocation of one or more owned assets
 
-Use the same path and common flags as `publish`, replacing the command name:
-
-```sh
-pontus-x_cli publish samples/publish/ --recursive --manifest ./manifest.yaml
-pontus-x_cli revoke samples/publish/ --recursive --manifest ./manifest.yaml
-```
-
-Both commands select `spec.yaml`, `spec.json`, then `index.ts` in that order
-(one asset per directory). Subdirectories are included only with `--recursive`.
-Publishing stores the DID in JSON/YAML metadata or, for a TypeScript script, in
-`<script>.published.json`. Revoking skips files without a recorded DID and removes
-the DID only after successful revocation. Previously published assets without a
-local DID record can still be revoked with `--dids`.
-
-`--dry-run` previews revocation without sending transactions or editing files.
-The `-p` shorthand now means `--provider` for both commands; use a positional path
-or the long `--paths` flag for revoke paths. `--resume` remains specific to publish.
-
 ```
 USAGE
-  $ pontus-x_cli revoke [PATH] [-d <value>...] [--dry-run] [-m <value>] [--paths <value>...] [-p <value>] [-r] [-y]
+  $ pontus-x_cli revoke [PATH] [-d <value>...] [--dry-run] [-m <value>] [--paths <value>...] [-p <value>]
+    [-r] [-y]
 
 ARGUMENTS
   [PATH]  Path to a JSON/YAML or TS file or asset directory to revoke
 
 FLAGS
   -d, --dids=<value>...   DID to revoke
-  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the manifest file
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
   -p, --provider=<value>  The Ocean Node URL (defaults to OCEAN_NODE_URI from .env)
   -r, --recursive         Recursively revoke assets in a directory
   -y, --yes               Skip confirmation prompt
@@ -863,7 +878,7 @@ EXAMPLES
   $ pontus-x_cli revoke -d did:op:ffeee8c8f19328985ef6743b08e61ef89d5141027fd47612e32e7900cacd2b7a
 ```
 
-_See code: [src/commands/revoke.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/revoke.ts)_
+_See code: [src/commands/revoke.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/revoke.ts)_
 
 ## `pontus-x_cli self-description DID SDURL`
 
@@ -871,14 +886,16 @@ Associate Gaia-X Self-Description to the asset with the given DID
 
 ```
 USAGE
-  $ pontus-x_cli self-description DID SDURL [-y]
+  $ pontus-x_cli self-description DID SDURL [-m <value>] [-y]
 
 ARGUMENTS
   DID    DID of the asset
   SDURL  URL of the Self-Description
 
 FLAGS
-  -y, --yes  Skip confirmation prompt
+  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
+                          missing)
+  -y, --yes               Skip confirmation prompt
 
 DESCRIPTION
   Associate Gaia-X Self-Description to the asset with the given DID
@@ -887,8 +904,7 @@ EXAMPLES
   $ pontus-x_cli self-description did:op:d22954f2cbf6a85c897ce605c275cc786e099592cc59e3b7dd66b93e784bed8c https://example.com/self-description.json
 ```
 
-_See code: [src/commands/self-description.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.0.5/src/commands/self-description.ts)_
-
+_See code: [src/commands/self-description.ts](https://github.com/AgrospAI/pontus-x_cli/blob/v2.1.0/src/commands/self-description.ts)_
 <!-- commandsstop -->
 
 # Useful information
