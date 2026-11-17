@@ -1,0 +1,111 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing GitHub release tag to publish or retry (e.g. v2.1.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+# Never cancel an in-progress publish when another commit lands.
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # v4
+        id: release
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+          release-type: node
+          include-component-in-tag: false
+      # GITHUB_TOKEN commits may need manual approval to run PR-triggered CI.
+      # Validate the generated release PR here as well.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        if: steps.release.outputs.prs_created == 'true'
+        with:
+          ref: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        if: steps.release.outputs.prs_created == 'true'
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Generate and validate release PR contents
+        if: steps.release.outputs.prs_created == 'true'
+        run: |
+          npm ci
+          npm run check
+          npm run test:unit
+          npm run prepack
+          if ! git diff --quiet -- README.md; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add README.md
+            git commit -m 'chore: regenerate release README'
+            git push
+          fi
+
+  publish:
+    needs: release-please
+    if: >-
+      always() && !cancelled() && github.ref == 'refs/heads/main' &&
+      ((github.event_name == 'push' && needs.release-please.result == 'success' &&
+        needs.release-please.outputs.release_created == 'true') ||
+       github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      RELEASE_TAG: ${{ inputs.tag || needs.release-please.outputs.tag }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Verify release version and select npm tag
+        id: package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$RELEASE_TAG" --json isDraft --jq '.isDraft == false' | grep -qx true
+          node --input-type=module -e '
+            import assert from "node:assert/strict";
+            import {appendFileSync, readFileSync} from "node:fs";
+            const {version} = JSON.parse(readFileSync("package.json", "utf8"));
+            assert.equal(process.env.RELEASE_TAG, `v${version}`, "Release tag must match package.json");
+            appendFileSync(process.env.GITHUB_OUTPUT, `dist_tag=${version.includes("-") ? "next" : "latest"}\n`);
+          '
+      - run: npm ci
+      - run: npm run check
+      - run: npm run test:unit
+      # npm publish runs prepack to build the CLI and generate its manifest and README.
+      - name: Publish to npm with OIDC
+        env:
+          DIST_TAG: ${{ steps.package.outputs.dist_tag }}
+        run: npm publish --access public --tag "$DIST_TAG"

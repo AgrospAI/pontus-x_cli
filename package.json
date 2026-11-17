@@ -91,6 +91,7 @@
     "test:clean": "ts-node -r tsconfig-paths/register test/helpers/assets.ts revokeAssets",
     "test:ui": "vitest --ui",
     "test:watch": "vitest --watch",
+    "test:unit": "vitest --run test/unit",
     "schema:publish": "ts-json-schema-generator --path 'src/types/publish.d.ts' --type 'PublishConfig' --expose 'export' --out 'src/types/schema.json'",
     "schema:manifest": "ts-node src/scripts/json-schema.ts generateManifestJsonSchema",
     "local-install": "npm run build && npm install -g ."
