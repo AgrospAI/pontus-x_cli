@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { setTimeout } from "node:timers/promises";
-import type { NodeComputeJob } from "@deltadao/nautilus";
+import type { ComputeEnvironment, NodeComputeJob } from "@deltadao/nautilus";
 import { search, select } from "@inquirer/prompts";
 import { Args, Command, Flags } from "@oclif/core";
 import chalk from "chalk";
@@ -78,11 +78,7 @@ export default class Compute extends Command {
       }
     }
 
-    this.log(
-      "Algorithm parameters:",
-      flags.parameters,
-      Object.keys(algoParams),
-    );
+    this.log(`Algorithm parameters: ${JSON.stringify(algoParams)}`);
 
     // Authentication selection
     const inputLoginInfo = loginInfos.length === 1 ? loginInfos[0] : null;
@@ -142,23 +138,50 @@ export default class Compute extends Command {
     };
     const connection = await Connection.connect(envOverrides);
 
+    const computeConfig = {
+      algorithm: { did: algorithm.did, algocustomdata: algoParams },
+      dataset: { did: datasets[0].did },
+      additionalDatasets: datasets
+        .filter((_, i) => i > 0)
+        .map((dataset) => ({ did: dataset.did })),
+    };
+
     try {
+      const environments = await connection.nautilus.getComputeEnvironments();
+      const freeEnv = pickComputeEnvironment(environments, "free", chainId);
+
       let computeResult: { jobs: NodeComputeJob[] };
       try {
         computeResult = await connection.nautilus.freeCompute({
-          algorithm: { did: algorithm.did, algocustomdata: algoParams },
-          dataset: { did: datasets[0].did },
-          additionalDatasets: datasets
-            .filter((_, i) => i > 0)
-            .map((dataset) => ({ did: dataset.did })),
+          ...computeConfig,
+          computeEnv: freeEnv,
         });
-      } catch (_freeError: any) {
+      } catch (freeError) {
+        const freeMessage = errorMessage(freeError);
+
+        // `freeCompute()` only fails with this message when the environment
+        // genuinely has no `free` configuration. Any other failure (the node
+        // could not pull the algorithm image, the policy server refused, ...)
+        // is a real error: retrying it as a paid job hides the cause and often
+        // cannot succeed anyway, because a free environment usually publishes
+        // no fees.
+        if (!/does not offer free jobs/i.test(freeMessage)) {
+          throw new Error(computeErrorMessage(freeError));
+        }
+
+        const paidEnv = pickComputeEnvironment(environments, "paid", chainId);
+        if (!paidEnv) {
+          throw new Error(
+            `No compute environment offers free jobs or publishes fees for chain ${chainId}.`,
+          );
+        }
+
+        this.warn(
+          `Free compute is unavailable (${freeMessage}). Retrying as a paid job...`,
+        );
         computeResult = await connection.nautilus.compute({
-          algorithm: { did: algorithm.did, algocustomdata: algoParams },
-          dataset: { did: datasets[0].did },
-          additionalDatasets: datasets
-            .filter((_, i) => i > 0)
-            .map((dataset) => ({ did: dataset.did })),
+          ...computeConfig,
+          computeEnv: paidEnv,
           confirmEscrowPayment: async (quote) => {
             console.log(
               `Compute escrow quote: ${quote.amount} base units of token ${quote.token}`,
@@ -182,6 +205,54 @@ export default class Compute extends Command {
       this.error(`Error starting compute: ${error}`);
     }
   }
+}
+
+type ComputeMode = "free" | "paid";
+
+/**
+ * Picks the node's environment that can run the requested kind of job.
+ *
+ * Both `freeCompute()` and `compute()` default to the node's *first*
+ * environment. A node often advertises a free environment without fees and a
+ * separate paid one that publishes them, so letting the default decide makes a
+ * paid job fail with "publishes no fees for chain ...".
+ */
+function pickComputeEnvironment(
+  environments: ComputeEnvironment[],
+  mode: ComputeMode,
+  chainId: number,
+): string | undefined {
+  const environment = environments.find((candidate) =>
+    mode === "free"
+      ? Boolean(candidate.free)
+      : Boolean(candidate.fees?.[String(chainId)]?.length),
+  );
+  return environment?.id;
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+/**
+ * Turns a node error into something actionable. In particular, an algorithm
+ * image published for only one CPU architecture fails on a node running the
+ * other one, and the node's message does not say what to do about it.
+ */
+function computeErrorMessage(error: unknown): string {
+  const message = errorMessage(error);
+  if (
+    /Cannot find image .* for (aarch64|arm64|x86_64|amd64)\b/i.test(message)
+  ) {
+    return (
+      `${message}\n\n` +
+      "The compute node cannot run this algorithm image on its CPU architecture. " +
+      "Rebuild and publish the image for the node's architecture " +
+      "(for example `docker buildx build --platform linux/amd64,linux/arm64 -t <image>:<tag> --push .`) " +
+      "and update the algorithm's container checksum with `pontus-x_cli edit-algo`."
+    );
+  }
+  return message;
 }
 
 async function askForDatasets(chainId: number): Promise<AssetInfo[]> {
