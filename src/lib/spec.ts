@@ -5,6 +5,7 @@ import {
   AssetBuilder,
   ConsumerParameterBuilder,
   CredentialListTypes,
+  getServices,
   type PricingConfigWithoutOwner,
   PublishIncompleteError,
   ServiceBuilder,
@@ -202,6 +203,16 @@ function resolveServiceConfigs(
   return serviceConfigs;
 }
 
+function readConfigDescription(
+  folder: string,
+  config: PublishConfig,
+): string {
+  return readFileSync(
+    path.resolve(folder, config.metadata.description),
+    "utf8",
+  );
+}
+
 function buildConsumerParameters(
   params: ServiceConfig["consumerParameters"],
 ): any[] {
@@ -231,6 +242,126 @@ function buildConsumerParameters(
 }
 
 /**
+ * Reads the address values out of a DDO credential list. Handles both shapes:
+ * legacy `{ values: ["0x.."] }` and the v5 `{ values: [{ address: "0x.." }] }`.
+ */
+function flattenCredentialAddresses(
+  credentials: any,
+  list: "allow" | "deny",
+): string[] {
+  const entries = Array.isArray(credentials?.[list])
+    ? credentials[list]
+    : [];
+  const out: string[] = [];
+
+  for (const entry of entries) {
+    if (typeof entry === "string") {
+      out.push(entry);
+      continue;
+    }
+    if (!entry || typeof entry !== "object") continue;
+    if (Array.isArray(entry.values)) {
+      for (const value of entry.values) {
+        if (typeof value === "string") out.push(value);
+        else if (value && typeof value.address === "string") {
+          out.push(value.address);
+        }
+      }
+    } else if (typeof entry.address === "string") {
+      out.push(entry.address);
+    }
+  }
+
+  return [...new Set(out)];
+}
+
+/** Makes a spec's allow/deny lists authoritative, leaving non-address entries alone. */
+function applyCredentialLists(
+  builder: {
+    addCredentialAddresses: (list: CredentialListTypes, addresses: string[]) => any;
+    removeCredentialAddresses: (
+      list: CredentialListTypes,
+      addresses: string[],
+    ) => any;
+  },
+  current: any,
+  desired: { allow?: string[]; deny?: string[] },
+): void {
+  const lists = [
+    ["allow", CredentialListTypes.ALLOW],
+    ["deny", CredentialListTypes.DENY],
+  ] as const;
+
+  for (const [list, type] of lists) {
+    const addresses = desired[list];
+    if (!addresses) continue;
+
+    const wanted = new Set(addresses.map((address) => address.toLowerCase()));
+    const stale = flattenCredentialAddresses(current, list).filter(
+      (address) => !wanted.has(address.toLowerCase()),
+    );
+
+    if (stale.length) builder.removeCredentialAddresses(type, stale);
+    if (addresses.length) builder.addCredentialAddresses(type, addresses);
+  }
+}
+
+/**
+ * Replaces a service's address lists in the normalized v5 credential shape.
+ * `ServiceBuilder` can only add addresses, so removal is done on the built
+ * service's credential object.
+ */
+function replaceServiceCredentialLists(
+  credentials: any,
+  desired: { allow?: string[]; deny?: string[] },
+): any {
+  let next = { ...(credentials || {}) };
+
+  for (const list of ["allow", "deny"] as const) {
+    const addresses = desired[list];
+    if (!addresses) continue;
+
+    const entries = Array.isArray(next[list]) ? next[list] : [];
+    const kept = entries.filter((entry: any) => entry?.type !== "address");
+
+    // An empty allow entry means "deny everyone", so it is kept; an empty deny
+    // entry denies no one, so it is dropped.
+    if (addresses.length || list === "allow") {
+      kept.push({
+        type: "address",
+        values: addresses.map((address) => ({ address })),
+      });
+    }
+
+    next = { ...next, [list]: kept };
+  }
+
+  return next;
+}
+
+/**
+ * Finds the published service a spec entry refers to without failing when
+ * there is none. `publish --update` uses the miss to add a new service.
+ */
+function findPublishedService(
+  publishedServices: any[],
+  serviceConfig: ServiceConfig,
+  usedServiceIds: Set<string>,
+): any | undefined {
+  if (serviceConfig.serviceId) {
+    return publishedServices.find(
+      (service) => service.id === serviceConfig.serviceId,
+    );
+  }
+
+  return publishedServices.find(
+    (service) =>
+      service.type === serviceConfig.serviceType &&
+      !usedServiceIds.has(service.id),
+  );
+}
+
+/**
  * Turns the spec's `files` entries into the file objects the node encrypts.
  * `method` defaults to GET and `type` falls back to the service's `fileType`.
  */
@@ -245,6 +376,66 @@ function buildServiceFiles(serviceConfig: ServiceConfig): any[] {
     }
     return fileObj;
   });
+}
+
+/**
+ * Applies compute settings to an existing compute service. The spec is
+ * authoritative: algorithms or publishers it omits are removed. Files and
+ * pricing are never touched here, so the service id and datatoken survive.
+ */
+function applyComputeSettings(
+  serviceBuilder: ServiceBuilder<any, any>,
+  serviceConfig: ServiceConfig,
+  config: PublishConfig,
+  connection: Connection,
+  publishedService: any,
+): void {
+  const allowNetworkAccess =
+    serviceConfig.allowAlgorithmNetworkAccess ??
+    config.allowAlgorithmNetworkAccess;
+  if (allowNetworkAccess !== undefined) {
+    serviceBuilder.allowAlgorithmNetworkAccess(allowNetworkAccess);
+  }
+
+  const trustedAlgorithms =
+    serviceConfig.trustedAlgorithms ?? config.trustedAlgorithms;
+  if (trustedAlgorithms) {
+    const wanted = new Set(trustedAlgorithms.map((entry) => entry.did));
+    const current = publishedService.compute?.publisherTrustedAlgorithms;
+
+    for (const algorithm of Array.isArray(current) ? current : []) {
+      if (!wanted.has(algorithm.did)) {
+        serviceBuilder.removeTrustedAlgorithm(algorithm.did);
+      }
+    }
+
+    if (trustedAlgorithms.length) {
+      serviceBuilder.addTrustedAlgorithms(trustedAlgorithms);
+    }
+  }
+
+  const publishers =
+    serviceConfig.trustedAlgorithmPublishers ??
+    config.trustedAlgorithmPublishers;
+  const trustOwner =
+    serviceConfig.trustOwnerAlgorithms ?? config.trustOwnerAlgorithms;
+
+  if (publishers || trustOwner !== undefined) {
+    const wanted = new Set(
+      (publishers || []).map((address) => address.toLowerCase()),
+    );
+    if (trustOwner) wanted.add(connection.wallet.address.toLowerCase());
+
+    const current = publishedService.compute?.publisherTrustedAlgorithmPublishers;
+    for (const address of Array.isArray(current) ? current : []) {
+      if (!wanted.has(address.toLowerCase())) {
+        serviceBuilder.removeTrustedAlgorithmPublisher(address);
+      }
+    }
+    for (const address of wanted) {
+      serviceBuilder.addTrustedAlgorithmPublisher(address);
+    }
+  }
 }
 
 /**
@@ -521,6 +712,265 @@ export async function publishFromFile(
   console.log(
     [
       "✅ Asset published.",
+      `🔗 Transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}`,
+      `🌐 Asset: https://portal.agrospai.udl.cat/asset/${result.ddo.id}`,
+    ].join("\n"),
+  );
+
+  return result.ddo.id as string;
+}
+
+/**
+ * Replaces the published tag list with the spec's.
+ *
+ * nautilus only exposes `addTags()` (additive), while `--update` treats the
+ * spec as authoritative for every metadata field it sets, so the list is
+ * written directly. The DDO builder keeps its metadata in this state and
+ * projects it over the published document on `edit()`.
+ */
+function replaceAssetTags(assetBuilder: AssetBuilder, tags: string[]): void {
+  const builder = assetBuilder as unknown as {
+    asset: { ddo: { metadata: { tags?: string[] } } };
+  };
+  builder.asset.ddo.metadata.tags = [...tags];
+}
+
+/**
+ * Applies an existing spec to an already-published asset, keeping its DID.
+ *
+ * Services that exist are updated in place: description, tags (replaced), asset
+ * credentials, service name/timeout/credentials/consumer parameters and, for
+ * compute services, network access and trusted algorithms/publishers. Files,
+ * endpoints, pricing and datatoken names are ignored for those — changing any
+ * of them would re-encrypt the service (new service id) or mint a new
+ * datatoken. Services the asset does not have yet are created from the spec,
+ * with their own files, pricing and datatoken.
+ */
+export async function updateFromFile(
+  filePath: string,
+  did: string,
+  connection: Connection,
+  dryRun: boolean,
+  updateFiles: string[] = [],
+): Promise<string | undefined> {
+  const config: PublishConfig = parseConfig(filePath);
+
+  const ajv = new Ajv();
+  const validate = ajv.compile(schema);
+  if (!validate(config)) {
+    console.error("❌ Invalid publish config file:");
+    console.error(validate.errors);
+    throw new Error(`Publish config validation failed for file ${filePath}`);
+  }
+
+  const folder = path.dirname(filePath);
+  const owner = config.metadata.owner || connection.wallet.address;
+
+  if (
+    config.metadata.owner &&
+    normalizeAddress(config.metadata.owner) !==
+      normalizeAddress(connection.wallet.address)
+  ) {
+    throw new Error(
+      `The connected account ${connection.wallet.address} does not match the asset owner ${config.metadata.owner} declared in ${filePath}. ` +
+        `Use the owner's private key, or run the publish command recursively (-r) with the manifest that contains the owner's account.`,
+    );
+  }
+
+  if (config.metadata.did && config.metadata.did !== did) {
+    throw new Error(
+      `The spec targets ${config.metadata.did}, but --update was given ${did}.`,
+    );
+  }
+
+  const serviceConfigs = resolveServiceConfigs(config, filePath);
+
+  const published: any = await connection.nautilus.getAsset(did);
+  if (!published) {
+    throw new Error(`Could not resolve asset ${did}.`);
+  }
+
+  const publishedServices = getServices(published) as any[];
+  const assetBuilder = new AssetBuilder(published);
+  assetBuilder.setIssuer(connection.wallet.address);
+  assetBuilder.setOwner(owner);
+  assetBuilder.setDescription(readConfigDescription(folder, config));
+
+  // The spec is authoritative for tags: replace the published list instead of
+  // merging the new tags into it.
+  if (config.metadata.tags) {
+    replaceAssetTags(assetBuilder, config.metadata.tags);
+  }
+
+  if (config.credentials) {
+    const current =
+      published.credentialSubject?.credentials ?? published.credentials;
+    applyCredentialLists(assetBuilder, current, config.credentials);
+  }
+
+  const usedServiceIds = new Set<string>();
+  const matchedFileSelectors = new Set<string>();
+  const plan: string[] = [];
+
+  for (const serviceConfig of serviceConfigs) {
+    const publishedService = findPublishedService(
+      publishedServices,
+      serviceConfig,
+      usedServiceIds,
+    );
+
+    if (!publishedService) {
+      if (serviceConfig.serviceId) {
+        throw new Error(
+          `Service ${serviceConfig.serviceId} does not exist on ${did}.`,
+        );
+      }
+
+      // The asset does not have this service yet. Building it with a pricing
+      // config makes nautilus mint its datatoken and assign the new service id.
+      const built = buildNewService(
+        serviceConfig,
+        config,
+        connection,
+        serviceConfig.serviceEndpoint,
+      );
+      assetBuilder.addService(built);
+
+      for (const selector of updateFiles) {
+        if (
+          selector === serviceConfig.serviceType ||
+          selector === serviceConfig.serviceId
+        ) {
+          matchedFileSelectors.add(selector);
+        }
+      }
+
+      plan.push(
+        `   • ${serviceConfig.serviceType} → new service (${
+          serviceConfig.name || built.name || "unnamed"
+        }), ${built.consumerParameters.length} consumer parameter(s), datatoken will be minted`,
+      );
+      continue;
+    }
+
+    usedServiceIds.add(publishedService.id);
+
+    const serviceBuilder = new ServiceBuilder({
+      asset: published,
+      serviceId: publishedService.id,
+    });
+
+    if (serviceConfig.name) serviceBuilder.setName(serviceConfig.name);
+    if (serviceConfig.displayName) {
+      serviceBuilder.setDisplayName(serviceConfig.displayName);
+    }
+    serviceBuilder.setTimeout(serviceConfig.timeout);
+
+    // Files are only replaced when explicitly selected: re-encrypting them
+    // changes the service id (it is the hash of the encrypted file object),
+    // while the DID and the datatoken address stay the same.
+    const fileSelectors = updateFiles.filter(
+      (selector) =>
+        selector === publishedService.id ||
+        selector === serviceConfig.serviceType ||
+        selector === serviceConfig.serviceId,
+    );
+    if (fileSelectors.length > 0) {
+      for (const fileObj of buildServiceFiles(serviceConfig)) {
+        serviceBuilder.addFile(fileObj);
+      }
+      for (const selector of fileSelectors) matchedFileSelectors.add(selector);
+    }
+
+    if (serviceConfig.serviceType === "compute") {
+      applyComputeSettings(
+        serviceBuilder,
+        serviceConfig,
+        config,
+        connection,
+        publishedService,
+      );
+    }
+
+    const built = serviceBuilder.build();
+    if (serviceConfig.credentials) {
+      built.credentials = replaceServiceCredentialLists(
+        built.credentials,
+        serviceConfig.credentials,
+      );
+    }
+    // The spec is authoritative for consumer parameters, so replace the list
+    // instead of appending to it.
+    if (serviceConfig.consumerParameters) {
+      built.consumerParameters = buildConsumerParameters(
+        serviceConfig.consumerParameters,
+      );
+    }
+
+    assetBuilder.addService(built);
+    plan.push(
+      `   • ${serviceConfig.serviceType} → ${publishedService.id} (${
+        serviceConfig.name || publishedService.name || "unnamed"
+      }), ${built.consumerParameters.length} consumer parameter(s)${
+        fileSelectors.length > 0
+          ? ", files replaced (service id will change)"
+          : ""
+      }`,
+    );
+  }
+
+  const unmatchedFileSelectors = updateFiles.filter(
+    (selector) => !matchedFileSelectors.has(selector),
+  );
+  if (unmatchedFileSelectors.length > 0) {
+    throw new Error(
+      `--update-files did not match any service on ${did}: ${unmatchedFileSelectors.join(
+        ", ",
+      )}. Use a service type (${publishedServices
+        .map((service) => service.type)
+        .join(", ")}) or a service id.`,
+    );
+  }
+
+  const asset = assetBuilder.build();
+
+  console.log(`✅ Update plan for ${did}:`);
+  console.log(plan.join("\n"));
+  console.log(
+    `   • description: "${config.metadata.description}" (${readConfigDescription(folder, config).length} chars)`,
+  );
+  if (config.metadata.tags) {
+    console.log(
+      `   • tags (replaced): ${config.metadata.tags.join(", ") || "(none)"}`,
+    );
+  }
+
+  if (dryRun) {
+    console.log(
+      `\n⚠️  Dry run enabled. Asset not updated. DID stays ${did}.\n`,
+    );
+    return did;
+  }
+
+  if (!connection.remoteStore) {
+    throw new Error(
+      "Updating requires a remote store. Please set PINATA_JWT or IPFS_UPLOAD_URL in your environment.",
+    );
+  }
+
+  console.log(`🚀 Updating asset ${did}...`);
+
+  const result = await connection.nautilus.edit(asset, {
+    waitForIndexer: true,
+  });
+
+  const txHash =
+    (result.setMetadataTxReceipt as any).hash ||
+    (result.setMetadataTxReceipt as any).transactionHash;
+
+  console.log(
+    [
+      "✅ Asset updated (DID unchanged).",
       `🔗 Transaction: ${connection.networkConfig.explorerUri}/tx/${txHash}`,
       `🌐 Asset: https://portal.agrospai.udl.cat/asset/${result.ddo.id}`,
     ].join("\n"),

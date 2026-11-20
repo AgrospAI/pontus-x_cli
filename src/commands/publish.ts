@@ -13,7 +13,7 @@ import {
 import { Connection } from "@/utils/connection";
 import { manifestFlag } from "@/utils/manifest-flag";
 import { readOptionalManifest } from "../lib/manifest";
-import { getEnvironmentConfig, publishFromFile } from "../lib/spec";
+import { getEnvironmentConfig, publishFromFile, updateFromFile } from "../lib/spec";
 
 export default class Publish extends Command {
   static args = {
@@ -49,10 +49,29 @@ export default class Publish extends Command {
       default: false,
       description: "Recursively publish assets in a directory",
     }),
+    update: Flags.string({
+      description:
+        "Update an existing asset with this spec instead of publishing a new one (DID is preserved)",
+    }),
+    "update-files": Flags.string({
+      description:
+        "With --update, replace the files of the matching service(s) from the spec. Pass a service type (e.g. compute) or service id; repeat for several. The service id changes, the DID and datatoken do not.",
+      multiple: true,
+    }),
   };
 
   async run(): Promise<string | undefined> {
     const { args, flags } = await this.parse(Publish);
+
+    if (flags.update && flags.resume) {
+      this.error("--update and --resume cannot be combined.");
+    }
+    if (flags["update-files"] && !flags.update) {
+      this.error("--update-files only works together with --update <DID>.");
+    }
+    if (flags.update && flags.recursive) {
+      this.error("--update works on a single spec file, not with -r.");
+    }
 
     const files = resolveAssetFiles(args.path, flags.recursive);
 
@@ -81,6 +100,24 @@ export default class Publish extends Command {
           process.env.OCEAN_NODE_URI ||
           connection.networkConfig.oceanNodeUri ||
           DEFAULT_OCEAN_NODE_URI;
+
+        if (flags.update) {
+          const updatedDid = await updateFromFile(
+            path,
+            flags.update,
+            connection,
+            flags["dry-run"],
+            flags["update-files"],
+          );
+          if (updatedDid && !flags["dry-run"]) {
+            updatePublication(path, {
+              did: updatedDid,
+              owner: connection.wallet.address,
+              network: environment.network,
+            });
+          }
+          return updatedDid;
+        }
 
         const originalPublish = connection.nautilus.publish.bind(
           connection.nautilus,
