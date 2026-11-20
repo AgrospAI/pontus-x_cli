@@ -57,6 +57,27 @@ metadata:
 
 Check [samples/publish](samples/publish) folder for more examples.
 
+A spec may describe several services on the same asset with a `services` list
+instead of the single `service` block. That is how one asset exposes, for
+example, both an `access` and a `compute` service:
+
+```yaml
+services:
+  - serviceType: access
+    name: Download
+    ...
+  - serviceType: compute
+    name: Compute
+    ...
+    trustedAlgorithms:
+      - did: did:ope:...
+```
+
+Exactly one of `service` or `services` must be present. `publish <spec>
+--update <DID>` applies a spec to an already-published asset in place: the DID
+is preserved, and services the asset does not have yet are created from the
+spec with their own datatoken.
+
 ## Manifest declarative format
 
 Example:
@@ -809,18 +830,24 @@ Publish the asset as instructed in the provided script folder.
 
 ```
 USAGE
-  $ pontus-x_cli publish PATH [--dry-run] [-m <value>] [-p <value>] [--resume <value>] [-r]
+  $ pontus-x_cli publish PATH [--dry-run] [-m <value>] [-p <value>] [--resume <value>] [-r] [--update
+    <value>] [--update-files <value>...]
 
 ARGUMENTS
   PATH  Path to find a JSON/YAML or TS file describing the asset to publish
 
 FLAGS
-  -m, --manifest=<value>  [default: ./manifest.yaml] Path to the authentication manifest (falls back to PRIVATE_KEY if
-                          missing)
-  -p, --provider=<value>  The Ocean Node URL (defaults to OCEAN_NODE_URI from .env)
-  -r, --recursive         Recursively publish assets in a directory
-      --dry-run           Dry run the publishing process
-      --resume=<value>    Resume an incomplete publish on an existing NFT address
+  -m, --manifest=<value>         [default: ./manifest.yaml] Path to the authentication manifest (falls back to
+                                 PRIVATE_KEY if missing)
+  -p, --provider=<value>         The Ocean Node URL (defaults to OCEAN_NODE_URI from .env)
+  -r, --recursive                Recursively publish assets in a directory
+      --dry-run                  Dry run the publishing process
+      --resume=<value>           Resume an incomplete publish on an existing NFT address
+      --update=<value>           Update an existing asset with this spec instead of publishing a new one (DID is
+                                 preserved)
+      --update-files=<value>...  With --update, replace the files of the matching service(s) from the spec. Pass a
+                                 service type (e.g. compute) or service id; repeat for several. The service id changes,
+                                 the DID and datatoken do not.
 
 DESCRIPTION
   Publish the asset as instructed in the provided script folder.
