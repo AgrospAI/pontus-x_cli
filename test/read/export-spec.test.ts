@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import Ajv from "ajv";
+import schema from "@/types/schema";
 import {
   ddoToSpec,
   decodeFiles,
@@ -232,5 +234,132 @@ describe("export-spec", () => {
       name: "Enhanced EDA",
       symbol: "E-EDA",
     });
+  });
+
+  it("exports every service of a multi-service asset into a services list", () => {
+    const did =
+      "did:ope:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+    const algorithmDid =
+      "did:ope:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789";
+    const owner = "0xD999bAaE98AC5246568FD726be8832c49626867D";
+    const vc = {
+      id: did,
+      credentialSubject: {
+        id: did,
+        chainId: 11_155_420,
+        metadata: {
+          type: "dataset",
+          name: "SIGPAC (Spanish LPIS): Coordinates to GeoJSON",
+          author: "Ministerio de Agricultura",
+          tags: ["sigpac"],
+          description: { "@value": "SIGPAC query", "@language": "en" },
+          license: { name: "CC-BY-4.0" },
+        },
+        services: [
+          {
+            id: "access-service",
+            type: "access",
+            name: "SIGPAC-COORD",
+            datatokenAddress: "0xaccessdt",
+            serviceEndpoint: "https://ocean-node.example.com",
+            timeout: 0,
+            files: {
+              files: [
+                {
+                  type: "url",
+                  method: "GET",
+                  url: "https://sigpac.example.com/query",
+                },
+              ],
+            },
+          },
+          {
+            id: "compute-service",
+            type: "compute",
+            name: "SIGPAC-COMPUTE",
+            datatokenAddress: "0xcomputedt",
+            serviceEndpoint: "https://ocean-node.example.com",
+            timeout: 0,
+            files: {
+              files: [{ type: "url", url: "https://example.com/algorithm.py" }],
+            },
+            compute: {
+              allowNetworkAccess: true,
+              publisherTrustedAlgorithms: [
+                {
+                  did: algorithmDid,
+                  serviceId: "algo-service-id",
+                  containerSectionChecksum: "sha256:container",
+                  filesChecksum: "sha256:files",
+                },
+              ],
+              publisherTrustedAlgorithmPublishers: [owner, "0xother"],
+            },
+            credentials: {
+              allow: [{ type: "address", values: [{ address: "*" }] }],
+            },
+          },
+        ],
+        credentials: {
+          allow: [{ type: "address", values: [{ address: "*" }] }],
+          deny: [],
+        },
+        datatokens: [
+          { address: "0xaccessdt", name: "SIGPAC-COORD", symbol: "SIGPAC-COORD" },
+          { address: "0xcomputedt", name: "SIGPAC-COMPUTE", symbol: "SIGPAC-COMPUTE" },
+        ],
+      },
+      indexedMetadata: {
+        nft: {
+          name: "SIGPAC-COORD",
+          symbol: "SIGPAC-COORD",
+          tokenURI: "https://example.com/nft.json",
+          owner,
+        },
+        stats: [
+          {
+            datatokenAddress: "0xaccessdt",
+            symbol: "SIGPAC-COORD",
+            prices: [{ type: "dispenser", price: "0" }],
+          },
+        ],
+      },
+    };
+
+    const { spec } = ddoToSpec(normalizeVcDdo(vc));
+
+    expect(spec.service).toBeUndefined();
+    expect(spec.services).toHaveLength(2);
+
+    const [accessService, computeService] = spec.services || [];
+    expect(accessService.serviceType).toBe("access");
+    expect(accessService.files).toEqual([
+      {
+        method: "GET",
+        type: "url",
+        url: "https://sigpac.example.com/query",
+      },
+    ]);
+
+    expect(computeService.serviceType).toBe("compute");
+    expect(computeService.datatoken).toEqual({
+      name: "SIGPAC-COMPUTE",
+      symbol: "SIGPAC-COMPUTE",
+    });
+    expect(computeService.allowAlgorithmNetworkAccess).toBe(true);
+    expect(computeService.trustedAlgorithms).toEqual([
+      { did: algorithmDid, serviceIds: ["algo-service-id"] },
+    ]);
+    // The owner publisher is folded into trustOwnerAlgorithms.
+    expect(computeService.trustOwnerAlgorithms).toBe(true);
+    expect(computeService.trustedAlgorithmPublishers).toEqual(["0xother"]);
+    expect(computeService.credentials).toEqual({ allow: ["*"] });
+
+    // Asset-wide lists are not duplicated per service.
+    expect(spec.credentials).toEqual({ allow: ["*"] });
+
+    const ajv = new Ajv();
+    const validate = ajv.compile(schema);
+    expect(validate(spec)).toBe(true);
   });
 });
