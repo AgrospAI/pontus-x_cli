@@ -64,7 +64,60 @@ type MetadataConfig = Omit<
 
 export type PricingType = PricingConfig["type"];
 
+/**
+ * One service of an asset.
+ *
+ * Compute settings live here (instead of only at the top level of the spec) so
+ * an asset with several services can carry different trusted algorithms,
+ * publishers and network-access flags per compute service. When omitted, the
+ * top-level `allowAlgorithmNetworkAccess` / `trustedAlgorithms` /
+ * `trustedAlgorithmPublishers` / `trustOwnerAlgorithms` act as defaults for
+ * every service.
+ */
+export type ServiceConfig = {
+  /** Per-service address allow/deny list. Asset-wide lists go in the top-level `credentials`. */
+  credentials?: {
+    allow?: string[];
+    deny?: string[];
+  };
+  consumerParameters?: ExtendedConsumerParameter[];
+  datatoken: {
+    name: string;
+    symbol: string;
+  };
+  /** Human-readable service name, shown by portals. Editable on an existing asset. */
+  name?: string;
+  /** Presentational service title. Editable on an existing asset. */
+  displayName?: string;
+  /**
+   * Target service id, for `publish --update`. Matching is by `serviceType` when
+   * omitted. Service ids change when the service's files are re-encrypted.
+   */
+  serviceId?: string;
+  files: (ServiceFileType<FileTypes> | UrlFileObject)[];
+  fileType: FileTypes;
+  pricing: {
+    amount?: number;
+    currency?: "EURAU" | "EUROe" | "OCEAN" | "devEURAU";
+    type: "fixed" | "free";
+  };
+  serviceEndpoint: string;
+  serviceType: ServiceTypes;
+  timeout: number;
+} & ComputeConfig;
+
+export type ComputeConfig = {
+  allowAlgorithmNetworkAccess?: boolean;
+  trustedAlgorithmPublishers?: string[];
+  trustedAlgorithms?: TrustedAlgorithmAsset[];
+  trustOwnerAlgorithms?: boolean;
+};
+
 export default interface PublishConfig {
+  /**
+   * Default for every service that does not declare its own value.
+   * @deprecated Set it on the compute service instead.
+   */
   allowAlgorithmNetworkAccess?: boolean;
   credentials?: {
     allow?: string[];
@@ -72,24 +125,17 @@ export default interface PublishConfig {
   };
   metadata: MetadataConfig;
   nftData: NftCreateDataWithoutOwner;
-  service: {
-    consumerParameters?: ExtendedConsumerParameter[];
-    datatoken: {
-      name: string;
-      symbol: string;
-    };
-    files: (ServiceFileType<FileTypes> | UrlFileObject)[];
-    fileType: FileTypes;
-    pricing: {
-      amount?: number;
-      currency?: "EURAU" | "EUROe" | "OCEAN" | "devEURAU";
-      type: "fixed" | "free";
-    };
-    serviceEndpoint: string;
-    serviceType: ServiceTypes;
-    timeout: number;
-  };
+  /**
+   * Single-service shorthand. Use `services` for assets with more than one
+   * service; exactly one of `service` / `services` must be present.
+   */
+  service?: ServiceConfig;
+  /** Multi-service form. Each entry becomes one service on the same asset. */
+  services?: ServiceConfig[];
+  /** Default for every service that does not declare its own value. */
   trustedAlgorithmPublishers?: string[];
+  /** Default for every service that does not declare its own value. */
   trustedAlgorithms?: TrustedAlgorithmAsset[];
+  /** Default for every service that does not declare its own value. */
   trustOwnerAlgorithms?: boolean;
 }

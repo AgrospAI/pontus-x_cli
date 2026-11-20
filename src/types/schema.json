@@ -25,11 +25,17 @@
           ]
         }
       },
-      "required": ["transactionId", "type"],
+      "required": [
+        "transactionId",
+        "type"
+      ],
       "type": "object"
     },
     "EncryptMethod": {
-      "enum": ["AES", "ECIES"],
+      "enum": [
+        "AES",
+        "ECIES"
+      ],
       "type": "string"
     },
     "ExtendedConsumerParameter": {
@@ -57,7 +63,12 @@
           "type": "boolean"
         },
         "type": {
-          "enum": ["text", "number", "boolean", "select"],
+          "enum": [
+            "text",
+            "number",
+            "boolean",
+            "select"
+          ],
           "type": "string"
         }
       },
@@ -72,12 +83,25 @@
       "type": "object"
     },
     "FileObjectType": {
-      "enum": ["url", "ipfs", "arweave", "s3", "ftp"],
+      "enum": [
+        "url",
+        "ipfs",
+        "arweave",
+        "s3",
+        "ftp"
+      ],
       "type": "string"
     },
     "FileTypes": {
       "description": "Storage backends ocean-node can read.\n\nTwo v1 types are gone because ocean-node no longer implements them: `graphql` and `smartcontract`. Three are new: `s3`, `ftp` and the node's own persistent storage.",
-      "enum": ["url", "ipfs", "arweave", "s3", "ftp", "nodePersistentStorage"],
+      "enum": [
+        "url",
+        "ipfs",
+        "arweave",
+        "s3",
+        "ftp",
+        "nodePersistentStorage"
+      ],
       "type": "string"
     },
     "FtpFileObject": {
@@ -104,7 +128,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "url"],
+      "required": [
+        "type",
+        "url"
+      ],
       "type": "object"
     },
     "HeadersObject": {
@@ -136,7 +163,10 @@
           ]
         }
       },
-      "required": ["hash", "type"],
+      "required": [
+        "hash",
+        "type"
+      ],
       "type": "object"
     },
     "LanguageValueObject": {
@@ -152,7 +182,11 @@
           "type": "string"
         }
       },
-      "required": ["@value", "@language", "@direction"],
+      "required": [
+        "@value",
+        "@language",
+        "@direction"
+      ],
       "type": "object"
     },
     "MetadataConfig": {
@@ -192,7 +226,12 @@
                   "type": "string"
                 }
               },
-              "required": ["checksum", "entrypoint", "image", "tag"],
+              "required": [
+                "checksum",
+                "entrypoint",
+                "image",
+                "tag"
+              ],
               "type": "object"
             },
             "language": {
@@ -202,7 +241,9 @@
               "type": "string"
             }
           },
-          "required": ["container"],
+          "required": [
+            "container"
+          ],
           "type": "object"
         },
         "attachments": {
@@ -273,7 +314,11 @@
           "type": "string"
         }
       },
-      "required": ["description", "name", "type"],
+      "required": [
+        "description",
+        "name",
+        "type"
+      ],
       "type": "object"
     },
     "NftCreateDataWithoutOwner": {
@@ -314,7 +359,10 @@
           "type": "string"
         }
       },
-      "required": ["key", "value"],
+      "required": [
+        "key",
+        "value"
+      ],
       "type": "object"
     },
     "PersistentStorageObject": {
@@ -337,13 +385,19 @@
           "type": "string"
         }
       },
-      "required": ["bucketId", "fileName", "type"],
+      "required": [
+        "bucketId",
+        "fileName",
+        "type"
+      ],
       "type": "object"
     },
     "PublishConfig": {
       "additionalProperties": false,
       "properties": {
         "allowAlgorithmNetworkAccess": {
+          "deprecated": "Set it on the compute service instead.",
+          "description": "Default for every service that does not declare its own value.",
           "type": "boolean"
         },
         "credentials": {
@@ -371,99 +425,39 @@
           "$ref": "#/definitions/NftCreateDataWithoutOwner"
         },
         "service": {
-          "additionalProperties": false,
-          "properties": {
-            "consumerParameters": {
-              "items": {
-                "$ref": "#/definitions/ExtendedConsumerParameter"
-              },
-              "type": "array"
-            },
-            "datatoken": {
-              "additionalProperties": false,
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "symbol": {
-                  "type": "string"
-                }
-              },
-              "required": ["name", "symbol"],
-              "type": "object"
-            },
-            "fileType": {
-              "$ref": "#/definitions/FileTypes"
-            },
-            "files": {
-              "items": {
-                "anyOf": [
-                  {
-                    "$ref": "#/definitions/ServiceFileType%3CFileTypes%3E"
-                  },
-                  {
-                    "$ref": "#/definitions/UrlFileObject"
-                  }
-                ]
-              },
-              "type": "array"
-            },
-            "pricing": {
-              "additionalProperties": false,
-              "properties": {
-                "amount": {
-                  "type": "number"
-                },
-                "currency": {
-                  "enum": ["EURAU", "EUROe", "OCEAN", "devEURAU"],
-                  "type": "string"
-                },
-                "type": {
-                  "enum": ["fixed", "free"],
-                  "type": "string"
-                }
-              },
-              "required": ["type"],
-              "type": "object"
-            },
-            "serviceEndpoint": {
-              "type": "string"
-            },
-            "serviceType": {
-              "$ref": "#/definitions/ServiceTypes"
-            },
-            "timeout": {
-              "type": "number"
-            }
+          "$ref": "#/definitions/ServiceConfig",
+          "description": "Single-service shorthand. Use `services` for assets with more than one service; exactly one of `service` / `services` must be present."
+        },
+        "services": {
+          "description": "Multi-service form. Each entry becomes one service on the same asset.",
+          "items": {
+            "$ref": "#/definitions/ServiceConfig"
           },
-          "required": [
-            "datatoken",
-            "files",
-            "fileType",
-            "pricing",
-            "serviceEndpoint",
-            "serviceType",
-            "timeout"
-          ],
-          "type": "object"
+          "type": "array"
         },
         "trustOwnerAlgorithms": {
+          "description": "Default for every service that does not declare its own value.",
           "type": "boolean"
         },
         "trustedAlgorithmPublishers": {
+          "description": "Default for every service that does not declare its own value.",
           "items": {
             "type": "string"
           },
           "type": "array"
         },
         "trustedAlgorithms": {
+          "description": "Default for every service that does not declare its own value.",
           "items": {
             "$ref": "#/definitions/TrustedAlgorithmAsset"
           },
           "type": "array"
         }
       },
-      "required": ["metadata", "nftData", "service"],
+      "required": [
+        "metadata",
+        "nftData"
+      ],
       "type": "object"
     },
     "RemoteObject": {
@@ -471,7 +465,11 @@
       "properties": {
         "additionalInformation": {
           "additionalProperties": {
-            "type": ["string", "number", "boolean"]
+            "type": [
+              "string",
+              "number",
+              "boolean"
+            ]
           },
           "type": "object"
         },
@@ -497,7 +495,12 @@
           "type": "string"
         }
       },
-      "required": ["name", "fileType", "sha256", "mirrors"],
+      "required": [
+        "name",
+        "fileType",
+        "sha256",
+        "mirrors"
+      ],
       "type": "object"
     },
     "RemoteSource": {
@@ -510,7 +513,11 @@
             },
             {
               "additionalProperties": {
-                "type": ["string", "number", "boolean"]
+                "type": [
+                  "string",
+                  "number",
+                  "boolean"
+                ]
               },
               "type": "object"
             }
@@ -529,7 +536,9 @@
           "type": "string"
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "type": "object"
     },
     "S3FileObject": {
@@ -555,7 +564,10 @@
           ]
         }
       },
-      "required": ["s3Access", "type"],
+      "required": [
+        "s3Access",
+        "type"
+      ],
       "type": "object"
     },
     "S3Object": {
@@ -593,6 +605,146 @@
       ],
       "type": "object"
     },
+    "ServiceConfig": {
+      "additionalProperties": false,
+      "description": "One service of an asset.\n\nCompute settings live here (instead of only at the top level of the spec) so an asset with several services can carry different trusted algorithms, publishers and network-access flags per compute service. When omitted, the top-level `allowAlgorithmNetworkAccess` / `trustedAlgorithms` / `trustedAlgorithmPublishers` / `trustOwnerAlgorithms` act as defaults for every service.",
+      "properties": {
+        "allowAlgorithmNetworkAccess": {
+          "type": "boolean"
+        },
+        "consumerParameters": {
+          "items": {
+            "$ref": "#/definitions/ExtendedConsumerParameter"
+          },
+          "type": "array"
+        },
+        "credentials": {
+          "additionalProperties": false,
+          "description": "Per-service address allow/deny list. Asset-wide lists go in the top-level `credentials`.",
+          "properties": {
+            "allow": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "deny": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "datatoken": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "symbol": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "symbol"
+          ],
+          "type": "object"
+        },
+        "displayName": {
+          "description": "Presentational service title. Editable on an existing asset.",
+          "type": "string"
+        },
+        "fileType": {
+          "$ref": "#/definitions/FileTypes"
+        },
+        "files": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/ServiceFileType%3CFileTypes%3E"
+              },
+              {
+                "$ref": "#/definitions/UrlFileObject"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "name": {
+          "description": "Human-readable service name, shown by portals. Editable on an existing asset.",
+          "type": "string"
+        },
+        "pricing": {
+          "additionalProperties": false,
+          "properties": {
+            "amount": {
+              "type": "number"
+            },
+            "currency": {
+              "enum": [
+                "EURAU",
+                "EUROe",
+                "OCEAN",
+                "devEURAU"
+              ],
+              "type": "string"
+            },
+            "type": {
+              "enum": [
+                "fixed",
+                "free"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        "serviceEndpoint": {
+          "type": "string"
+        },
+        "serviceId": {
+          "description": "Target service id, for `publish --update`. Matching is by `serviceType` when omitted. Service ids change when the service's files are re-encrypted.",
+          "type": "string"
+        },
+        "serviceType": {
+          "$ref": "#/definitions/ServiceTypes"
+        },
+        "timeout": {
+          "type": "number"
+        },
+        "trustOwnerAlgorithms": {
+          "type": "boolean"
+        },
+        "trustedAlgorithmPublishers": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "trustedAlgorithms": {
+          "items": {
+            "$ref": "#/definitions/TrustedAlgorithmAsset"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "datatoken",
+        "fileType",
+        "files",
+        "pricing",
+        "serviceEndpoint",
+        "serviceType",
+        "timeout"
+      ],
+      "type": "object"
+    },
     "ServiceFileType<FileTypes>": {
       "anyOf": [
         {
@@ -617,7 +769,10 @@
       "description": "Maps a `FileTypes` member onto the ocean.js storage object it needs."
     },
     "ServiceTypes": {
-      "enum": ["access", "compute"],
+      "enum": [
+        "access",
+        "compute"
+      ],
       "type": "string"
     },
     "TrustedAlgorithmAsset": {
@@ -634,7 +789,9 @@
           "type": "array"
         }
       },
-      "required": ["did"],
+      "required": [
+        "did"
+      ],
       "type": "object"
     },
     "UrlFileObject": {
@@ -666,7 +823,11 @@
           "type": "string"
         }
       },
-      "required": ["method", "type", "url"],
+      "required": [
+        "method",
+        "type",
+        "url"
+      ],
       "type": "object"
     }
   }

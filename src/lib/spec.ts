@@ -17,6 +17,7 @@ import { getAccountByAddress, normalizeAddress } from "@/lib/manifest";
 import { readPrivateKey } from "@/lib/wallet";
 import type { Manifest } from "@/types/manifest";
 import type PublishConfig from "@/types/publish";
+import type { ServiceConfig } from "@/types/publish";
 import schema from "@/types/schema";
 import {
   manifestToLoginInfos,
@@ -151,9 +152,9 @@ export function writeConfig(config: PublishConfig, filePath: string): void {
 
 function getPricing(
   connection: Connection,
-  type: PublishConfig["service"]["pricing"]["type"],
-  currency: PublishConfig["service"]["pricing"]["currency"],
-  amount: PublishConfig["service"]["pricing"]["amount"],
+  type: ServiceConfig["pricing"]["type"],
+  currency: ServiceConfig["pricing"]["currency"],
+  amount: ServiceConfig["pricing"]["amount"],
 ): PricingConfigWithoutOwner {
   if (type === "free" || !amount) {
     return { type: "free" };
@@ -170,6 +171,179 @@ function getPricing(
     pricingMap[currency as keyof typeof pricingMap] ?? pricingMap.OCEAN;
 
   return pricingFn(amount);
+}
+
+// ---- Shared config helpers ------------------------------------------------
+
+function resolveServiceConfigs(
+  config: PublishConfig,
+  filePath: string,
+): ServiceConfig[] {
+  // `service` is the single-service shorthand; `services` is the multi-service
+  // form. Exactly one of them may be present.
+  if (config.services?.length && config.service) {
+    throw new Error(
+      `Both \`service\` and \`services\` are defined in ${filePath}. Use one or the other.`,
+    );
+  }
+
+  const serviceConfigs: ServiceConfig[] = config.services?.length
+    ? config.services
+    : config.service
+      ? [config.service]
+      : [];
+
+  if (!serviceConfigs.length) {
+    throw new Error(
+      `No service defined in ${filePath}. Add a \`service\` block or a non-empty \`services\` list.`,
+    );
+  }
+
+  return serviceConfigs;
+}
+
+function buildConsumerParameters(
+  params: ServiceConfig["consumerParameters"],
+): any[] {
+  const consumerParameters: any[] = [];
+  for (const param of params || []) {
+    const consumerParameter = new ConsumerParameterBuilder()
+      .setType(param.type)
+      .setName(param.name)
+      .setLabel(param.label)
+      .setDescription(param.description)
+      .setRequired(param.required)
+      .setDefault(
+        typeof param.default === "object"
+          ? JSON.stringify(param.default)
+          : param.default,
+      );
+
+    if (Array.isArray(param.options)) {
+      for (const { key, value } of param.options) {
+        consumerParameter.addOption({ [key]: value });
+      }
+    }
+
+    consumerParameters.push(consumerParameter.build());
+  }
+  return consumerParameters;
+}
+
+/**
+ * Turns the spec's `files` entries into the file objects the node encrypts.
+ * `method` defaults to GET and `type` falls back to the service's `fileType`.
+ */
+function buildServiceFiles(serviceConfig: ServiceConfig): any[] {
+  return serviceConfig.files.map((file) => {
+    const fileObj = {
+      method: "GET",
+      ...file,
+    } as any;
+    if (!fileObj.type) {
+      fileObj.type = serviceConfig.fileType || "url";
+    }
+    return fileObj;
+  });
+}
+
+/**
+ * Builds a brand-new service from its spec entry. Used when publishing an
+ * asset and when `publish --update` adds a service the asset does not have
+ * yet. A new service carries its own pricing, so nautilus mints a datatoken
+ * for it and assigns the service id when the file object is encrypted.
+ */
+function buildNewService(
+  serviceConfig: ServiceConfig,
+  config: PublishConfig,
+  connection: Connection,
+  serviceEndpoint: string,
+): any {
+  const serviceBuilder = new ServiceBuilder({
+    fileType: serviceConfig.fileType,
+    serviceType: serviceConfig.serviceType,
+  });
+
+  serviceBuilder.setName(
+    serviceConfig.name ||
+      serviceConfig.datatoken?.name ||
+      config.metadata.name ||
+      "Access Service",
+  );
+
+  if (serviceConfig.displayName) {
+    serviceBuilder.setDisplayName(serviceConfig.displayName);
+  }
+
+  for (const fileObj of buildServiceFiles(serviceConfig)) {
+    serviceBuilder.addFile(fileObj);
+  }
+
+  for (const consumerParameter of buildConsumerParameters(
+    serviceConfig.consumerParameters,
+  )) {
+    serviceBuilder.addConsumerParameter(consumerParameter);
+  }
+
+  // Per-service compute settings win over the spec-level defaults, so a
+  // multi-service asset can trust different algorithms on each service.
+  const trustedAlgorithms =
+    serviceConfig.trustedAlgorithms ?? config.trustedAlgorithms;
+  if (trustedAlgorithms) {
+    serviceBuilder.addTrustedAlgorithms(trustedAlgorithms);
+  }
+
+  const trustedAlgorithmPublishers = [
+    ...(serviceConfig.trustedAlgorithmPublishers ??
+      config.trustedAlgorithmPublishers ??
+      []),
+  ];
+  if (serviceConfig.trustOwnerAlgorithms ?? config.trustOwnerAlgorithms) {
+    trustedAlgorithmPublishers.push(connection.wallet.address);
+  }
+  for (const trustedAlgorithmPublisher of trustedAlgorithmPublishers) {
+    serviceBuilder.addTrustedAlgorithmPublisher(trustedAlgorithmPublisher);
+  }
+
+  const allowAlgorithmNetworkAccess =
+    serviceConfig.allowAlgorithmNetworkAccess ??
+    config.allowAlgorithmNetworkAccess;
+  if (allowAlgorithmNetworkAccess !== undefined) {
+    serviceBuilder.allowAlgorithmNetworkAccess(allowAlgorithmNetworkAccess);
+  }
+
+  if (serviceConfig.credentials) {
+    if (serviceConfig.credentials.allow) {
+      serviceBuilder.addCredentialAddresses(
+        CredentialListTypes.ALLOW,
+        serviceConfig.credentials.allow,
+      );
+    }
+
+    if (serviceConfig.credentials.deny) {
+      serviceBuilder.addCredentialAddresses(
+        CredentialListTypes.DENY,
+        serviceConfig.credentials.deny,
+      );
+    }
+  }
+
+  return serviceBuilder
+    .setServiceEndpoint(serviceEndpoint)
+    .setTimeout(serviceConfig.timeout)
+    .setDatatokenNameAndSymbol(
+      serviceConfig.datatoken.name,
+      serviceConfig.datatoken.symbol,
+    )
+    .setPricing(
+      getPricing(
+        connection,
+        serviceConfig.pricing.type,
+        serviceConfig.pricing.currency,
+        serviceConfig.pricing.amount,
+      ),
+    )
+    .build();
 }
 
 export async function publishFromFile(
@@ -191,11 +365,26 @@ export async function publishFromFile(
   }
 
   const folder = path.dirname(filePath);
+  const owner = config.metadata.owner || connection.wallet.address;
+
+  // Nautilus refuses to publish an asset whose owner differs from the signer.
+  // Fail early with an actionable message instead of silently using the
+  // connected wallet as the owner.
+  if (
+    config.metadata.owner &&
+    normalizeAddress(config.metadata.owner) !==
+      normalizeAddress(connection.wallet.address)
+  ) {
+    throw new Error(
+      `The connected account ${connection.wallet.address} does not match the asset owner ${config.metadata.owner} declared in ${filePath}. ` +
+        `Use the owner's private key, or run the publish command recursively (-r) with the manifest that contains the owner's account.`,
+    );
+  }
 
   const assetBuilder = new AssetBuilder()
     .setType(config.metadata.type)
     .setName(config.metadata.name)
-    .setOwner(connection.wallet.address)
+    .setOwner(owner)
     .setDescription(
       readFileSync(path.resolve(folder, config.metadata.description), "utf8"),
     )
@@ -277,88 +466,13 @@ export async function publishFromFile(
     } as any);
   }
 
-  const serviceBuilder = new ServiceBuilder({
-    fileType: config.service.fileType,
-    serviceType: config.service.serviceType,
-  });
+  const serviceConfigs = resolveServiceConfigs(config, filePath);
 
-  serviceBuilder.setName(
-    config.service.datatoken?.name || config.metadata.name || "Access Service",
-  );
-
-  for (const file of config.service.files) {
-    const fileObj = {
-      method: "GET",
-      ...file,
-    } as any;
-    if (!fileObj.type) {
-      fileObj.type = config.service.fileType || "url";
-    }
-    serviceBuilder.addFile(fileObj);
-  }
-
-  for (const param of config.service.consumerParameters || []) {
-    // Stringify param.default if it's an object
-    const defaultValue =
-      typeof param.default === "object"
-        ? JSON.stringify(param.default)
-        : param.default;
-
-    const consumerParam = new ConsumerParameterBuilder()
-      .setType(param.type)
-      .setName(param.name)
-      .setLabel(param.label)
-      .setDescription(param.description)
-      .setRequired(param.required)
-      .setDefault(defaultValue);
-
-    if (Array.isArray(param.options)) {
-      for (const { key, value } of param.options) {
-        consumerParam.addOption({ [key]: value });
-      }
-    }
-
-    serviceBuilder.addConsumerParameter(consumerParam.build());
-  }
-
-  if (config.trustedAlgorithms) {
-    serviceBuilder.addTrustedAlgorithms(config.trustedAlgorithms);
-  }
-
-  for (const trustedAlgorithmPublisher of config.trustedAlgorithmPublishers ||
-    []) {
-    serviceBuilder.addTrustedAlgorithmPublisher(trustedAlgorithmPublisher);
-  }
-
-  if (config.trustOwnerAlgorithms) {
-    serviceBuilder.addTrustedAlgorithmPublisher(connection.wallet.address);
-  }
-
-  if (config.allowAlgorithmNetworkAccess !== undefined) {
-    serviceBuilder.allowAlgorithmNetworkAccess(
-      config.allowAlgorithmNetworkAccess,
+  for (const serviceConfig of serviceConfigs) {
+    assetBuilder.addService(
+      buildNewService(serviceConfig, config, connection, providerUrl),
     );
   }
-
-  serviceBuilder
-    .setServiceEndpoint(providerUrl)
-    .setTimeout(config.service.timeout)
-    .setDatatokenNameAndSymbol(
-      config.service.datatoken.name,
-      config.service.datatoken.symbol,
-    )
-    .setPricing(
-      getPricing(
-        connection,
-        config.service.pricing.type,
-        config.service.pricing.currency,
-        config.service.pricing.amount,
-      ),
-    );
-
-  const service = serviceBuilder.build();
-
-  assetBuilder.addService(service);
 
   const asset = assetBuilder.build();
 

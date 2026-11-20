@@ -48,11 +48,22 @@ export default class ExportSpec extends Command {
 
     const spec = result.spec;
     const container = spec.metadata.algorithm?.container;
-    const files = spec.service.files as any;
-    const urls = Array.isArray(files)
-      ? files.map((file) => file.url).filter(Boolean)
-      : [];
-    const encrypted = !Array.isArray(files) && typeof files === "string";
+    // A multi-service asset exports a `services` list; single-service assets
+    // keep the `service` shorthand.
+    const services = spec.services?.length
+      ? spec.services
+      : spec.service
+        ? [spec.service]
+        : [];
+    const filesByService = services.map((service) => service.files as any);
+    const urls = filesByService.flatMap((files) =>
+      Array.isArray(files)
+        ? files.map((file: any) => file.url).filter(Boolean)
+        : [],
+    );
+    const encrypted = filesByService.some(
+      (files) => !Array.isArray(files) && typeof files === "string",
+    );
 
     if (encrypted) {
       this.warn(
@@ -72,9 +83,14 @@ export default class ExportSpec extends Command {
     this.log(`Name     : ${spec.metadata.name}`);
     this.log(
       `Type     : ${spec.metadata.type}${
-        spec.service.serviceType ? ` (${spec.service.serviceType})` : ""
+        services.length
+          ? ` (${services.map((service) => service.serviceType).join(", ")})`
+          : ""
       }`,
     );
+    if (services.length > 1) {
+      this.log(`Services : ${services.length} services in \`services\``);
+    }
     if (spec.metadata.network) this.log(`Network  : ${spec.metadata.network}`);
     if (container) {
       this.log(
@@ -91,7 +107,7 @@ export default class ExportSpec extends Command {
           : urls.join(", ") || "(none)"
       }`,
     );
-    this.log(`Pricing  : ${spec.service.pricing.type}`);
+    this.log(`Pricing  : ${services.map((service) => service.pricing.type).join(", ") || "(none)"}`);
     this.log("");
     this.log(
       `${result.overwritten ? "Overwrote" : "Created"}: ${result.folder}`,

@@ -5,6 +5,7 @@ import { stringify } from "yaml";
 
 import { DEFAULT_OCEAN_NODE_URI, NETWORK_CONFIGS, Network } from "@/config";
 import type PublishConfig from "@/types/publish";
+import type { ServiceConfig } from "@/types/publish";
 
 /**
  * Metadata services used as a last resort when neither `--node` nor the
@@ -407,7 +408,7 @@ function flattenCredentialList(list: any): string[] {
   return out;
 }
 
-function mapPricing(ddo: any): PublishConfig["service"]["pricing"] {
+function mapPricing(ddo: any): ServiceConfig["pricing"] {
   const price = ddo.stats?.price || {};
   const value = Number(price.value || 0);
   if (value > 0) {
@@ -430,14 +431,14 @@ function extractFiles(service: any): any[] {
 
 function mapServiceFiles(service: any): {
   files: any;
-  fileType: PublishConfig["service"]["fileType"];
+  fileType: ServiceConfig["fileType"];
 } {
   // Without NODE_PRIVATE_KEY the payload is still the DDO's ciphertext. Keep it
   // verbatim instead of turning it into an empty (and silently wrong) list.
   if (isEncryptedFiles(service?.files)) {
     return {
       files: String(service.files).trim(),
-      fileType: "url" as PublishConfig["service"]["fileType"],
+      fileType: "url" as ServiceConfig["fileType"],
     };
   }
 
@@ -461,7 +462,7 @@ function mapServiceFiles(service: any): {
 
   return {
     files,
-    fileType: fileType as PublishConfig["service"]["fileType"],
+    fileType: fileType as ServiceConfig["fileType"],
   };
 }
 
@@ -483,8 +484,98 @@ function mapAlgorithm(algorithm: any): any {
 }
 
 /**
+ * Maps a single DDO service to its publish-spec entry. Compute settings are
+ * kept on the service so a multi-service asset can describe each one.
+ */
+function mapServiceToSpec(service: any, ddo: any, nft: any): ServiceConfig {
+  const datatokens = ddo.datatokens || [];
+  const dt =
+    datatokens.find((d: any) => d.address === service.datatokenAddress) ||
+    datatokens[0] ||
+    {};
+  const { files, fileType } = mapServiceFiles(service);
+
+  const out: any = {
+    serviceType: service.type,
+    ...(service.name ? { name: service.name } : {}),
+    ...(service.displayName ? { displayName: service.displayName } : {}),
+    fileType,
+    serviceEndpoint: service.serviceEndpoint,
+    timeout: service.timeout,
+    files,
+    pricing: mapPricing(ddo),
+    datatoken: { name: dt.name, symbol: dt.symbol },
+  };
+
+  if (
+    Array.isArray(service.consumerParameters) &&
+    service.consumerParameters.length
+  ) {
+    const cps = mapConsumerParameters(service.consumerParameters);
+    if (cps) out.consumerParameters = cps;
+  }
+
+  // v5 DDOs can gate an individual service independently of the asset list.
+  const allow = flattenCredentialValues(service.credentials?.allow);
+  const deny = flattenCredentialValues(service.credentials?.deny);
+  if (allow.length || deny.length) {
+    out.credentials = {
+      ...(allow.length ? { allow } : {}),
+      ...(deny.length ? { deny } : {}),
+    };
+  }
+
+  if (service.type === "compute") {
+    const compute = service.compute || {};
+    if (typeof compute.allowNetworkAccess === "boolean") {
+      out.allowAlgorithmNetworkAccess = compute.allowNetworkAccess;
+    }
+    if (
+      Array.isArray(compute.publisherTrustedAlgorithmPublishers) &&
+      compute.publisherTrustedAlgorithmPublishers.length
+    ) {
+      out.trustedAlgorithmPublishers = [
+        ...compute.publisherTrustedAlgorithmPublishers,
+      ];
+    }
+    if (
+      Array.isArray(compute.publisherTrustedAlgorithms) &&
+      compute.publisherTrustedAlgorithms.length
+    ) {
+      out.trustedAlgorithms = compute.publisherTrustedAlgorithms.map(
+        (entry: any) => ({
+          did: entry.did,
+          ...(entry.serviceId ? { serviceIds: [entry.serviceId] } : {}),
+        }),
+      );
+    }
+    // trustOwnerAlgorithms is not stored explicitly in the DDO; infer it when
+    // the owner itself is listed among the trusted algorithm publishers.
+    if (
+      nft.owner &&
+      Array.isArray(out.trustedAlgorithmPublishers) &&
+      out.trustedAlgorithmPublishers.includes(nft.owner)
+    ) {
+      out.trustOwnerAlgorithms = true;
+      out.trustedAlgorithmPublishers = out.trustedAlgorithmPublishers.filter(
+        (address: string) => address !== nft.owner,
+      );
+      if (!out.trustedAlgorithmPublishers.length) {
+        delete out.trustedAlgorithmPublishers;
+      }
+    }
+  }
+
+  return out as ServiceConfig;
+}
+
+/**
  * Maps a legacy-shaped DDO to the CLI publish spec. New-stack assets must be
  * normalised first with {@link normalizeVcDdo}.
+ *
+ * A DDO with one service keeps the single `service` block (compute settings
+ * stay at the top level, as before). A DDO with several services emits a
+ * `services` list, which `publish` maps onto one service per entry.
  */
 export function ddoToSpec(ddo: any): {
   spec: PublishConfig;
@@ -492,15 +583,6 @@ export function ddoToSpec(ddo: any): {
 } {
   const md = ddo.metadata || {};
   const nft = ddo.nft || {};
-  const service = (ddo.services || [])[0] || {};
-  const serviceDtAddress = service.datatokenAddress;
-  const dt =
-    (ddo.datatokens || []).find((d: any) => d.address === serviceDtAddress) ||
-    (ddo.datatokens || [])[0] ||
-    {};
-  const compute = service.compute || {};
-
-  const { files, fileType } = mapServiceFiles(service);
   const network = NETWORK_BY_CHAIN[ddo.chainId];
 
   const metadata: any = {
@@ -524,6 +606,10 @@ export function ddoToSpec(ddo: any): {
     if (algorithm) metadata.algorithm = algorithm;
   }
 
+  const services = (Array.isArray(ddo.services) ? ddo.services : []).map(
+    (service: any) => mapServiceToSpec(service, ddo, nft),
+  );
+
   const spec: any = {
     metadata,
     nftData: {
@@ -533,23 +619,40 @@ export function ddoToSpec(ddo: any): {
       tokenURI: nft.tokenURI,
       transferable: false,
     },
-    service: {
-      serviceType: service.type,
-      fileType,
-      serviceEndpoint: service.serviceEndpoint,
-      timeout: service.timeout,
-      files,
-      pricing: mapPricing(ddo),
-      datatoken: { name: dt.name, symbol: dt.symbol },
-    },
   };
 
-  if (
-    Array.isArray(service.consumerParameters) &&
-    service.consumerParameters.length
-  ) {
-    const cps = mapConsumerParameters(service.consumerParameters);
-    if (cps) spec.service.consumerParameters = cps;
+  if (services.length > 1) {
+    spec.services = services;
+  } else if (services.length === 1) {
+    // Single service: keep the previous flat layout.
+    const service = { ...services[0] } as any;
+    for (const key of [
+      "allowAlgorithmNetworkAccess",
+      "trustedAlgorithmPublishers",
+      "trustedAlgorithms",
+      "trustOwnerAlgorithms",
+    ]) {
+      if (service[key] !== undefined) {
+        spec[key] = service[key];
+        delete service[key];
+      }
+    }
+    spec.service = service;
+  } else {
+    // A DDO without services cannot round-trip, but still produce a file the
+    // user can edit rather than an invalid spec.
+    spec.service = {
+      serviceType: "access",
+      fileType: "url",
+      serviceEndpoint: "",
+      timeout: 0,
+      files: [],
+      pricing: { type: "free" },
+      datatoken: {
+        name: nft.name || "ACCESS",
+        symbol: nft.symbol || "ACCESS",
+      },
+    };
   }
 
   if (ddo.credentials && typeof ddo.credentials === "object") {
@@ -560,43 +663,6 @@ export function ddoToSpec(ddo: any): {
         ...(allow.length ? { allow } : {}),
         ...(deny.length ? { deny } : {}),
       };
-    }
-  }
-
-  if (service.type === "compute") {
-    if (typeof compute.allowNetworkAccess === "boolean") {
-      spec.allowAlgorithmNetworkAccess = compute.allowNetworkAccess;
-    }
-    if (
-      Array.isArray(compute.publisherTrustedAlgorithmPublishers) &&
-      compute.publisherTrustedAlgorithmPublishers.length
-    ) {
-      spec.trustedAlgorithmPublishers =
-        compute.publisherTrustedAlgorithmPublishers;
-    }
-    if (
-      Array.isArray(compute.publisherTrustedAlgorithms) &&
-      compute.publisherTrustedAlgorithms.length
-    ) {
-      spec.trustedAlgorithms = compute.publisherTrustedAlgorithms.map(
-        (entry: any) => ({
-          did: entry.did,
-          ...(entry.serviceId ? { serviceIds: [entry.serviceId] } : {}),
-        }),
-      );
-    }
-    // trustOwnerAlgorithms is not stored explicitly in the DDO; infer it when
-    // the owner itself is listed among the trusted algorithm publishers.
-    if (
-      nft.owner &&
-      Array.isArray(compute.publisherTrustedAlgorithmPublishers) &&
-      compute.publisherTrustedAlgorithmPublishers.includes(nft.owner)
-    ) {
-      spec.trustOwnerAlgorithms = true;
-      spec.trustedAlgorithmPublishers =
-        compute.publisherTrustedAlgorithmPublishers.filter(
-          (address: string) => address !== nft.owner,
-        );
     }
   }
 
