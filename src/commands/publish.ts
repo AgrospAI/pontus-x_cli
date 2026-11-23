@@ -95,11 +95,6 @@ export default class Publish extends Command {
           },
           flags.manifest,
         );
-        const oceanNodeUri =
-          flags.provider ||
-          process.env.OCEAN_NODE_URI ||
-          connection.networkConfig.oceanNodeUri ||
-          DEFAULT_OCEAN_NODE_URI;
 
         if (flags.update) {
           const updatedDid = await updateFromFile(
@@ -177,7 +172,7 @@ export default class Publish extends Command {
 
         const did = await publish(
           path,
-          oceanNodeUri,
+          flags.provider || "",
           flags["dry-run"],
           connection,
         );
@@ -238,14 +233,10 @@ export default class Publish extends Command {
           PRIVATE_KEY: privateKey,
         };
         const connection = await Connection.connect(envOverrides);
-        const oceanNodeUri =
-          flags.provider ||
-          process.env.OCEAN_NODE_URI ||
-          connection.networkConfig.oceanNodeUri ||
-          DEFAULT_OCEAN_NODE_URI;
+
         const publishedDid = await publish(
           file,
-          oceanNodeUri,
+          flags.provider || "",
           flags["dry-run"],
           connection,
         );
@@ -323,7 +314,10 @@ async function publish(
         "publish",
         dirPath,
         connection,
-        provider,
+        provider ||
+          process.env.OCEAN_NODE_URI ||
+          connection.networkConfig.oceanNodeUri ||
+          DEFAULT_OCEAN_NODE_URI,
         dryRun,
       );
       return typeof result === "string" ? result : publishedDid;

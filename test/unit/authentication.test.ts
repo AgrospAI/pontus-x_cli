@@ -162,12 +162,19 @@ describe("asset owner authentication", () => {
     ).toBe(manifestKey);
   });
 
-  it("uses the environment account when the manifest is missing", async () => {
+  it("uses the environment account when it matches the declared owner", async () => {
+    vi.stubEnv("PRIVATE_KEY", manifestKey);
     expect(await getEnvironmentConfig("spec.yaml", config)).toEqual({
       network: "PONTUSXTEST",
-      owner: new Wallet(envKey).address,
-      privateKey: envKey,
+      owner,
+      privateKey: manifestKey,
     });
+  });
+
+  it("rejects an environment key that overrides the declared owner", async () => {
+    await expect(getEnvironmentConfig("spec.yaml", config)).rejects.toThrow(
+      "does not match owner",
+    );
   });
 
   it("reports a missing login", async () => {

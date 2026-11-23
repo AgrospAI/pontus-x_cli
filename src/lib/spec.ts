@@ -13,19 +13,18 @@ import {
 import Ajv from "ajv";
 import { Wallet } from "ethers";
 import { parse, stringify } from "yaml";
-
 import { getAccountByAddress, normalizeAddress } from "@/lib/manifest";
 import { readPrivateKey } from "@/lib/wallet";
 import type { Manifest } from "@/types/manifest";
 import type PublishConfig from "@/types/publish";
 import type { ServiceConfig } from "@/types/publish";
 import schema from "@/types/schema";
+import type { Connection } from "@/utils/connection";
 import {
   manifestToLoginInfos,
-  selectLoginInfo,
   NOT_LOGGED_IN_MESSAGE,
+  selectLoginInfo,
 } from "@/utils/login";
-import type { Connection } from "@/utils/connection";
 
 function getFiles(
   rootPath: string,
@@ -117,6 +116,14 @@ export async function getEnvironmentConfig(
   }
 
   const owner = new Wallet(privateKey).address;
+  if (
+    requestedOwner &&
+    normalizeAddress(owner) !== normalizeAddress(requestedOwner)
+  ) {
+    throw new Error(
+      `Signing key does not match owner ${requestedOwner} (file ${file}).`,
+    );
+  }
 
   return { network, owner, privateKey };
 }
@@ -203,10 +210,7 @@ function resolveServiceConfigs(
   return serviceConfigs;
 }
 
-function readConfigDescription(
-  folder: string,
-  config: PublishConfig,
-): string {
+function readConfigDescription(folder: string, config: PublishConfig): string {
   return readFileSync(
     path.resolve(folder, config.metadata.description),
     "utf8",
@@ -249,9 +253,7 @@ function flattenCredentialAddresses(
   credentials: any,
   list: "allow" | "deny",
 ): string[] {
-  const entries = Array.isArray(credentials?.[list])
-    ? credentials[list]
-    : [];
+  const entries = Array.isArray(credentials?.[list]) ? credentials[list] : [];
   const out: string[] = [];
 
   for (const entry of entries) {
@@ -278,7 +280,10 @@ function flattenCredentialAddresses(
 /** Makes a spec's allow/deny lists authoritative, leaving non-address entries alone. */
 function applyCredentialLists(
   builder: {
-    addCredentialAddresses: (list: CredentialListTypes, addresses: string[]) => any;
+    addCredentialAddresses: (
+      list: CredentialListTypes,
+      addresses: string[],
+    ) => any;
     removeCredentialAddresses: (
       list: CredentialListTypes,
       addresses: string[],
@@ -390,6 +395,12 @@ function applyComputeSettings(
   connection: Connection,
   publishedService: any,
 ): void {
+  const allowRawAlgorithms =
+    serviceConfig.allowRawAlgorithms ?? config.allowRawAlgorithms;
+  if (allowRawAlgorithms !== undefined) {
+    serviceBuilder.allowRawAlgorithms(allowRawAlgorithms);
+  }
+
   const allowNetworkAccess =
     serviceConfig.allowAlgorithmNetworkAccess ??
     config.allowAlgorithmNetworkAccess;
@@ -426,7 +437,8 @@ function applyComputeSettings(
     );
     if (trustOwner) wanted.add(connection.wallet.address.toLowerCase());
 
-    const current = publishedService.compute?.publisherTrustedAlgorithmPublishers;
+    const current =
+      publishedService.compute?.publisherTrustedAlgorithmPublishers;
     for (const address of Array.isArray(current) ? current : []) {
       if (!wanted.has(address.toLowerCase())) {
         serviceBuilder.removeTrustedAlgorithmPublisher(address);
@@ -462,65 +474,56 @@ function buildNewService(
       "Access Service",
   );
 
-  if (serviceConfig.displayName) {
-    serviceBuilder.setDisplayName(serviceConfig.displayName);
-  }
-
   for (const fileObj of buildServiceFiles(serviceConfig)) {
     serviceBuilder.addFile(fileObj);
   }
-
-  for (const consumerParameter of buildConsumerParameters(
+  for (const parameter of buildConsumerParameters(
     serviceConfig.consumerParameters,
   )) {
-    serviceBuilder.addConsumerParameter(consumerParameter);
+    serviceBuilder.addConsumerParameter(parameter);
   }
 
-  // Per-service compute settings win over the spec-level defaults, so a
-  // multi-service asset can trust different algorithms on each service.
-  const trustedAlgorithms =
-    serviceConfig.trustedAlgorithms ?? config.trustedAlgorithms;
-  if (trustedAlgorithms) {
-    serviceBuilder.addTrustedAlgorithms(trustedAlgorithms);
-  }
-
-  const trustedAlgorithmPublishers = [
-    ...(serviceConfig.trustedAlgorithmPublishers ??
-      config.trustedAlgorithmPublishers ??
-      []),
-  ];
-  if (serviceConfig.trustOwnerAlgorithms ?? config.trustOwnerAlgorithms) {
-    trustedAlgorithmPublishers.push(connection.wallet.address);
-  }
-  for (const trustedAlgorithmPublisher of trustedAlgorithmPublishers) {
-    serviceBuilder.addTrustedAlgorithmPublisher(trustedAlgorithmPublisher);
-  }
-
-  const allowAlgorithmNetworkAccess =
-    serviceConfig.allowAlgorithmNetworkAccess ??
-    config.allowAlgorithmNetworkAccess;
-  if (allowAlgorithmNetworkAccess !== undefined) {
-    serviceBuilder.allowAlgorithmNetworkAccess(allowAlgorithmNetworkAccess);
-  }
-
-  if (serviceConfig.credentials) {
-    if (serviceConfig.credentials.allow) {
-      serviceBuilder.addCredentialAddresses(
-        CredentialListTypes.ALLOW,
-        serviceConfig.credentials.allow,
+  if (serviceConfig.serviceType === "compute") {
+    const compute = { ...config, ...serviceConfig };
+    if (compute.trustedAlgorithms?.length)
+      serviceBuilder.addTrustedAlgorithms(compute.trustedAlgorithms);
+    for (const publisher of compute.trustedAlgorithmPublishers || [])
+      serviceBuilder.addTrustedAlgorithmPublisher(publisher);
+    if (compute.trustOwnerAlgorithms)
+      serviceBuilder.addTrustedAlgorithmPublisher(connection.wallet.address);
+    if (compute.allowAlgorithmNetworkAccess !== undefined)
+      serviceBuilder.allowAlgorithmNetworkAccess(
+        compute.allowAlgorithmNetworkAccess,
       );
-    }
-
-    if (serviceConfig.credentials.deny) {
-      serviceBuilder.addCredentialAddresses(
-        CredentialListTypes.DENY,
-        serviceConfig.credentials.deny,
-      );
-    }
+    if (compute.allowRawAlgorithms !== undefined)
+      serviceBuilder.allowRawAlgorithms(compute.allowRawAlgorithms);
+  }
+  if (serviceConfig.displayName)
+    serviceBuilder.setDisplayName(serviceConfig.displayName);
+  if (serviceConfig.description)
+    serviceBuilder.setDescription(serviceConfig.description);
+  if (serviceConfig.state !== undefined)
+    serviceBuilder.setState(serviceConfig.state);
+  if (serviceConfig.additionalInformation)
+    serviceBuilder.addAdditionalInformation(
+      serviceConfig.additionalInformation,
+    );
+  if (serviceConfig.dataSchema)
+    serviceBuilder.setDataSchema(serviceConfig.dataSchema);
+  if (serviceConfig.inputSchema)
+    serviceBuilder.setInputSchema(serviceConfig.inputSchema);
+  if (serviceConfig.outputSchema)
+    serviceBuilder.setOutputSchema(serviceConfig.outputSchema);
+  for (const list of [CredentialListTypes.ALLOW, CredentialListTypes.DENY]) {
+    const addresses = serviceConfig.credentials?.[list];
+    if (addresses?.length)
+      serviceBuilder.addCredentialAddresses(list, addresses);
+    const requests = serviceConfig.credentials?.requestCredentials?.[list];
+    if (requests?.length) serviceBuilder.addRequestCredentials(list, requests);
   }
 
-  return serviceBuilder
-    .setServiceEndpoint(serviceEndpoint)
+  serviceBuilder
+    .setServiceEndpoint(serviceEndpoint || serviceConfig.serviceEndpoint)
     .setTimeout(serviceConfig.timeout)
     .setDatatokenNameAndSymbol(
       serviceConfig.datatoken.name,
@@ -533,8 +536,9 @@ function buildNewService(
         serviceConfig.pricing.currency,
         serviceConfig.pricing.amount,
       ),
-    )
-    .build();
+    );
+
+  return serviceBuilder.build();
 }
 
 export async function publishFromFile(
@@ -545,7 +549,16 @@ export async function publishFromFile(
 ): Promise<string | undefined> {
   const config: PublishConfig = parseConfig(filePath);
 
-  const ajv = new Ajv();
+  if (
+    (config.service && config.services) ||
+    (!config.service && !config.services?.length)
+  ) {
+    throw new Error(
+      "Specify either service or a non-empty services array, not both.",
+    );
+  }
+
+  const ajv = new Ajv({ allowUnionTypes: true });
   const validate = ajv.compile(schema);
   const valid = validate(config);
 
@@ -567,7 +580,7 @@ export async function publishFromFile(
       normalizeAddress(connection.wallet.address)
   ) {
     throw new Error(
-      `The connected account ${connection.wallet.address} does not match the asset owner ${config.metadata.owner} declared in ${filePath}. ` +
+      `The connected account ${connection.wallet.address} does not match owner ${config.metadata.owner} declared in ${filePath}. ` +
         `Use the owner's private key, or run the publish command recursively (-r) with the manifest that contains the owner's account.`,
     );
   }
@@ -584,6 +597,35 @@ export async function publishFromFile(
     )
     .setNftData(config.nftData);
 
+  if (config.metadata.contentLanguage) {
+    assetBuilder.setContentLanguage(
+      config.metadata.contentLanguage,
+      config.metadata.contentDirection,
+    );
+    assetBuilder.setDescription(
+      readFileSync(path.resolve(folder, config.metadata.description), "utf8"),
+    );
+  }
+  if (config.metadata.displayTitle)
+    assetBuilder.setDisplayTitle(
+      typeof config.metadata.displayTitle === "string"
+        ? config.metadata.displayTitle
+        : config.metadata.displayTitle["@value"],
+    );
+  if (config.metadata.copyrightHolder)
+    assetBuilder.setCopyrightHolder(config.metadata.copyrightHolder);
+  if (config.metadata.categories)
+    assetBuilder.addCategories(config.metadata.categories);
+  if (config.metadata.attachments)
+    assetBuilder.addAttachments(config.metadata.attachments);
+  if (config.lifecycleState !== undefined)
+    assetBuilder.setLifecycleState(config.lifecycleState);
+  if (config.credentials?.requestCredentials) {
+    for (const list of [CredentialListTypes.ALLOW, CredentialListTypes.DENY]) {
+      const requests = config.credentials.requestCredentials[list];
+      if (requests?.length) assetBuilder.addRequestCredentials(list, requests);
+    }
+  }
   if (config.metadata.license) {
     assetBuilder.setLicense(config.metadata.license);
   }
@@ -755,7 +797,7 @@ export async function updateFromFile(
 ): Promise<string | undefined> {
   const config: PublishConfig = parseConfig(filePath);
 
-  const ajv = new Ajv();
+  const ajv = new Ajv({ allowUnionTypes: true });
   const validate = ajv.compile(schema);
   if (!validate(config)) {
     console.error("❌ Invalid publish config file:");
@@ -772,7 +814,7 @@ export async function updateFromFile(
       normalizeAddress(connection.wallet.address)
   ) {
     throw new Error(
-      `The connected account ${connection.wallet.address} does not match the asset owner ${config.metadata.owner} declared in ${filePath}. ` +
+      `The connected account ${connection.wallet.address} does not match owner ${config.metadata.owner} declared in ${filePath}. ` +
         `Use the owner's private key, or run the publish command recursively (-r) with the manifest that contains the owner's account.`,
     );
   }
@@ -946,9 +988,7 @@ export async function updateFromFile(
   }
 
   if (dryRun) {
-    console.log(
-      `\n⚠️  Dry run enabled. Asset not updated. DID stays ${did}.\n`,
-    );
+    console.log(`\n⚠️  Dry run enabled. Asset not updated. DID stays ${did}.\n`);
     return did;
   }
 

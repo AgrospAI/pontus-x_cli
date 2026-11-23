@@ -31,6 +31,74 @@
       ],
       "type": "object"
     },
+    "AssetState": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/LifecycleStates"
+        },
+        {
+          "$ref": "#/definitions/State"
+        }
+      ],
+      "description": "`LifecycleStates` and ddo-js's `State` are the same values."
+    },
+    "CredentialPolicy": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "args": {},
+            "policy": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "policy"
+          ],
+          "type": "object"
+        }
+      ],
+      "description": "A per-credential policy attached to a single `request_credentials` entry: a walt.id policy name, or a name with arguments."
+    },
+    "CredentialsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "allow": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "deny": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "requestCredentials": {
+          "additionalProperties": false,
+          "properties": {
+            "allow": {
+              "items": {
+                "$ref": "#/definitions/RequestCredential"
+              },
+              "type": "array"
+            },
+            "deny": {
+              "items": {
+                "$ref": "#/definitions/RequestCredential"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
     "EncryptMethod": {
       "enum": [
         "AES",
@@ -55,7 +123,20 @@
         },
         "options": {
           "items": {
-            "$ref": "#/definitions/Options"
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "value"
+            ],
+            "type": "object"
           },
           "type": "array"
         },
@@ -189,137 +270,37 @@
       ],
       "type": "object"
     },
-    "MetadataConfig": {
+    "License": {
       "additionalProperties": false,
+      "description": "v5 replaced the plain `license: string` with a structured object.\n\nIdentical to ddo-js's `License`, but unreachable: `DDO5/Metadata.js` is exported as `{ Metadata as MetadataV5 }` only, so nothing else in that module escapes the package.",
       "properties": {
-        "additionalInformation": {
-          "type": "object"
-        },
-        "algorithm": {
-          "additionalProperties": false,
-          "properties": {
-            "consumerParameters": {
-              "items": {
-                "$ref": "#/definitions/ExtendedConsumerParameter"
-              },
-              "type": "array"
-            },
-            "container": {
-              "additionalProperties": false,
-              "properties": {
-                "checksum": {
-                  "type": "string"
-                },
-                "consumerParameters": {
-                  "items": {
-                    "$ref": "#/definitions/ExtendedConsumerParameter"
-                  },
-                  "type": "array"
-                },
-                "entrypoint": {
-                  "type": "string"
-                },
-                "image": {
-                  "type": "string"
-                },
-                "tag": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "checksum",
-                "entrypoint",
-                "image",
-                "tag"
-              ],
-              "type": "object"
-            },
-            "language": {
-              "type": "string"
-            },
-            "version": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "container"
-          ],
-          "type": "object"
-        },
-        "attachments": {
+        "ODRL": {},
+        "licenseDocuments": {
           "items": {
             "$ref": "#/definitions/RemoteObject"
           },
           "type": "array"
         },
-        "author": {
-          "type": "string"
-        },
-        "categories": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "copyrightHolder": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "did": {
-          "type": "string"
-        },
-        "displayTitle": {
-          "$ref": "#/definitions/LanguageValueObject"
-        },
-        "license": {
-          "type": "string"
-        },
-        "links": {
-          "anyOf": [
-            {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            {
-              "additionalProperties": {
-                "type": "string"
-              },
-              "type": "object"
-            }
-          ]
-        },
         "name": {
-          "type": "string"
-        },
-        "network": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
-        "providedBy": {
-          "type": "string"
-        },
-        "tags": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "type": {
           "type": "string"
         }
       },
       "required": [
-        "description",
-        "name",
-        "type"
+        "name"
       ],
       "type": "object"
+    },
+    "LifecycleStates": {
+      "description": "Asset lifecycle state, mirroring the NFT's metadata state.\n\nDDO v5 exports the same values as `State` from `@oceanprotocol/ddo-js`; this enum is kept because it is part of nautilus's published API.",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "type": "number"
     },
     "NftCreateDataWithoutOwner": {
       "additionalProperties": false,
@@ -346,22 +327,6 @@
         "templateIndex",
         "tokenURI",
         "transferable"
-      ],
-      "type": "object"
-    },
-    "Options": {
-      "additionalProperties": false,
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "key",
-        "value"
       ],
       "type": "object"
     },
@@ -393,72 +358,391 @@
       "type": "object"
     },
     "PublishConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "allowAlgorithmNetworkAccess": {
-          "deprecated": "Set it on the compute service instead.",
-          "description": "Default for every service that does not declare its own value.",
-          "type": "boolean"
-        },
-        "credentials": {
+      "anyOf": [
+        {
           "additionalProperties": false,
           "properties": {
-            "allow": {
+            "allowAlgorithmNetworkAccess": {
+              "type": "boolean"
+            },
+            "allowRawAlgorithms": {
+              "type": "boolean"
+            },
+            "credentials": {
+              "$ref": "#/definitions/CredentialsConfig"
+            },
+            "lifecycleState": {
+              "$ref": "#/definitions/AssetState"
+            },
+            "metadata": {
+              "additionalProperties": false,
+              "properties": {
+                "additionalInformation": {
+                  "type": "object"
+                },
+                "algorithm": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "consumerParameters": {
+                      "items": {
+                        "$ref": "#/definitions/ExtendedConsumerParameter"
+                      },
+                      "type": "array"
+                    },
+                    "container": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "checksum": {
+                          "type": "string"
+                        },
+                        "consumerParameters": {
+                          "items": {
+                            "$ref": "#/definitions/ExtendedConsumerParameter"
+                          },
+                          "type": "array"
+                        },
+                        "entrypoint": {
+                          "type": "string"
+                        },
+                        "image": {
+                          "type": "string"
+                        },
+                        "tag": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "checksum",
+                        "entrypoint",
+                        "image",
+                        "tag"
+                      ],
+                      "type": "object"
+                    },
+                    "language": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "container"
+                  ],
+                  "type": "object"
+                },
+                "attachments": {
+                  "items": {
+                    "$ref": "#/definitions/RemoteObject"
+                  },
+                  "type": "array"
+                },
+                "author": {
+                  "type": "string"
+                },
+                "categories": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "contentDirection": {
+                  "type": "string"
+                },
+                "contentLanguage": {
+                  "type": "string"
+                },
+                "copyrightHolder": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "did": {
+                  "type": "string"
+                },
+                "displayTitle": {
+                  "$ref": "#/definitions/LanguageValueObject"
+                },
+                "license": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/definitions/License"
+                    }
+                  ]
+                },
+                "links": {
+                  "anyOf": [
+                    {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    {
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "type": "object"
+                    }
+                  ]
+                },
+                "name": {
+                  "type": "string"
+                },
+                "network": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "string"
+                },
+                "providedBy": {
+                  "type": "string"
+                },
+                "tags": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "type": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "description",
+                "name",
+                "type"
+              ],
+              "type": "object"
+            },
+            "nftData": {
+              "$ref": "#/definitions/NftCreateDataWithoutOwner"
+            },
+            "service": {
+              "$ref": "#/definitions/ServiceConfig"
+            },
+            "trustOwnerAlgorithms": {
+              "type": "boolean"
+            },
+            "trustedAlgorithmPublishers": {
               "items": {
                 "type": "string"
               },
               "type": "array"
             },
-            "deny": {
+            "trustedAlgorithms": {
               "items": {
-                "type": "string"
+                "$ref": "#/definitions/TrustedAlgorithmAsset"
               },
               "type": "array"
             }
           },
+          "required": [
+            "metadata",
+            "nftData",
+            "service"
+          ],
           "type": "object"
         },
-        "metadata": {
-          "$ref": "#/definitions/MetadataConfig"
-        },
-        "nftData": {
-          "$ref": "#/definitions/NftCreateDataWithoutOwner"
-        },
-        "service": {
-          "$ref": "#/definitions/ServiceConfig",
-          "description": "Single-service shorthand. Use `services` for assets with more than one service; exactly one of `service` / `services` must be present."
-        },
-        "services": {
-          "description": "Multi-service form. Each entry becomes one service on the same asset.",
-          "items": {
-            "$ref": "#/definitions/ServiceConfig"
+        {
+          "additionalProperties": false,
+          "properties": {
+            "allowAlgorithmNetworkAccess": {
+              "type": "boolean"
+            },
+            "allowRawAlgorithms": {
+              "type": "boolean"
+            },
+            "credentials": {
+              "$ref": "#/definitions/CredentialsConfig"
+            },
+            "lifecycleState": {
+              "$ref": "#/definitions/AssetState"
+            },
+            "metadata": {
+              "additionalProperties": false,
+              "properties": {
+                "additionalInformation": {
+                  "type": "object"
+                },
+                "algorithm": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "consumerParameters": {
+                      "items": {
+                        "$ref": "#/definitions/ExtendedConsumerParameter"
+                      },
+                      "type": "array"
+                    },
+                    "container": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "checksum": {
+                          "type": "string"
+                        },
+                        "consumerParameters": {
+                          "items": {
+                            "$ref": "#/definitions/ExtendedConsumerParameter"
+                          },
+                          "type": "array"
+                        },
+                        "entrypoint": {
+                          "type": "string"
+                        },
+                        "image": {
+                          "type": "string"
+                        },
+                        "tag": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "checksum",
+                        "entrypoint",
+                        "image",
+                        "tag"
+                      ],
+                      "type": "object"
+                    },
+                    "language": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "container"
+                  ],
+                  "type": "object"
+                },
+                "attachments": {
+                  "items": {
+                    "$ref": "#/definitions/RemoteObject"
+                  },
+                  "type": "array"
+                },
+                "author": {
+                  "type": "string"
+                },
+                "categories": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "contentDirection": {
+                  "type": "string"
+                },
+                "contentLanguage": {
+                  "type": "string"
+                },
+                "copyrightHolder": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "did": {
+                  "type": "string"
+                },
+                "displayTitle": {
+                  "$ref": "#/definitions/LanguageValueObject"
+                },
+                "license": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "#/definitions/License"
+                    }
+                  ]
+                },
+                "links": {
+                  "anyOf": [
+                    {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    {
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "type": "object"
+                    }
+                  ]
+                },
+                "name": {
+                  "type": "string"
+                },
+                "network": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "string"
+                },
+                "providedBy": {
+                  "type": "string"
+                },
+                "tags": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "type": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "description",
+                "name",
+                "type"
+              ],
+              "type": "object"
+            },
+            "nftData": {
+              "$ref": "#/definitions/NftCreateDataWithoutOwner"
+            },
+            "services": {
+              "items": {
+                "$ref": "#/definitions/ServiceConfig"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "trustOwnerAlgorithms": {
+              "type": "boolean"
+            },
+            "trustedAlgorithmPublishers": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "trustedAlgorithms": {
+              "items": {
+                "$ref": "#/definitions/TrustedAlgorithmAsset"
+              },
+              "type": "array"
+            }
           },
-          "type": "array"
-        },
-        "trustOwnerAlgorithms": {
-          "description": "Default for every service that does not declare its own value.",
-          "type": "boolean"
-        },
-        "trustedAlgorithmPublishers": {
-          "description": "Default for every service that does not declare its own value.",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "trustedAlgorithms": {
-          "description": "Default for every service that does not declare its own value.",
-          "items": {
-            "$ref": "#/definitions/TrustedAlgorithmAsset"
-          },
-          "type": "array"
+          "required": [
+            "metadata",
+            "nftData",
+            "services"
+          ],
+          "type": "object"
         }
-      },
-      "required": [
-        "metadata",
-        "nftData"
       ],
-      "type": "object"
+      "description": "Exactly one service declaration; legacy singular manifests remain supported."
     },
     "RemoteObject": {
       "additionalProperties": false,
@@ -541,6 +825,28 @@
       ],
       "type": "object"
     },
+    "RequestCredential": {
+      "additionalProperties": false,
+      "description": "One credential the verifier should ask the holder to present. `format` is a walt.id credential format such as `jwt_vc_json`.",
+      "properties": {
+        "format": {
+          "type": "string"
+        },
+        "policies": {
+          "items": {
+            "$ref": "#/definitions/CredentialPolicy"
+          },
+          "type": "array"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
     "S3FileObject": {
       "additionalProperties": false,
       "properties": {
@@ -607,9 +913,21 @@
     },
     "ServiceConfig": {
       "additionalProperties": false,
-      "description": "One service of an asset.\n\nCompute settings live here (instead of only at the top level of the spec) so an asset with several services can carry different trusted algorithms, publishers and network-access flags per compute service. When omitted, the top-level `allowAlgorithmNetworkAccess` / `trustedAlgorithms` / `trustedAlgorithmPublishers` / `trustOwnerAlgorithms` act as defaults for every service.",
       "properties": {
+        "additionalInformation": {
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean"
+            ]
+          },
+          "type": "object"
+        },
         "allowAlgorithmNetworkAccess": {
+          "type": "boolean"
+        },
+        "allowRawAlgorithms": {
           "type": "boolean"
         },
         "consumerParameters": {
@@ -619,23 +937,10 @@
           "type": "array"
         },
         "credentials": {
-          "additionalProperties": false,
-          "description": "Per-service address allow/deny list. Asset-wide lists go in the top-level `credentials`.",
-          "properties": {
-            "allow": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            "deny": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            }
-          },
-          "type": "object"
+          "$ref": "#/definitions/CredentialsConfig"
+        },
+        "dataSchema": {
+          "$ref": "#/definitions/RemoteObject"
         },
         "datatoken": {
           "additionalProperties": false,
@@ -653,8 +958,10 @@
           ],
           "type": "object"
         },
+        "description": {
+          "type": "string"
+        },
         "displayName": {
-          "description": "Presentational service title. Editable on an existing asset.",
           "type": "string"
         },
         "fileType": {
@@ -673,9 +980,14 @@
           },
           "type": "array"
         },
+        "inputSchema": {
+          "$ref": "#/definitions/RemoteObject"
+        },
         "name": {
-          "description": "Human-readable service name, shown by portals. Editable on an existing asset.",
           "type": "string"
+        },
+        "outputSchema": {
+          "$ref": "#/definitions/RemoteObject"
         },
         "pricing": {
           "additionalProperties": false,
@@ -709,11 +1021,14 @@
           "type": "string"
         },
         "serviceId": {
-          "description": "Target service id, for `publish --update`. Matching is by `serviceType` when omitted. Service ids change when the service's files are re-encrypted.",
+          "description": "Target service for publish --update; otherwise match by service type.",
           "type": "string"
         },
         "serviceType": {
           "$ref": "#/definitions/ServiceTypes"
+        },
+        "state": {
+          "$ref": "#/definitions/AssetState"
         },
         "timeout": {
           "type": "number"
@@ -736,8 +1051,8 @@
       },
       "required": [
         "datatoken",
-        "fileType",
         "files",
+        "fileType",
         "pricing",
         "serviceEndpoint",
         "serviceType",
@@ -774,6 +1089,17 @@
         "compute"
       ],
       "type": "string"
+    },
+    "State": {
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "type": "number"
     },
     "TrustedAlgorithmAsset": {
       "additionalProperties": false,

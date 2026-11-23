@@ -57,26 +57,65 @@ metadata:
 
 Check [samples/publish](samples/publish) folder for more examples.
 
-A spec may describe several services on the same asset with a `services` list
-instead of the single `service` block. That is how one asset exposes, for
-example, both an `access` and a `compute` service:
+Use either the legacy `service` object or a non-empty `services` array. Each
+service creates its own datatoken and pricing contract under the same asset NFT:
 
 ```yaml
 services:
-  - serviceType: access
-    name: Download
-    ...
-  - serviceType: compute
-    name: Compute
-    ...
-    trustedAlgorithms:
-      - did: did:ope:...
+  - name: Compute
+    serviceType: compute
+    fileType: url
+    serviceEndpoint: http://localhost:8000
+    timeout: 3600
+    files:
+      - type: url
+        method: GET
+        url: https://example.org/data.csv
+    datatoken: { name: Compute, symbol: CMP }
+    pricing: { type: free }
+    credentials: { allow: ['*'] }
+    trustOwnerAlgorithms: true
+  - name: Download
+    serviceType: access
+    fileType: url
+    serviceEndpoint: http://localhost:8000
+    timeout: 3600
+    files:
+      - type: url
+        method: GET
+        url: https://example.org/data.csv
+    datatoken: { name: Download, symbol: DL }
+    pricing: { type: free }
+    credentials: { allow: ['*'] }
 ```
 
-Exactly one of `service` or `services` must be present. `publish <spec>
---update <DID>` applies a spec to an already-published asset in place: the DID
-is preserved, and services the asset does not have yet are created from the
-spec with their own datatoken.
+Exactly one of `service` or `services` must be present.
+`publish <spec> --update <DID>` updates an existing asset in place, preserving
+its DID and creating missing services with their own datatokens. Use
+`--update-files` to explicitly select services whose files should be replaced.
+
+`--provider` explicitly overrides every service endpoint. Otherwise each service
+uses its own `serviceEndpoint`. TypeScript publish scripts retain the environment
+and network endpoint defaults.
+
+Services also accept `displayName`, `description`, `state`, `additionalInformation`,
+`dataSchema`, `inputSchema`, `outputSchema`, and `consumerParameters`. Credentials
+support address `allow`/`deny` lists and
+`requestCredentials: { allow: [{ type: VerifiableId, format: jwt_vc_json }] }` at
+asset or service scope. Asset and service restrictions are combined by the node.
+
+Compute settings may be set per service: `allowRawAlgorithms`,
+`allowAlgorithmNetworkAccess`, `trustedAlgorithms`, `trustedAlgorithmPublishers`,
+and `trustOwnerAlgorithms`. Top-level settings provide backward-compatible defaults
+for compute services; a service's own values override them, including `false`
+and empty lists. Access services do not inherit compute settings.
+
+Metadata supports structured licenses, `displayTitle`, `copyrightHolder`,
+`categories`, `attachments`, `contentLanguage`, and `contentDirection`.
+`lifecycleState` controls the asset state. Nautilus generates identifiers,
+contract addresses, encrypted files, timestamps and signatures; the node supplies
+indexed metadata and access details. These generated DDO fields are not publish
+inputs.
 
 ## Manifest declarative format
 
@@ -100,7 +139,9 @@ account in the manifest, taking precedence over `PRIVATE_KEY`. This applies to
 single assets and recursive batches. Without an owner, the CLI uses the sole
 manifest account or prompts you to choose one. If a manifest exists but its
 credentials are invalid or the requested owner is missing, the command reports
-an error. When the manifest is missing, the environment wallet becomes the owner.
+an error. For publication, the signing wallet must match `metadata.owner`, even
+when using the environment key without a manifest. If no owner is specified,
+the selected wallet becomes the owner.
 
 # Commands
 
